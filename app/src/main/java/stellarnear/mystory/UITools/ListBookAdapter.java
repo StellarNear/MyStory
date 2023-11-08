@@ -54,6 +54,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
+
         }
     }
 }

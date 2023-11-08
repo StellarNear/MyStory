@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="stellarnear.mystory.Activities.Fragments.FirstFragment"
+        android:name="stellarnear.mystory.Activities.Fragments.MainActivityFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_main_searsh_books">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="stellarnear.mystory.Activities.Fragments.SecondFragment"
+        android:name="stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
