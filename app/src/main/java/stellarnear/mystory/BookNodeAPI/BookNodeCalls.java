@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,18 +20,14 @@ import java.util.List;
 
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
-import stellarnear.mystory.BooksLibs.Serie;
 
 public class BookNodeCalls {
+
+
     private static String baseUrl = "https://booknode.com/";
 
-    public List<Book> getBooksFromSearch(String search) throws JSONException {
-
-        new JsonTask().execute(baseUrl + "search-json?q=" + search.replace(" ", "+") + "&exclude_series_from_books=0");
-
-
-        return null;
-
+    public void getBooksFromSearch(String search) throws JSONException {
+        new JsonTaskGetBook().execute(baseUrl + "search-json?q=" + search.replace(" ", "+") + "&exclude_series_from_books=0");
     }
 
     private OnDataRecievedEventListener mListener;
@@ -41,7 +38,7 @@ public class BookNodeCalls {
     }
 
     public interface OnDataRecievedEventListener {
-        void onEvent();
+        void onEvent(List<Book> allBooks);
     }
 
     public void setOnDataFailEventListener(OnDataFailEventListener eventListener) {
@@ -53,17 +50,17 @@ public class BookNodeCalls {
     }
 
 
-    private class JsonTask extends AsyncTask<String, String, String> {
+    private class JsonTaskGetBook extends AsyncTask<String, String, List<Book>> {
 
-        private ArrayList<Book> allBooks;
-        private ArrayList<Autor> autors;
-        private ArrayList<Serie> series;
+
+        //private Set<Autor> autors;
+        // private Set<Serie> series;
 
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
-        protected String doInBackground(String... params) {
+        protected List<Book> doInBackground(String... params) {
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -86,47 +83,24 @@ public class BookNodeCalls {
 
                 }
 
-                return buffer.toString();
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            try {
-
-                JSONObject allResults = new JSONObject(result);
+                JSONObject allResults = new JSONObject(buffer.toString());
 
                 //books
-                this.allBooks = new ArrayList<>();
+                List<Book> allBooks = new ArrayList<>();
                 JSONArray booksJson = (JSONArray) allResults.get("books");
-                for(int i=0; i<booksJson.length();i++){
+                for (int i = 0; i < booksJson.length(); i++) {
                     JSONObject bookJson = booksJson.getJSONObject(i);
                     JSONObject autorJson = bookJson.getJSONArray("authors").getJSONObject(0);
-                    Autor autor = new Autor(autorJson.getLong("idauteur"),autorJson.getString("_prenom"),autorJson.getString("_nom"),autorJson.getString("nom"));
-                    Book book = new Book(bookJson.getLong("id"),bookJson.getString("name"),bookJson.getString("cover_double"),autor);
+                    Autor autor = new Autor(autorJson.getLong("idauteur"), autorJson.getString("_prenom"), autorJson.getString("_nom"), autorJson.getString("nom"));
+                    Book book = new Book(bookJson.getLong("id"), bookJson.getString("name"), bookJson.getString("cover_double"), autor);
+                    getImage(book);
+                    new OpenLibraryCalls().addExtraMetadatas(book);
                     allBooks.add(book);
                 }
 
 
+                /*
                 //autors
                 this.autors= new ArrayList<>();
                 JSONArray autorsJson = (JSONArray) allResults.get("authors");
@@ -144,13 +118,71 @@ public class BookNodeCalls {
                     JSONObject serieJson = seriesJson.getJSONObject(i);
                     Serie serie = new Serie(serieJson.getLong("id"),serieJson.getString("name"),serieJson.getInt("book_count"));
                     series.add(serie);
+                }*/
+
+
+                return allBooks;
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        private void getImage(Book book) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            InputStream stream = null;
+            try {
+                byte[] chunk = new byte[4096];
+                int bytesRead;
+                stream = new URL(book.getCover_url()).openStream();
+
+                while ((bytesRead = stream.read(chunk)) > 0) {
+                    outputStream.write(chunk, 0, bytesRead);
+                }
+                book.setImageByte(outputStream.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
+            }
+
+
+        }
+
+        @Override
+        protected void onPostExecute(List<Book> allBooksFound) {
+            super.onPostExecute(allBooksFound);
+
+            try {
 
                 if (mListener != null) {
-                    mListener.onEvent();
+                    mListener.onEvent(allBooksFound);
                 }
-                
             } catch (Exception e) {
                 e.printStackTrace();
                 if (mListenerFail != null) {
@@ -161,5 +193,6 @@ public class BookNodeCalls {
 
 
     }
+
 
 }

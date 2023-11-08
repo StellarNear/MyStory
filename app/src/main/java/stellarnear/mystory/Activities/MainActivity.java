@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +18,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
+import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
+import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.databinding.ActivityMainBinding;
 
 import android.view.Menu;
@@ -26,15 +29,18 @@ import android.widget.EditText;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
-    private Context mC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.mC=getApplicationContext();
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -64,13 +70,27 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("Chercher", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
-                    new BookNodeCalls().getBooksFromSearch(edittext.getText().toString());
+                    BookNodeCalls bookCall = new BookNodeCalls();
+                    final List<Book> booksList = new ArrayList<>();
+                    bookCall.setOnDataRecievedEventListener(new BookNodeCalls.OnDataRecievedEventListener() {
+                        @Override
+                        public void onEvent(List<Book> allBooks) {
+                            booksList.addAll(allBooks);
+                            popupDisplayListBookToPick(booksList);
+                        }
+                    });
+                    bookCall.getBooksFromSearch(edittext.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
         alert.show();
+    }
+
+    private void popupDisplayListBookToPick(List<Book> booksList) {
+        DiscreteScrollView scrollView = findViewById(R.id.picker);
+        scrollView.setAdapter(new ListBookAdapter(booksList));
     }
 
     @Override

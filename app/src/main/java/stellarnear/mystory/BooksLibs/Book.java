@@ -1,8 +1,12 @@
 package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 public class Book {
+
+   private byte[] imageByte;
 
    public Instant getStartTime() {
       return startTime;
@@ -73,5 +77,18 @@ public class Book {
       this.name = name;
       this.autor = autor;
       this.cover_url = cover_url;
+   }
+
+   private Set<Integer> maxPagesFound;
+   public void addMultipleMaxPagesFound(Set<Integer> maxPagesFounds) {
+      this.maxPagesFound=maxPagesFounds;
+   }
+
+   public byte[] getImage() {
+      return this.imageByte;
+   }
+
+   public void setImageByte(byte[] byteChunk) {
+      this.imageByte=byteChunk;
    }
 }
