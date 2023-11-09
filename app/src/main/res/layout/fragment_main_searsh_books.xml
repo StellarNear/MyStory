@@ -10,13 +10,13 @@
 
     <ImageButton
         android:id="@+id/back_main_from_search"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:adjustViewBounds="true"
         android:background="@null"
         android:layout_margin="@dimen/general_margin"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_baseline_error_24"
+        android:src="@drawable/ic_baseline_arrow_24"
         tools:ignore="ContentDescription"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -5,21 +5,15 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
@@ -42,8 +36,17 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
     private Tools tools = Tools.getTools();
     private ListBookAdapter bookAdapter;
+    private OnFramentViewCreatedEventListener mLoadedListner;
 
     public MainActivityFragmentSearchBooks() {
+    }
+
+    public void setOnFramentViewCreatedEventListener(OnFramentViewCreatedEventListener eventListener) {
+        mLoadedListner = eventListener;
+    }
+
+    public interface OnFramentViewCreatedEventListener {
+        void onEvent();
     }
 
     @Override
@@ -59,11 +62,43 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
         buildPage1();
 
-        animate(((ImageButton) returnFragView.findViewById(R.id.back_main_from_search)));
+       ImageButton backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
+
+        Animation left = AnimationUtils.loadAnimation(getContext(), R.anim.infromleft);
+
+        left.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animate(backButton);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        backButton.startAnimation(left);
+
+
+        if(mLoadedListner!=null){
+            mLoadedListner.onEvent();
+        }
         return returnFragView;
     }
 
     public void startSearch() {
+        EditText authorPrompt = returnFragView.findViewById(R.id.search_author_prompt);
+        EditText titlePrompt = returnFragView.findViewById(R.id.search_title_prompt);
+        String search = titlePrompt.getText().toString().trim()+" "+ authorPrompt.getText().toString().trim();
+        if(search.trim().length()<3){
+            tools.customToast(getContext(),"Entres au moins un titre ou un auteur");
+            return;
+        }
 
         BookNodeCalls bookCall = new BookNodeCalls();
         final List<Book> booksList = new ArrayList<>();
@@ -76,9 +111,8 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             }
         });
 
-        EditText authorPrompt = returnFragView.findViewById(R.id.search_author_prompt);
-        EditText titlePrompt = returnFragView.findViewById(R.id.search_title_prompt);
-        String search = titlePrompt.getText().toString().trim()+" "+ authorPrompt.getText().toString().trim();
+
+
         try {
             bookCall.getBooksFromSearch(search);
         } catch (Exception e) {
@@ -156,6 +190,10 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
     private void buildPage1() {
         //do the actual stuff
+    }
+
+    public View getBackButtonView() {
+        return returnFragView.findViewById(R.id.back_main_from_search);
     }
 
  /*
