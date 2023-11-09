@@ -42,12 +42,14 @@
             android:id="@+id/fabSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
+
             android:animateLayoutChanges="true"
             android:backgroundTint="@color/primary_middle_yellow"
             android:outlineSpotShadowColor="@color/primary_light_yellow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_marginRight="@dimen/fab_margin"
             android:src="@drawable/ic_book_add"
             app:tint="@color/primary_light_yellow" />
 

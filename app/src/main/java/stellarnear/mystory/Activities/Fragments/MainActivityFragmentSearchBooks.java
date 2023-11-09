@@ -1,10 +1,13 @@
 package stellarnear.mystory.Activities.Fragments;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
@@ -13,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +30,7 @@ import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
+import stellarnear.mystory.UITools.CustomAlertDialog;
 import stellarnear.mystory.UITools.ListBookAdapter;
 
 
@@ -36,16 +41,49 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
     private Tools tools = Tools.getTools();
     private ListBookAdapter bookAdapter;
-    private OnFramentViewCreatedEventListener mLoadedListner;
+    private boolean resultShown=false;
+    private Book selectedBook;
 
     public MainActivityFragmentSearchBooks() {
     }
+
+    private OnFramentViewCreatedEventListener mLoadedListner;
 
     public void setOnFramentViewCreatedEventListener(OnFramentViewCreatedEventListener eventListener) {
         mLoadedListner = eventListener;
     }
 
+    public boolean hasResultShown() {
+        return this.resultShown;
+    }
+
+    public void clearResult() {
+        bookAdapter.reset();
+
+        returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
+
+        returnFragView.findViewById(R.id.linearSearchPrompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.search_title_prompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.search_author_prompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.loading_search).clearAnimation();
+        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
+        resultShown=false;
+    }
+
     public interface OnFramentViewCreatedEventListener {
+        void onEvent();
+    }
+
+
+    private OnSearchedEventListener mSearchedListner;
+
+    public void setOnSearchedEventListener(OnSearchedEventListener eventListener) {
+        mSearchedListner = eventListener;
+    }
+
+    public interface OnSearchedEventListener {
         void onEvent();
     }
 
@@ -58,9 +96,6 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         }
 
         returnFragView = inflater.inflate(R.layout.fragment_main_searsh_books, container, false);
-
-
-        buildPage1();
 
        ImageButton backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
 
@@ -107,11 +142,9 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             public void onEvent(List<Book> allBooks) {
                 tools.customSnack(getContext(),returnFragView, allBooks.size() + " livres trouvés","yellow");
                 booksList.addAll(allBooks);
-                popupDisplayListBookToPick(booksList);
+                displayListBookToPick(booksList);
             }
         });
-
-
 
         try {
             bookCall.getBooksFromSearch(search);
@@ -119,14 +152,31 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             tools.customToast(getContext(), "Erreur lors de la recherche : " + e.getLocalizedMessage());
         }
 
+        if(mSearchedListner!=null){
+            mSearchedListner.onEvent();
+            resultShown=true;
+        }
+
+        authorPrompt.setVisibility(View.GONE);
+        titlePrompt.setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.loading_search).setVisibility(View.VISIBLE);
+
+        ScaleAnimation mAnimation = new ScaleAnimation(1f,1.25f,1f,1.25f,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mAnimation.setDuration(1000);
+        mAnimation.setRepeatCount(-1);
+        mAnimation.setRepeatMode(Animation.REVERSE);
+        mAnimation.setInterpolator(new AccelerateInterpolator());
+        returnFragView.findViewById(R.id.loading_search).startAnimation(mAnimation);
     }
 
-    private void popupDisplayListBookToPick(List<Book> booksList) {
+    private void displayListBookToPick(List<Book> booksList) {
         returnFragView.findViewById(R.id.linearSearchPrompt).setVisibility(View.GONE);
-        returnFragView.findViewById(R.id.linearBooksFound).setVisibility(View.VISIBLE);
-        returnFragView.findViewById(R.id.picker).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.VISIBLE);
 
-        DiscreteScrollView scrollView = returnFragView.findViewById(R.id.picker);
+
+        DiscreteScrollView scrollView = returnFragView.findViewById(R.id.pickerScroller);
         scrollView.setSlideOnFling(true);
         scrollView.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.8f)
@@ -152,11 +202,10 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             }
         });
 
-
         scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
             @Override
             public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
-                Book selectedBook = bookAdapter.getBook(adapterPosition);
+                selectedBook = bookAdapter.getBook(adapterPosition);
                 TextView title = returnFragView.findViewById(R.id.list_book_title);
                 title.setText(selectedBook.getName());
                 TextView author = returnFragView.findViewById(R.id.list_book_author);
@@ -169,6 +218,70 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
                         pages.setText(selectedBook.getMeanPagesFoundTxt());
                     }
                 });
+            }
+        });
+
+        returnFragView.findViewById(R.id.add_to_wishlist).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+                // Inflate and set the layout for the dialog.
+                // Pass null as the parent view because it's going in the dialog layout.
+                View alert = inflater.inflate(R.layout.dialog_alert_add_to_wish,null);
+                ((TextView)alert.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+                ((TextView)alert.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+                CustomAlertDialog alertDialog = new CustomAlertDialog(getActivity(),getContext(),alert);
+                alertDialog.addCancelButton("non");
+                alertDialog.addConfirmButton("oui");
+                alertDialog.setFill("widthheight");
+                alertDialog.showAlert();
+
+
+                /*
+                      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setView(alert)
+                        // Add action buttons
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                tools.customToast(getContext(),"c'est bon on ajoute wishlist");
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                builder.show();*/
+            }
+        });
+
+        returnFragView.findViewById(R.id.add_to_current).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater.
+                LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+                // Inflate and set the layout for the dialog.
+                // Pass null as the parent view because it's going in the dialog layout.
+                builder.setView(inflater.inflate(R.layout.dialog_alert_add_to_wish, null))
+                        // Add action buttons
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                tools.customToast(getContext(),"c'est bon on ajoute nen courrant");
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                builder.show();
             }
         });
     }
@@ -186,10 +299,6 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
                 buttonMain.startAnimation(anim);
             }
         }, getResources().getInteger(R.integer.translationFragDuration));
-    }
-
-    private void buildPage1() {
-        //do the actual stuff
     }
 
     public View getBackButtonView() {

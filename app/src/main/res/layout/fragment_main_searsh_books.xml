@@ -40,6 +40,7 @@
             android:id="@+id/search_title_prompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_prompt"
             android:hint="Titre"
             android:textColor="@color/primary_light_yellow"
             android:textAlignment="center"/>
@@ -47,34 +48,73 @@
             android:id="@+id/search_author_prompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_prompt"
             android:hint="Auteur"
             android:textColor="@color/primary_light_yellow"
             android:textAlignment="center"/>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/loading_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/list_book_title_size"
+            android:textColor="@color/primary_middle_yellow"
+            android:text="Recherche en cours..."/>
 
     </LinearLayout>
 
+
+    <LinearLayout
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/pickerScroller"
+        android:gravity="center">
+       <LinearLayout
+           android:id="@+id/add_book_linear"
+           android:visibility="gone"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:padding="@dimen/general_margin">
+           <ImageView
+               android:id="@+id/add_to_wishlist"
+               android:layout_marginRight="@dimen/padding_add_book_from_search"
+               android:layout_width="@dimen/add_book_from_search"
+               android:layout_height="@dimen/add_book_from_search"
+               app:tint="@color/primary_light_yellow"
+               android:src="@drawable/ic_book_heart"/>
+
+           <ImageView
+               android:id="@+id/add_to_current"
+               android:layout_width="@dimen/add_book_from_search"
+               android:layout_height="@dimen/add_book_from_search"
+               app:tint="@color/primary_light_yellow"
+               android:src="@drawable/ic_book_open_page"/>
+       </LinearLayout>
+    </LinearLayout>
     <com.yarolegovich.discretescrollview.DiscreteScrollView
+        android:id="@+id/pickerScroller"
         android:visibility="gone"
-        android:id="@+id/picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:dsv_orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
 
     <LinearLayout
         android:visibility="gone"
-        android:id="@+id/linearBooksFound"
+        android:id="@+id/linearBooksFoundInfosSub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
         android:padding="@dimen/general_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/picker">
+        app:layout_constraintTop_toBottomOf="@id/pickerScroller">
 
         <TextView
             android:visibility="gone"

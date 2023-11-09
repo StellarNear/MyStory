@@ -4,12 +4,25 @@
     <color name="primary_middle_purple">#2a2160</color>
     <color name="primary_light_purple">#7974f4</color>
 
-     <color name="primary_dark_yellow">#451f13</color>
+    <color name="primary_dark_yellow">#451f13</color>
     <color name="primary_middle_yellow">#723727</color>
-    <color name="primary_light_yellow">#fed464</color>
+    <color name="primary_light_yellow">#BF972C</color>
+
+    <color name="primary_light_yellowOLD">#fed464</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="main_fragment_background_color">#C5C5C5</color>
     <color name="search_fragment_background_color">#5162E073</color>
+
+    <color name="start_gradient_button_cancel">#822616</color>
+    <color name="end_gradient_button_cancel">#bd3e1e</color>
+
+    <color name="start_gradient_button_basic">#80555555</color>
+    <color name="end_gradient_button_basic">#80FFFFFF</color>
+
+    <color name="gray50">#808080</color>
+
+    <color name="end_gradient_button_ok">@color/primary_dark_yellow</color>
+    <color name="start_gradient_button_ok">@color/primary_middle_yellow</color>
 </resources>

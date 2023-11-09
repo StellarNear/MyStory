@@ -8,4 +8,10 @@
     <dimen name="translationFragTransi">500</dimen>
 
     <dimen name="size_snack_text">22</dimen>
+    <dimen name="text_prompt">40sp</dimen>
+
+    <dimen name="add_book_from_search">35dp</dimen>
+    <dimen name="padding_add_book_from_search">100dp</dimen>
+    <dimen name="popup_add_book_width">250dp</dimen>
+    <dimen name="popup_add_book_height">200dp</dimen>
 </resources>

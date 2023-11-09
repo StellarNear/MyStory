@@ -1,16 +1,18 @@
 package stellarnear.mystory.Activities;
 
 import android.animation.LayoutTransition;
-
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -22,21 +24,18 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.R;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
 
     private FrameLayout mainFrameFrag;
-    private boolean toSearch=true;
+    private boolean toSearch = true;
     private MainActivityFragment mainFrag;
     private MainActivityFragmentSearchBooks searchFrag;
     private ConstraintLayout mConstraintLayout;
@@ -55,13 +54,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().show();
 
 
-
         fabSearchPanel = findViewById(R.id.fabSearch);
         mainFrag = new MainActivityFragment();
         searchFrag = new MainActivityFragmentSearchBooks();
         window = getWindow();
 
-        mConstraintLayout  = (ConstraintLayout) findViewById(R.id.main_constrain);
+        mConstraintLayout = (ConstraintLayout) findViewById(R.id.main_constrain);
         mConstraintLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
         fabSearchPanel.setOnClickListener(new View.OnClickListener() {
@@ -71,11 +69,20 @@ public class MainActivity extends AppCompatActivity {
                     startSearchFragment();
                     toSearch = false;
                 } else {
-                    searchFrag.startSearch();
+                    if(searchFrag.hasResultShown()){
+                        ConstraintSet set = new ConstraintSet();
+                        set.clone(mConstraintLayout);
+                        set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, 0);
+                        set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,0);
+                        set.applyTo(mConstraintLayout);
+                        fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_baseline_search_24));
+                        searchFrag.clearResult();
+                    } else {
+                        searchFrag.startSearch();
+                    }
                 }
             }
         });
-
 
         initMainFragment();
     }
@@ -85,11 +92,14 @@ public class MainActivity extends AppCompatActivity {
         searchFrag = new MainActivityFragmentSearchBooks();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
-        startFragment(R.id.fragment_main,searchFrag,R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
+        startFragment(R.id.fragment_main, searchFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
         window.setStatusBarColor(getColor(R.color.primary_middle_yellow));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_yellow));
 
-        set.connect(fabSearchPanel.getId(), ConstraintSet.START,mConstraintLayout.getId(), ConstraintSet.START, 0);
+
+
+        set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, 0);
+        set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, 0);
         set.applyTo(mConstraintLayout);
         fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_baseline_search_24));
 
@@ -108,32 +118,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        searchFrag.setOnSearchedEventListener(new MainActivityFragmentSearchBooks.OnSearchedEventListener() {
+            @Override
+            public void onEvent() {
+                int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+                set.clear(fabSearchPanel.getId(), ConstraintSet.START);
+                set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
+                set.applyTo(mConstraintLayout);
+                fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_baseline_searched_again_for_24));
+            }
+        });
+
     }
 
     private void restartMainFramemnt() {
         mainFrag = new MainActivityFragment();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
-        startFragment(R.id.fragment_search,mainFrag,R.animator.infromleftfrag,  R.animator.outfadefrag, "frag_main");
+        startFragment(R.id.fragment_search, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
 
+
+
+        int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
         set.clear(fabSearchPanel.getId(), ConstraintSet.START);
+        set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
         set.applyTo(mConstraintLayout);
         fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
     }
 
 
     private void startFragment(final int fragId, final Fragment ActivityFragment, final int animIn, final int animOut, final String tag) {
-                lockOrient();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(animIn, animOut);
-                fragmentTransaction.replace(fragId, ActivityFragment, tag);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+        lockOrient();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(animIn, animOut);
+        fragmentTransaction.replace(fragId, ActivityFragment, tag);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
-
 
 
     private void unlockOrient() {

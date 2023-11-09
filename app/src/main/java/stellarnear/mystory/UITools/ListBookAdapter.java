@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,9 +41,6 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.item_book_card, parent, false);
-
-
-
         return new ViewHolder(v);
     }
 
@@ -89,6 +87,10 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     public List<Book> getData() {
         return this.data;
+    }
+
+    public void reset() {
+        data=new ArrayList<>();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
