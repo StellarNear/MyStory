@@ -29,27 +29,9 @@ public class OpenLibraryCalls {
     public void addExtraMetadatas(Book book) throws JSONException {
         this.book = book;
         new JsonTaskGetMetaData().execute();
-        return;
     }
 
-    private OnDataRecievedEventListener mListener;
-    private OnDataFailEventListener mListenerFail;
 
-    public void setOnDataRecievedEventListener(OnDataRecievedEventListener eventListener) {
-        mListener = eventListener;
-    }
-
-    public interface OnDataRecievedEventListener {
-        void onEvent();
-    }
-
-    public void setOnDataFailEventListener(OnDataFailEventListener eventListener) {
-        mListenerFail = eventListener;
-    }
-
-    public interface OnDataFailEventListener {
-        void onEvent();
-    }
 
 
     private class JsonTaskGetMetaData extends AsyncTask<String, String, Set<Integer>> {
@@ -78,7 +60,7 @@ public class OpenLibraryCalls {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
-                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
+                    //Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
                 }
 
 
@@ -107,7 +89,7 @@ public class OpenLibraryCalls {
 
                             while ((lineData = readerData.readLine()) != null) {
                                 bufferData.append(lineData + "\n");
-                                Log.d("ResponseData: ", "> " + lineData);   //here u ll get whole response...... :-)
+                                //Log.d("ResponseData: ", "> " + lineData);   //here u ll get whole response...... :-)
                             }
 
                             //dothing with meta on book then call listner
@@ -162,16 +144,8 @@ public class OpenLibraryCalls {
                 if (result.size() > 0) {
                     book.addMultipleMaxPagesFound(result);
                 }
-
-                if (mListener != null) {
-                    mListener.onEvent();
-                }
-
             } catch (Exception e) {
                 e.printStackTrace();
-                if (mListenerFail != null) {
-                    mListenerFail.onEvent();
-                }
             }
         }
 

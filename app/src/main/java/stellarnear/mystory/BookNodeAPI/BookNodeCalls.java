@@ -1,5 +1,9 @@
 package stellarnear.mystory.BookNodeAPI;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -20,6 +24,7 @@ import java.util.List;
 
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.R;
 
 public class BookNodeCalls {
 
@@ -79,8 +84,7 @@ public class BookNodeCalls {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
-                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
-
+                   // Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
                 }
 
 
@@ -147,16 +151,18 @@ public class BookNodeCalls {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             InputStream stream = null;
             try {
-                byte[] chunk = new byte[4096];
+                byte[] chunk = new byte[16384];
                 int bytesRead;
                 stream = new URL(book.getCover_url()).openStream();
-
                 while ((bytesRead = stream.read(chunk)) > 0) {
                     outputStream.write(chunk, 0, bytesRead);
                 }
-                book.setImageByte(outputStream.toByteArray());
-            } catch (IOException e) {
+                if(outputStream.toByteArray().length>0){
+                    book.setImageByte(outputStream.toByteArray());
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
+
             } finally {
                 try {
                     if (stream != null) {

@@ -7,6 +7,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -112,17 +115,34 @@ public class Tools extends SelfCustomLog {
     }
 
 
-    public void customToast(Context mC, String txt, String... modeInput) {
+    public void customToast(Context mC, String txt) {
         // Set the toast and duration
-        String mode = modeInput.length > 0 ? modeInput[0] : "";
-        Toast mToastToShow = Toast.makeText(mC, txt, Toast.LENGTH_LONG);
 
-        if (mode.contains("center")) {
-            TextView v = (TextView) mToastToShow.getView().findViewById(android.R.id.message);
-            if (v != null) v.setGravity(Gravity.CENTER);
-        }
+        Toast mToastToShow = Toast.makeText(mC, txt, Toast.LENGTH_LONG);
         mToastToShow.setGravity(Gravity.CENTER, 0, 0);
         mToastToShow.show();
+
+    }
+
+    public void customSnack(Context mC, View v,String txt,String... theme) {
+        // Set the toast and duration
+
+        Snackbar snack = Snackbar.make(mC, v, txt, Snackbar.LENGTH_LONG);
+        View view = snack.getView();
+        TextView tv = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+        if(theme.length>0){
+            if (theme[0].equalsIgnoreCase("yellow")){
+                snack.setTextColor(mC.getColor(R.color.primary_light_yellow));
+                view.setBackgroundColor(mC.getColor(R.color.primary_middle_yellow));
+            } else if (theme[0].equalsIgnoreCase("purple")){
+                snack.setTextColor(mC.getColor(R.color.primary_light_purple));
+                view.setBackgroundColor(mC.getColor(R.color.primary_middle_purple));
+            }
+        }
+
+        snack.show();
 
     }
 

@@ -12,31 +12,11 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:ignore="ContentDescription"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
         />
 
-    <TextView
-        android:id="@+id/list_book_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MyTitle"
-        android:textSize="@dimen/list_book_title_size"
-        />
-
-    <TextView
-        android:id="@+id/list_book_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MyAutor"
-        android:textSize="@dimen/list_book_author_size"/>
-    <TextView
-        android:id="@+id/list_book_page_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MyAutor"
-        android:textSize="@dimen/list_book_page_size"/>
 
 </LinearLayout>

@@ -20,13 +20,34 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/fragment_start_main_frame_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_constrain"
+        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent">
 
+        <FrameLayout
+            android:id="@+id/fragment_start_main_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@color/primary_middle_yellow"
+            android:outlineSpotShadowColor="@color/primary_light_yellow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@android:drawable/ic_search_category_default"
+            app:tint="@color/primary_light_yellow" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

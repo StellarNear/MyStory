@@ -1,9 +1,11 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="list_book_title_size">25sp</dimen>
-    <dimen name="list_book_author_size">20sp</dimen>
-    <dimen name="list_book_page_size">16sp</dimen>
+    <dimen name="fab_margin">20dp</dimen>
+    <dimen name="list_book_title_size">22sp</dimen>
+    <dimen name="list_book_author_size">18sp</dimen>
+    <dimen name="list_book_page_size">14sp</dimen>
     <dimen name="general_margin">5dp</dimen>
     <dimen name="translationFragTransiNegative">-500</dimen>
     <dimen name="translationFragTransi">500</dimen>
+
+    <dimen name="size_snack_text">22</dimen>
 </resources>
