@@ -31,9 +31,6 @@ public class OpenLibraryCalls {
         new JsonTaskGetMetaData().execute();
     }
 
-
-
-
     private class JsonTaskGetMetaData extends AsyncTask<String, String, Set<Integer>> {
         protected void onPreExecute() {
             super.onPreExecute();
@@ -141,7 +138,7 @@ public class OpenLibraryCalls {
             super.onPostExecute(result);
 
             try {
-                if (result.size() > 0) {
+                if (result !=null && result.size() > 0) {
                     book.addMultipleMaxPagesFound(result);
                 }
             } catch (Exception e) {

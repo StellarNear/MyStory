@@ -1,9 +1,5 @@
 package stellarnear.mystory.UITools;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +8,17 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
+import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
-
-import com.bumptech.glide.Glide;
-import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
 // based on https://android-arsenal.com/details/1/5480
 
@@ -49,19 +43,29 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        byte[] imageByte = data.get(position).getImage();
-        if(imageByte==null || imageByte.length<1){
+        Book book = data.get(position);
+        byte[] imageByte = book.getImage();
+        if (imageByte == null || imageByte.length < 1) {
+            //on a pas réussi à avoir d'image on affiche l'image broken et on lance un retry pour une prochaine utilisation
             try {
-            String file = "res/raw/no_image.png";
-            InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
-            int nRead;
-            byte[] data = new byte[16384];
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            while ((nRead = in.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, nRead);
-            }
-            imageByte = buffer.toByteArray();
-            } catch (Exception e){
+                String file = "res/raw/no_image.png";
+                InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
+                int nRead;
+                byte[] dataBytes = new byte[16384];
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
+                    buffer.write(dataBytes, 0, nRead);
+                }
+                imageByte = buffer.toByteArray();
+
+                new BookNodeCalls().refreshImage(book);
+                book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
+                    @Override
+                    public void onEvent() {
+                        onBindViewHolder(holder,position);
+                    }
+                });
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -92,7 +96,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     }
 
     public void reset() {
-        data=new ArrayList<>();
+        data = new ArrayList<>();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

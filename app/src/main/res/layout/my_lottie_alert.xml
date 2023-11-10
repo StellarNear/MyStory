@@ -11,9 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/animation_popup_size"
         android:layout_below="@id/lottie_dialog_title"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:background="@drawable/backdrop">
 
         <com.airbnb.lottie.LottieAnimationView
+            android:foregroundGravity="center"
+            android:layout_gravity="center"
             android:id="@+id/lottie_dialog_animation"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -85,17 +85,35 @@ public class Book {
         return this.imageByte;
     }
 
+
+    private OnImageRefreshedEventListener mListenerImageRefreshed;
+
+    public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener eventListener) {
+        mListenerImageRefreshed = eventListener;
+    }
+
+    public interface OnImageRefreshedEventListener {
+        void onEvent();
+    }
+
+
     public void setImageByte(byte[] byteChunk) {
-        this.imageByte = byteChunk;
+        if(byteChunk!=null && byteChunk.length>1){
+            this.imageByte = byteChunk;
+            if(mListenerImageRefreshed!=null){
+                mListenerImageRefreshed.onEvent();
+            }
+        }
+
     }
 
     //later call pages data
     private Set<Integer> maxPagesFound = new HashSet<>();
 
-    private OnPageDataRecievedEventListener mListener;
+    private OnPageDataRecievedEventListener mListenerPageData;
 
     public void setOnPageDataRecievedEventListener(OnPageDataRecievedEventListener eventListener) {
-        mListener = eventListener;
+        mListenerPageData = eventListener;
     }
 
     public interface OnPageDataRecievedEventListener {
@@ -104,8 +122,8 @@ public class Book {
 
     public void addMultipleMaxPagesFound(Set<Integer> maxPagesFounds) {
         this.maxPagesFound = maxPagesFounds;
-        if (!pageDataRecieved && mListener != null) {
-            mListener.onEvent();
+        if (!pageDataRecieved && mListenerPageData != null) {
+            mListenerPageData.onEvent();
         }
         pageDataRecieved =true;
     }

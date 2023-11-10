@@ -1,21 +1,16 @@
 package stellarnear.mystory;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,10 +28,11 @@ public class Tools extends SelfCustomLog {
 
     private static Tools instance;
 
-    public Tools(){  }
+    public Tools() {
+    }
 
-    public static Tools getTools(){
-        if (instance==null){
+    public static Tools getTools() {
+        if (instance == null) {
             instance = new Tools();
         }
         return instance;
@@ -84,8 +80,8 @@ public class Tools extends SelfCustomLog {
         Double value;
         try {
             value = Double.parseDouble(key);
-        } catch (Exception e){
-            value=0.0;
+        } catch (Exception e) {
+            value = 0.0;
             //some value are tested and if abscent we return default value
         }
         return value;
@@ -102,7 +98,7 @@ public class Tools extends SelfCustomLog {
     }
 
     public void resize(ImageView img, int dimensionPixelSize) {
-        img.setLayoutParams(new LinearLayout.LayoutParams(dimensionPixelSize,dimensionPixelSize)); //note that it don't work with relative layout para
+        img.setLayoutParams(new LinearLayout.LayoutParams(dimensionPixelSize, dimensionPixelSize)); //note that it don't work with relative layout para
     }
 
     public Drawable convertToGrayscale(Drawable inputDraw) {
@@ -124,19 +120,24 @@ public class Tools extends SelfCustomLog {
 
     }
 
-    public void customSnack(Context mC, View v,String txt,String... theme) {
+    public void customSnack(Context mC, View v, String txt, String... option) {
         // Set the toast and duration
-
-        Snackbar snack = Snackbar.make(mC, v, txt, Snackbar.LENGTH_LONG);
+        int dura = Snackbar.LENGTH_LONG;
+        if (option.length > 0) {
+            if (option[0].contains("short")) {
+                dura = Snackbar.LENGTH_SHORT;
+            }
+        }
+        Snackbar snack = Snackbar.make(mC, v, txt, dura);
         View view = snack.getView();
         TextView tv = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
         tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-        if(theme.length>0){
-            if (theme[0].equalsIgnoreCase("yellow")){
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        if (option.length > 0) {
+            if (option[0].contains("yellow")) {
                 snack.setTextColor(mC.getColor(R.color.primary_light_yellow));
                 view.setBackgroundColor(mC.getColor(R.color.primary_middle_yellow));
-            } else if (theme[0].equalsIgnoreCase("purple")){
+            } else if (option[0].contains("purple")) {
                 snack.setTextColor(mC.getColor(R.color.primary_light_purple));
                 view.setBackgroundColor(mC.getColor(R.color.primary_middle_purple));
             }

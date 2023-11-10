@@ -54,8 +54,12 @@ public class BookNodeCalls {
         void onEvent();
     }
 
+    public void refreshImage(Book book){
+        new JsonTaskRefreshImage().execute(book);
+    }
 
-    private class JsonTaskGetBook extends AsyncTask<String, String, List<Book>> {
+
+    public class JsonTaskGetBook extends AsyncTask<String, String, List<Book>> {
 
 
         //private Set<Autor> autors;
@@ -147,7 +151,7 @@ public class BookNodeCalls {
             return null;
         }
 
-        private void getImage(Book book) {
+        public void getImage(Book book) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             InputStream stream = null;
             try {
@@ -174,7 +178,6 @@ public class BookNodeCalls {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
 
@@ -201,4 +204,62 @@ public class BookNodeCalls {
     }
 
 
+    private class JsonTaskRefreshImage extends AsyncTask<Book, String,byte[]> {
+        private Book book;
+
+        //private Set<Autor> autors;
+        // private Set<Serie> series;
+
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        protected byte[] doInBackground(Book... books) {
+            this.book=books[0];
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                InputStream stream = null;
+                try {
+                    byte[] chunk = new byte[16384];
+                    int bytesRead;
+                    stream = new URL(book.getCover_url()).openStream();
+                    while ((bytesRead = stream.read(chunk)) > 0) {
+                        outputStream.write(chunk, 0, bytesRead);
+                    }
+
+                    return  outputStream.toByteArray();
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                } finally {
+                    try {
+                        if (stream != null) {
+                            stream.close();
+                        }
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(byte[] byteArray) {
+            super.onPostExecute(byteArray);
+            if ( byteArray!=null && byteArray.length>1){
+                    book.setImageByte(byteArray);
+            }
+        }
+
+    }
 }

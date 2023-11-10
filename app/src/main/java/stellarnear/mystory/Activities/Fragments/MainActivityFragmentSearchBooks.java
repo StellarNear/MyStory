@@ -1,7 +1,5 @@
 package stellarnear.mystory.Activities.Fragments;
 
-import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,8 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +25,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
@@ -44,7 +41,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
     private Tools tools = Tools.getTools();
     private ListBookAdapter bookAdapter;
-    private boolean resultShown=false;
+    private boolean resultShown = false;
     private Book selectedBook;
 
     public MainActivityFragmentSearchBooks() {
@@ -72,7 +69,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         returnFragView.findViewById(R.id.search_author_prompt).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.loading_search).clearAnimation();
         returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
-        resultShown=false;
+        resultShown = false;
     }
 
     public interface OnFramentViewCreatedEventListener {
@@ -100,7 +97,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
         returnFragView = inflater.inflate(R.layout.fragment_main_searsh_books, container, false);
 
-       ImageButton backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
+        ImageButton backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
 
         Animation left = AnimationUtils.loadAnimation(getContext(), R.anim.infromleft);
 
@@ -123,7 +120,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         backButton.startAnimation(left);
 
 
-        if(mLoadedListner!=null){
+        if (mLoadedListner != null) {
             mLoadedListner.onEvent();
         }
         return returnFragView;
@@ -132,9 +129,9 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
     public void startSearch() {
         EditText authorPrompt = returnFragView.findViewById(R.id.search_author_prompt);
         EditText titlePrompt = returnFragView.findViewById(R.id.search_title_prompt);
-        String search = titlePrompt.getText().toString().trim()+" "+ authorPrompt.getText().toString().trim();
-        if(search.trim().length()<3){
-            tools.customToast(getContext(),"Entres au moins un titre ou un auteur");
+        String search = titlePrompt.getText().toString().trim() + " " + authorPrompt.getText().toString().trim();
+        if (search.trim().length() < 3) {
+            tools.customToast(getContext(), "Entres au moins un titre ou un auteur");
             return;
         }
 
@@ -143,7 +140,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         bookCall.setOnDataRecievedEventListener(new BookNodeCalls.OnDataRecievedEventListener() {
             @Override
             public void onEvent(List<Book> allBooks) {
-                tools.customSnack(getContext(),returnFragView, allBooks.size() + " livres trouvés","yellow");
+                tools.customSnack(getContext(), returnFragView, allBooks.size() + " livres trouvés", "yellow");
                 booksList.addAll(allBooks);
                 displayListBookToPick(booksList);
             }
@@ -155,16 +152,16 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             tools.customToast(getContext(), "Erreur lors de la recherche : " + e.getLocalizedMessage());
         }
 
-        if(mSearchedListner!=null){
+        if (mSearchedListner != null) {
             mSearchedListner.onEvent();
-            resultShown=true;
+            resultShown = true;
         }
 
         authorPrompt.setVisibility(View.GONE);
         titlePrompt.setVisibility(View.GONE);
         returnFragView.findViewById(R.id.loading_search).setVisibility(View.VISIBLE);
 
-        ScaleAnimation mAnimation = new ScaleAnimation(1f,1.25f,1f,1.25f,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        ScaleAnimation mAnimation = new ScaleAnimation(1f, 1.25f, 1f, 1.25f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mAnimation.setDuration(1000);
         mAnimation.setRepeatCount(-1);
         mAnimation.setRepeatMode(Animation.REVERSE);
@@ -227,34 +224,14 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         returnFragView.findViewById(R.id.add_to_wishlist).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              popupAddToWishList();
+                popupAddToWishList();
             }
         });
 
         returnFragView.findViewById(R.id.add_to_current).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                // Get the layout inflater.
-                LayoutInflater inflater = requireActivity().getLayoutInflater();
-
-                // Inflate and set the layout for the dialog.
-                // Pass null as the parent view because it's going in the dialog layout.
-                builder.setView(inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null))
-                        // Add action buttons
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                tools.customToast(getContext(),"c'est bon on ajoute nen courrant");
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-
-                builder.show();
+                popupAddToCurrent();
             }
         });
     }
@@ -262,18 +239,18 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
     private void popupAddToWishList() {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        View alert = inflater.inflate(R.layout.my_lottie_alert,null);
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
 
-        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos,null);
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null);
 
-        ((TextView)alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
-        ((TextView)alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Oui");
-        LinearLayout.LayoutParams param=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin),0,0,0);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
 
         okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
 
@@ -284,7 +261,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         cancelButton.setText("Non");
         cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
-        MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
+        MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
                 .setAnimation(R.raw.add_wish_list)
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
@@ -295,9 +272,12 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
                 .setCancelable(false)
                 .addActionButton(cancelButton)
                 .addActionButton(okButton)
-                .setOnShowListener(dialogInterface -> {})
-                .setOnDismissListener(dialogInterface -> {})
-                .setOnCancelListener(dialogInterface -> {});
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,7 +288,128 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tools.customToast(getContext(),"c'est bon on ajoute wishlist");
+                tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+    }
+
+    private void popupAddToCurrent() {
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null);
+
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Oui");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Non");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                .setAnimation(R.raw.reading_blank_bakground)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Souhaites commencer la lecture de ce livre ?")
+                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
+                .setMessage(alertInnerInfo)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MainActivity.getCurrentBook() == null) {
+                    MainActivity.setCurrentBook(selectedBook);
+                    tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
+                } else {
+                    popupSwapBooks();
+                    dialog.dismiss();
+                }
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+    }
+
+    private void popupSwapBooks() {
+        String text = "Tu lis actuellement " + MainActivity.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Ok");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext())
+                .setAnimation(R.raw.swap_book)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Tu as un livre en cours")
+                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
+                .setMessage(text)
+                .setMessageColor(getContext().getColor(R.color.primary_light_yellow))
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.setCurrentBook(selectedBook);
+                tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();
             }
         });

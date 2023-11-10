@@ -77,10 +77,6 @@ public class MyLottieDialog {
     */
    public static final int INFINITE = LottieDrawable.INFINITE;
 
-   /**
-    * The custom layout for Lottie Dialog
-    */
-   private static final int LOTTIE_DIALOG_LAYOUT = R.layout.layout_lottie_dialog;
 
    /**
     * Layout params used for action buttons to the weight of each one equal to 1
@@ -91,9 +87,9 @@ public class MyLottieDialog {
 
    public MyLottieDialog(Context context) {
       this.mC=context;
-      final View view = LayoutInflater.from(context).inflate(LOTTIE_DIALOG_LAYOUT, null);
+      final View view = LayoutInflater.from(context).inflate(R.layout.my_lottie_alert, null);
 
-      this.lottieDialog = new Dialog(context);
+      this.lottieDialog = new Dialog(context,R.style.CustomDialog);
       this.lottieDialog.setContentView(view);
 
       this.lottieDialogTitle = view.findViewById(R.id.lottie_dialog_title);

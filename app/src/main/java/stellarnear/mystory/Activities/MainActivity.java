@@ -28,12 +28,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
+import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.Library;
 import stellarnear.mystory.R;
+import stellarnear.mystory.TinyDB;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-
+    private static Library library=null;
     private FrameLayout mainFrameFrag;
     private boolean toSearch = true;
     private MainActivityFragment mainFrag;
@@ -42,10 +44,24 @@ public class MainActivity extends AppCompatActivity {
     private Window window;
     private Toolbar toolbar;
     private FloatingActionButton fabSearchPanel;
+    private static  TinyDB tinyDB;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tinyDB = new TinyDB(getApplicationContext());
+        if(library==null){
+            try {
+                library=tinyDB.getLibrary();
+            } catch (Exception e){
+                e.printStackTrace();
+                library=new Library();
+                tinyDB.saveLibrary(library);
+            }
+        }
 
         setContentView(R.layout.activity_main);
         mainFrameFrag = findViewById(R.id.fragment_start_main_frame_layout);
@@ -198,10 +214,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.fragment_start_main_frame_layout);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+
+
+    // part to handle libbrary
+
+    public static Book getCurrentBook() {
+        return library.getCurrentBook();
+    }
+
+    public static void setCurrentBook(Book selectedBook) {
+        library.setCurrentBook(selectedBook);
+        tinyDB.saveLibrary(MainActivity.library);
     }
 }
