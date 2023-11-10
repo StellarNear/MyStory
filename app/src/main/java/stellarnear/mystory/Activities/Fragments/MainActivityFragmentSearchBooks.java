@@ -14,6 +14,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -226,89 +227,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         returnFragView.findViewById(R.id.add_to_wishlist).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater = requireActivity().getLayoutInflater();
-
-
-
-                // Inflate and set the layout for the dialog.
-                // Pass null as the parent view because it's going in the dialog layout.
-
-                View alert = inflater.inflate(R.layout.my_lottie_alert,null);
-
-                View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos,null);
-
-
-                ((TextView)alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
-                ((TextView)alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
-
-
-
-                Button okButton = new Button(getContext());
-                okButton.setText("Oui");
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        tools.customToast(getContext(),"c'est bon on ajoute wishlist");
-                    }
-                });
-
-                Button cancelButton = new Button(getContext());
-                cancelButton.setText("Non");
-
-
-                Drawable back=  AppCompatResources.getDrawable(getContext(),R.drawable.background_alert_add_book_from_search);
-
-
-                MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
-                        .setAnimation(R.raw.add_wish_list)
-                        .setAnimationRepeatCount(-1)
-                        .setAutoPlayAnimation(true)
-                        .setTitle("Souhaites tu ajouter ce livre à ta liste d'envie ?")
-                        .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
-                        .setMessage(alertInnerInfo)
-                        .setMessageColor(getContext().getColor(R.color.primary_middle_yellow))
-                        .setCancelable(false)
-                        .addActionButton(okButton)
-                        .addActionButton(cancelButton)
-                        .setOnShowListener(dialogInterface -> {})
-                        .setOnDismissListener(dialogInterface -> {})
-                        .setOnCancelListener(dialogInterface -> {});
-
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                    });
-                dialog.show();
-
-
-
-/*
-                CustomAlertDialog alertDialog = new CustomAlertDialog(getActivity(),getContext(),alert);
-                alertDialog.addCancelButton("non");
-                alertDialog.addConfirmButton("oui");
-                alertDialog.setFill("widthheight");
-                alertDialog.showAlert();*/
-
-
-                /*
-                      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setView(alert)
-                        // Add action buttons
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                tools.customToast(getContext(),"c'est bon on ajoute wishlist");
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-
-                builder.show();*/
+              popupAddToWishList();
             }
         });
 
@@ -338,6 +257,64 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
                 builder.show();
             }
         });
+    }
+
+    private void popupAddToWishList() {
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        View alert = inflater.inflate(R.layout.my_lottie_alert,null);
+
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos,null);
+
+        ((TextView)alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+        ((TextView)alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Oui");
+        LinearLayout.LayoutParams param=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin),0,0,0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Non");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
+                .setAnimation(R.raw.add_wish_list)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Souhaites tu ajouter ce livre à ta liste d'envie ?")
+                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
+                .setMessage(alertInnerInfo)
+                .setMessageColor(getContext().getColor(R.color.primary_middle_yellow))
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {})
+                .setOnDismissListener(dialogInterface -> {})
+                .setOnCancelListener(dialogInterface -> {});
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tools.customToast(getContext(),"c'est bon on ajoute wishlist");
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
     }
 
 

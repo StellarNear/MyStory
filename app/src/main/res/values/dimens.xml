@@ -12,6 +12,11 @@
 
     <dimen name="add_book_from_search">35dp</dimen>
     <dimen name="padding_add_book_from_search">100dp</dimen>
-    <dimen name="popup_add_book_width">250dp</dimen>
+
+    <dimen name="popup_add_book_width">350dp</dimen>
     <dimen name="popup_add_book_height">250dp</dimen>
+
+    <dimen name="animation_popup_size">200dp</dimen>
+    <dimen name="size_popup_alert_title">22sp</dimen>
+    <dimen name="margin_title_alert">15dp</dimen>
 </resources>

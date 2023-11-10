@@ -46,7 +46,7 @@ public class MyLottieDialog {
    /**
     *  View to control the main layout of lottie dialog
     */
-   private final ConstraintLayout lottieDialogLayout;
+   private final LinearLayout lottieDialogLayout;
 
    /**
     *  View to control the action layout of lottie dialog
