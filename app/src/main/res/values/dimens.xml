@@ -31,6 +31,11 @@
     <dimen name="main_page_icon">50dp</dimen>
     <dimen name="mainfrag_title_text">20sp</dimen>
     <dimen name="mainfrag_author_text">18sp</dimen>
+
     <dimen name="cover_book_height">300dp</dimen>
     <dimen name="cover_book_width">200dp</dimen>
+
+    <dimen name="mainframe_cover_book_height">225dp</dimen>
+    <dimen name="mainframe_cover_book_width">150dp</dimen>
+    <dimen name="mainfrag_percent_text">30sp</dimen>
 </resources>

@@ -76,9 +76,7 @@ public class Book {
     private Autor autor;
     private String cover_url;
 
-    private int currentPercent=0;
-    private int currentPage= 0;
-    private int maxPage=-1;
+
 
     public Book(long id, String name, String cover_url, Autor autor) {
         this.id = id;
@@ -87,11 +85,33 @@ public class Book {
         this.cover_url = cover_url;
     }
 
+    private Integer currentPercent=0;
+    private Integer currentPage= 0;
+    private Integer maxPages=-1;
 
-    public void setMaxPage(int page) {
-        this.maxPage=page;
+    public void setMaxPages(int page) {
+        this.maxPages=page;
     }
 
+    public Integer getMaxPages() {
+        return maxPages;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPercent(int currentPercent) {
+        this.currentPercent = currentPercent;
+    }
+
+    public Integer getCurrentPercent() {
+        return currentPercent;
+    }
 
     public byte[] getImage() {
         return this.imageByte;

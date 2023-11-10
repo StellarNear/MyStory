@@ -380,16 +380,16 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                     if(radioGroup.getCheckedRadioButtonId()==pageOtherRadio.getId()){
                         try {
                             EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
-                            int page = Integer.parseInt(valuePage.getText().toString());
-                            selectedBook.setMaxPage(page);
+                            Integer page = Integer.parseInt(valuePage.getText().toString());
+                            selectedBook.setMaxPages(page);
                         } catch (Exception e){
                             e.printStackTrace();
                         }
                     } else {
                         try {
                             RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-                            int page = Integer.parseInt(radioChecked.getText().toString().replace(" pages",""));
-                            selectedBook.setMaxPage(page);
+                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages",""));
+                            selectedBook.setMaxPages(page);
                         } catch (Exception e){
                             e.printStackTrace();
                         }
