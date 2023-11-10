@@ -38,6 +38,7 @@ public class Tools extends SelfCustomLog {
         return instance;
     }
 
+
     public Integer toInt(String key) {
         Integer value = 0;
         try {

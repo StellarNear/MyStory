@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Book {
 
@@ -74,12 +76,22 @@ public class Book {
     private Autor autor;
     private String cover_url;
 
+    private int currentPercent=0;
+    private int currentPage= 0;
+    private int maxPage=-1;
+
     public Book(long id, String name, String cover_url, Autor autor) {
         this.id = id;
         this.name = name;
         this.autor = autor;
         this.cover_url = cover_url;
     }
+
+
+    public void setMaxPage(int page) {
+        this.maxPage=page;
+    }
+
 
     public byte[] getImage() {
         return this.imageByte;
@@ -91,6 +103,7 @@ public class Book {
     public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener eventListener) {
         mListenerImageRefreshed = eventListener;
     }
+
 
     public interface OnImageRefreshedEventListener {
         void onEvent();
@@ -108,7 +121,7 @@ public class Book {
     }
 
     //later call pages data
-    private Set<Integer> maxPagesFound = new HashSet<>();
+    private SortedSet<Integer> maxPagesFound = new TreeSet<>();
 
     private OnPageDataRecievedEventListener mListenerPageData;
 
@@ -120,7 +133,12 @@ public class Book {
         void onEvent();
     }
 
-    public void addMultipleMaxPagesFound(Set<Integer> maxPagesFounds) {
+
+    public Set<Integer> getPagesFounds() {
+        return this.maxPagesFound;
+    }
+
+    public void addMultipleMaxPagesFound(SortedSet<Integer> maxPagesFounds) {
         this.maxPagesFound = maxPagesFounds;
         if (!pageDataRecieved && mListenerPageData != null) {
             mListenerPageData.onEvent();

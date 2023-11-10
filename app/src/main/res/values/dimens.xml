@@ -19,4 +19,18 @@
     <dimen name="animation_popup_size">200dp</dimen>
     <dimen name="size_popup_alert_title">22sp</dimen>
     <dimen name="margin_title_alert">15dp</dimen>
+    <dimen name="minimize_progress">200dp</dimen>
+    <dimen name="maximize_progress">350dp</dimen>
+    <dimen name="progress_width">8dp</dimen>
+
+    <dimen name="progress_inner_radius">3dp</dimen>
+    <dimen name="progress_inner_stroke">3dp</dimen>
+    <dimen name="progress_outer_radius">6dp</dimen>
+    <dimen name="progress_outer_stroke">5dp</dimen>
+    <dimen name="progress_dash_width">8dp</dimen>
+    <dimen name="main_page_icon">50dp</dimen>
+    <dimen name="mainfrag_title_text">20sp</dimen>
+    <dimen name="mainfrag_author_text">18sp</dimen>
+    <dimen name="cover_book_height">300dp</dimen>
+    <dimen name="cover_book_width">200dp</dimen>
 </resources>

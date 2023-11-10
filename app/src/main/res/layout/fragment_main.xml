@@ -1,23 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background_main_frag"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Activities.Fragments.MainActivityFragment"
-    android:background="@drawable/background_main_frag">
+    tools:context=".Activities.Fragments.MainActivityFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainfrag_center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="todo"
-        android:textColor="@color/white"
+        android:layout_margin="@dimen/general_margin"
+        android:orientation="vertical"
+        app:layout_constraintVertical_bias="0.25"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/mainframe_center_for_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/minimize_progress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!--
+            <com.seosh817.circularseekbar.CircularSeekBar
+                android:id="@+id/for_debug_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/minimize_progress"
+                app:circularSeekBar_animation="normal"
+                app:circularSeekBar_animationDurationMillis="1000"
+                app:circularSeekBar_barStrokeCap="butt"
+                app:circularSeekBar_barWidth="8dp"
+                app:circularSeekBar_dashGap="2"
+                app:circularSeekBar_dashWidth="1"
+                app:circularSeekBar_innerThumbColor="@color/primary_middle_purple"
+                app:circularSeekBar_innerThumbRadius="5dp"
+                app:circularSeekBar_innerThumbStrokeWidth="3dp"
+                app:circularSeekBar_interactive="false"
+                app:circularSeekBar_min="0"
+                app:circularSeekBar_outerThumbColor="@color/primary_dark_purple"
+                app:circularSeekBar_outerThumbRadius="5dp"
+                app:circularSeekBar_outerThumbStrokeWidth="10dp"
+                app:circularSeekBar_progressGradientColors="@array/rainbow"
+                app:circularSeekBar_showAnimation="false"
+                app:circularSeekBar_startAngle="45"
+                app:circularSeekBar_sweepAngle="270" />
+                -->
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+            <ImageView
+                android:layout_width="@dimen/main_page_icon"
+                android:layout_height="@dimen/main_page_icon"
+                android:src="@drawable/ic_book_open_page"
+                app:tint="@color/primary_light_purple" />
+        </LinearLayout>
 
 
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/mainfrag_info_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainfrag_center"
+        >
+        <TextView
+            android:id="@+id/mainfram_title"
+            android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/mainfrag_title_text"
+            android:text="My long ass current book title"
+            android:textColor="@color/primary_light_purple"/>
+        <TextView
+            android:id="@+id/mainfram_author"
+            android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:textSize="@dimen/mainfrag_author_text"
+            android:text="the cool author"
+            android:textColor="@color/primary_light_purple"/>
+
+        <ImageView
+            android:id="@+id/mainfram_cover"
+            android:layout_width="@dimen/cover_book_width"
+            android:layout_height="@dimen/cover_book_height"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/mainframe_no_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="20"
+        android:shadowColor="@color/primary_light_purple"
+        android:textColor="@color/primary_middle_purple"
+        android:text="Aucun livre en cours..."
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

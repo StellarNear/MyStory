@@ -1,5 +1,6 @@
 package stellarnear.mystory.Activities.Fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -34,8 +37,7 @@ import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.UITools.MyLottieDialog;
 
 
-public class MainActivityFragmentSearchBooks extends Fragment /* implements
-        DiscreteScrollView.ScrollStateChangeListener<ListBookAdapter.ViewHolder>*/ {
+public class MainActivityFragmentSearchBooks extends Fragment {
 
     private View returnFragView;
 
@@ -58,7 +60,10 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
     }
 
     public void clearResult() {
-        bookAdapter.reset();
+        if(bookAdapter!=null){
+            bookAdapter.reset();
+        }
+
 
         returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
@@ -307,6 +312,30 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
 
+
+        RadioGroup radioGroup = (RadioGroup) alertInnerInfo.findViewById(R.id.radio_page_group);
+
+        RadioButton pageOtherRadio = alertInnerInfo.findViewById(R.id.radio_page_other);
+        pageOtherRadio.findViewById(R.id.radio_page_other).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
+            }
+        });
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_enabled} //enabled
+                },
+                new int[] {getContext().getColor(R.color.primary_light_yellow) }
+        );
+        for(int i :selectedBook.getPagesFounds()){
+            RadioButton button = new RadioButton(getContext());
+            button.setTextColor(getContext().getColor(R.color.primary_light_yellow));
+            button.setButtonTintList(colorStateList);
+            button.setText(i+" pages");
+            radioGroup.addView(button,0);
+        }
+
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Oui");
@@ -314,8 +343,6 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
 
         okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
-
-
         Button cancelButton = new Button(getContext());
         cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
 
@@ -348,7 +375,30 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(radioGroup.getCheckedRadioButtonId()!=-1){
+                    //on check si other a été selectionner
+                    if(radioGroup.getCheckedRadioButtonId()==pageOtherRadio.getId()){
+                        try {
+                            EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                            int page = Integer.parseInt(valuePage.getText().toString());
+                            selectedBook.setMaxPage(page);
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+                            int page = Integer.parseInt(radioChecked.getText().toString().replace(" pages",""));
+                            selectedBook.setMaxPage(page);
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 if (MainActivity.getCurrentBook() == null) {
+
+
+
                     MainActivity.setCurrentBook(selectedBook);
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 } else {

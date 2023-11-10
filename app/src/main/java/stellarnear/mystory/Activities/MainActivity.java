@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 searchFrag.getBackButtonView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        searchFrag = new MainActivityFragmentSearchBooks();
                         restartMainFramemnt();
                         toSearch = true;
                     }
@@ -154,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
         startFragment(R.id.fragment_search, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
-
 
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);

@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import stellarnear.mystory.BooksLibs.Book;
 
@@ -31,12 +33,12 @@ public class OpenLibraryCalls {
         new JsonTaskGetMetaData().execute();
     }
 
-    private class JsonTaskGetMetaData extends AsyncTask<String, String, Set<Integer>> {
+    private class JsonTaskGetMetaData extends AsyncTask<String, String, SortedSet<Integer>> {
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
-        protected Set<Integer> doInBackground(String... params) {
+        protected SortedSet<Integer> doInBackground(String... params) {
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -65,7 +67,7 @@ public class OpenLibraryCalls {
 
                 //books
                 JSONArray booksJsonArray = (JSONArray) allResults.get("docs");
-                Set<Integer> maxPagesFounds = new HashSet<>();
+                SortedSet<Integer> maxPagesFounds = new TreeSet<>();
                 for(int i=0 ;i<booksJsonArray.length();i++) {
                     JSONObject booksJson = booksJsonArray.getJSONObject(i);
                     for (int j = 0; j < booksJson.getJSONArray("seed").length(); j++) {
@@ -134,7 +136,7 @@ public class OpenLibraryCalls {
         }
 
         @Override
-        protected void onPostExecute(Set<Integer> result) {
+        protected void onPostExecute(SortedSet<Integer> result) {
             super.onPostExecute(result);
 
             try {
