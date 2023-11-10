@@ -87,7 +87,7 @@ public class Book {
 
     private Integer currentPercent=0;
     private Integer currentPage= 0;
-    private Integer maxPages=-1;
+    private Integer maxPages=null;
 
     public void setMaxPages(int page) {
         this.maxPages=page;
@@ -97,16 +97,15 @@ public class Book {
         return maxPages;
     }
 
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
     public Integer getCurrentPage() {
         return currentPage;
     }
 
     public void setCurrentPercent(int currentPercent) {
         this.currentPercent = currentPercent;
+        if(this.maxPages!=null){
+            this.currentPage= (int) ((1.0*currentPercent*maxPages)/100.0);
+        }
     }
 
     public Integer getCurrentPercent() {

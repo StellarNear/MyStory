@@ -38,4 +38,5 @@
     <dimen name="mainframe_cover_book_height">225dp</dimen>
     <dimen name="mainframe_cover_book_width">150dp</dimen>
     <dimen name="mainfrag_percent_text">30sp</dimen>
+    <dimen name="mainfrag_percent_page_text">14sp</dimen>
 </resources>

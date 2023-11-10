@@ -64,7 +64,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
             bookAdapter.reset();
         }
 
-
+        returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);

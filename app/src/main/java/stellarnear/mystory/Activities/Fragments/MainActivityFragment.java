@@ -53,6 +53,9 @@ public class MainActivityFragment extends Fragment {
 
         Book book = MainActivity.getCurrentBook();
         if (book != null) {
+            //TODO remove ca
+            book.setCurrentPercent(69);
+
             FrameLayout mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
             mainCenter.removeAllViews();
 
@@ -61,16 +64,16 @@ public class MainActivityFragment extends Fragment {
             seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
                 @Override
                 public void onProgressChanged(float v) {
-                    TextView progress = returnFragView.findViewById(R.id.mainframe_progress_text);
-                    String progressTxt = ((int)v)+" %";
+                    ((TextView)returnFragView.findViewById(R.id.mainframe_progress_text)).setText(((int)v)+" %");
                     if(book.getMaxPages()!=null && book.getMaxPages()>0){
-                        progressTxt += "\n"+"("+book.getCurrentPage()+"/"+book.getMaxPages()+" pages)";
+                        ((TextView)returnFragView.findViewById(R.id.mainframe_progress_page_text)).setText("("+book.getCurrentPage()+"/"+book.getMaxPages()+" pages)");
+                    } else {
+                        returnFragView.findViewById(R.id.mainframe_progress_page_text).setVisibility(View.GONE);
                     }
-                    progress.setText(progressTxt);
                 }
             });
             mainCenter.addView(seekBar);
-            seekBar.setProgress(59);
+            seekBar.setProgress(book.getCurrentPercent());
 
             ((TextView) returnFragView.findViewById(R.id.mainfram_title)).setText(book.getName());
             ((TextView) returnFragView.findViewById(R.id.mainfram_author)).setText(book.getAutor().getFullName());

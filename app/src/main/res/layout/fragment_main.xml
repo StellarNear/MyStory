@@ -58,20 +58,37 @@
 
 
         </FrameLayout>
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
         <TextView
             android:id="@+id/mainframe_progress_text"
             android:layout_width="match_parent"
             android:textAlignment="center"
             android:gravity="center"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="@dimen/mainfrag_percent_text"
-            android:text=" 10 %"
+            android:text="10 %"
             android:textColor="@color/primary_light_purple"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            />
+
+            <TextView
+                android:id="@+id/mainframe_progress_page_text"
+                android:layout_width="match_parent"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/mainfrag_percent_page_text"
+                android:text="(-/--- pages)"
+                android:textColor="@color/primary_light_purple"
+                />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
