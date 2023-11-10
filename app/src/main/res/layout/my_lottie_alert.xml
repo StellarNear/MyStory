@@ -1,0 +1,83 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="@dimen/popup_add_book_width"
+    android:layout_height="@dimen/popup_add_book_height"
+    android:padding="@dimen/general_margin"
+    android:id="@+id/lottie_dialog_layout"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/alert_background_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/background_alert_add_book_from_search">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/lottie_dialog_title"
+            android:text="title"
+            android:layout_width="match_parent"
+            android:textSize="11sp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_light_yellow"
+            android:textAlignment="center"/>
+
+
+        <LinearLayout
+            android:id="@+id/lottie_dialog_animation_container"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_below="@id/lottie_dialog_title"
+            android:layout_margin="5dp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_dialog_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <TextView
+            android:id="@+id/lottie_dialog_message"
+            android:padding="@dimen/general_margin"
+            android:textColor="@color/primary_light_yellow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Message"
+            android:textAlignment="center"/>
+        <View
+            android:visibility="gone"
+            android:id="@+id/lottie_dialog_inner_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/lottie_dialog_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/alert_background_holder"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

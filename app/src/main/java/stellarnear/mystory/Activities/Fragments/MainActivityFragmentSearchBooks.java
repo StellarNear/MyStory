@@ -1,7 +1,7 @@
 package stellarnear.mystory.Activities.Fragments;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -11,12 +11,14 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,8 +32,8 @@ import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
-import stellarnear.mystory.UITools.CustomAlertDialog;
 import stellarnear.mystory.UITools.ListBookAdapter;
+import stellarnear.mystory.UITools.MyLottieDialog;
 
 
 public class MainActivityFragmentSearchBooks extends Fragment /* implements
@@ -226,16 +228,68 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
             public void onClick(View view) {
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
 
+
+
                 // Inflate and set the layout for the dialog.
                 // Pass null as the parent view because it's going in the dialog layout.
-                View alert = inflater.inflate(R.layout.dialog_alert_add_to_wish,null);
-                ((TextView)alert.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
-                ((TextView)alert.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+
+                View alert = inflater.inflate(R.layout.my_lottie_alert,null);
+
+                View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos,null);
+
+
+                ((TextView)alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+                ((TextView)alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+
+
+
+                Button okButton = new Button(getContext());
+                okButton.setText("Oui");
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tools.customToast(getContext(),"c'est bon on ajoute wishlist");
+                    }
+                });
+
+                Button cancelButton = new Button(getContext());
+                cancelButton.setText("Non");
+
+
+                Drawable back=  AppCompatResources.getDrawable(getContext(),R.drawable.background_alert_add_book_from_search);
+
+
+                MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
+                        .setAnimation(R.raw.add_wish_list)
+                        .setAnimationRepeatCount(-1)
+                        .setAutoPlayAnimation(true)
+                        .setTitle("Souhaites tu ajouter ce livre à ta liste d'envie ?")
+                        .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
+                        .setMessage(alertInnerInfo)
+                        .setMessageColor(getContext().getColor(R.color.primary_middle_yellow))
+                        .setCancelable(false)
+                        .addActionButton(okButton)
+                        .addActionButton(cancelButton)
+                        .setOnShowListener(dialogInterface -> {})
+                        .setOnDismissListener(dialogInterface -> {})
+                        .setOnCancelListener(dialogInterface -> {});
+
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                    });
+                dialog.show();
+
+
+
+/*
                 CustomAlertDialog alertDialog = new CustomAlertDialog(getActivity(),getContext(),alert);
                 alertDialog.addCancelButton("non");
                 alertDialog.addConfirmButton("oui");
                 alertDialog.setFill("widthheight");
-                alertDialog.showAlert();
+                alertDialog.showAlert();*/
 
 
                 /*
@@ -267,7 +321,7 @@ public class MainActivityFragmentSearchBooks extends Fragment /* implements
 
                 // Inflate and set the layout for the dialog.
                 // Pass null as the parent view because it's going in the dialog layout.
-                builder.setView(inflater.inflate(R.layout.dialog_alert_add_to_wish, null))
+                builder.setView(inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null))
                         // Add action buttons
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override

@@ -26,6 +26,8 @@ import stellarnear.mystory.R;
 import com.bumptech.glide.Glide;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
+// based on https://android-arsenal.com/details/1/5480
+
 public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHolder> {
 
     private DiscreteScrollView scrollView;

@@ -25,4 +25,6 @@
 
     <color name="end_gradient_button_ok">@color/primary_dark_yellow</color>
     <color name="start_gradient_button_ok">@color/primary_middle_yellow</color>
+    
+    <color name="transparent">#00000000</color>
 </resources>
