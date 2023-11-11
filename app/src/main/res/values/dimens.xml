@@ -20,13 +20,19 @@
     <dimen name="size_popup_alert_title">22sp</dimen>
     <dimen name="margin_title_alert">15dp</dimen>
     <dimen name="minimize_progress">200dp</dimen>
-    <dimen name="maximize_progress">350dp</dimen>
+    <dimen name="maximize_progress">300dp</dimen>
     <dimen name="progress_width">8dp</dimen>
 
     <dimen name="progress_inner_radius">3dp</dimen>
     <dimen name="progress_inner_stroke">3dp</dimen>
     <dimen name="progress_outer_radius">6dp</dimen>
     <dimen name="progress_outer_stroke">5dp</dimen>
+
+    <dimen name="progress_inner_radius_zoomed">6dp</dimen>
+    <dimen name="progress_inner_stroke_zoomed">6dp</dimen>
+    <dimen name="progress_outer_radius_zoomed">12dp</dimen>
+    <dimen name="progress_outer_stroke_zoomed">10dp</dimen>
+
     <dimen name="progress_dash_width">8dp</dimen>
     <dimen name="main_page_icon">50dp</dimen>
     <dimen name="mainfrag_title_text">20sp</dimen>

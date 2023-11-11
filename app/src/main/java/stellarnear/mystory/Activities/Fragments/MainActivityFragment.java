@@ -2,17 +2,27 @@ package stellarnear.mystory.Activities.Fragments;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import com.seosh817.circularseekbar.BarStrokeCap;
@@ -34,6 +44,12 @@ import stellarnear.mystory.R;
  */
 public class MainActivityFragment extends Fragment {
     private View returnFragView;
+    private boolean zoomedProgress=false;
+    private ConstraintLayout constrainLayoutProgress;
+    private ConstraintLayout constrainLayoutMainFrag;
+    private FrameLayout mainCenter;
+    private CircularSeekBar seekBar;
+    private TextView movingPercent;
 
 
     public MainActivityFragment() {
@@ -51,27 +67,24 @@ public class MainActivityFragment extends Fragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        addProgressCircle();
+
+        return returnFragView;
+    }
+
+    public void addProgressCircle() {
         Book book = MainActivity.getCurrentBook();
         if (book != null) {
             //TODO remove ca
             book.setCurrentPercent(69);
 
-            FrameLayout mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
+            mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
+            constrainLayoutProgress = (ConstraintLayout)returnFragView.findViewById(R.id.mainfrag_center);
+            constrainLayoutMainFrag = (ConstraintLayout)returnFragView.findViewById(R.id.fragment_main);
             mainCenter.removeAllViews();
 
 
-            CircularSeekBar seekBar = createProgress();
-            seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
-                @Override
-                public void onProgressChanged(float v) {
-                    ((TextView)returnFragView.findViewById(R.id.mainframe_progress_text)).setText(((int)v)+" %");
-                    if(book.getMaxPages()!=null && book.getMaxPages()>0){
-                        ((TextView)returnFragView.findViewById(R.id.mainframe_progress_page_text)).setText("("+book.getCurrentPage()+"/"+book.getMaxPages()+" pages)");
-                    } else {
-                        returnFragView.findViewById(R.id.mainframe_progress_page_text).setVisibility(View.GONE);
-                    }
-                }
-            });
+            seekBar = createProgress();
             mainCenter.addView(seekBar);
             seekBar.setProgress(book.getCurrentPercent());
 
@@ -85,7 +98,55 @@ public class MainActivityFragment extends Fragment {
             returnFragView.findViewById(R.id.mainframe_no_current).setVisibility(View.VISIBLE);
         }
 
-        return returnFragView;
+        returnFragView.findViewById(R.id.mainframe_book_open).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!zoomedProgress){
+                    zoomedProgress=true;
+                    zoomProgress();
+
+                } else {
+                    zoomedProgress=false;
+                    unzoomProgress();
+                }
+            }
+        });
+    }
+
+
+    private void zoomProgress() {
+        returnFragView.findViewById(R.id.mainfram_cover).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.mainframe_progress_allcenter_info).setVisibility(View.GONE);
+
+       ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
+       params.verticalBias = 0.5f;
+       constrainLayoutProgress.setLayoutParams(params);
+
+        mainCenter.removeAllViews();
+        seekBar = createProgress();
+
+        FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.maximize_progress));
+        seekBar.setLayoutParams(paramSeek);
+
+        mainCenter.addView(seekBar);
+        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+    }
+
+    private void unzoomProgress() {
+        returnFragView.findViewById(R.id.mainfram_cover).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.mainframe_progress_allcenter_info).setVisibility(View.VISIBLE);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
+        params.verticalBias = 0.1f;
+        constrainLayoutProgress.setLayoutParams(params);
+
+        mainCenter.removeAllViews();
+        seekBar = createProgress();
+
+        FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
+        seekBar.setLayoutParams(paramSeek);
+        mainCenter.addView(seekBar);
+        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
     }
 
     private void setImage(Book book) {
@@ -125,27 +186,97 @@ public class MainActivityFragment extends Fragment {
         seekBar.setLayoutParams(param);
         seekBar.setShowAnimation(true);
         seekBar.setAnimationInterpolator(CircularSeekBarAnimation.DECELERATE.getInterpolator());
-        seekBar.setAnimationDurationMillis(3000);
 
-        seekBar.setBarWidth(20);
         seekBar.setDashGap(2);
         seekBar.setDashWidth(1);
-        seekBar.setInteractive(false);
+        Book book = MainActivity.getCurrentBook();
+        if(zoomedProgress){
+            seekBar.setAnimationDurationMillis(500);
+            seekBar.setBarWidth(60);
+            seekBar.setInteractive(true);
+            seekBar.setInnerThumbRadius(getContext().getResources().getDimension(R.dimen.progress_inner_radius_zoomed));
+            seekBar.setInnerThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_inner_stroke_zoomed));
+            seekBar.setOuterThumbRadius(getContext().getResources().getDimension(R.dimen.progress_outer_radius_zoomed));
+            seekBar.setOuterThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_outer_stroke_zoomed));
+
+
+
+            int height = constrainLayoutProgress.getMeasuredHeight();
+            int width = constrainLayoutProgress.getMeasuredWidth();
+
+            if(movingPercent==null){
+                movingPercent = new TextView(getContext());
+                movingPercent.setId(View.generateViewId());
+                constrainLayoutProgress.addView(movingPercent);
+
+                ConstraintSet set = new ConstraintSet();
+                set.clone(constrainLayoutProgress);
+                set.connect(movingPercent.getId(),ConstraintSet.TOP,constrainLayoutProgress.getId(),ConstraintSet.TOP,height/2);
+                set.connect(movingPercent.getId(),ConstraintSet.START,constrainLayoutProgress.getId(),ConstraintSet.START,width/2);
+                set.applyTo(constrainLayoutProgress);
+                movingPercent.setText("- %");
+/*
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
+                params.verticalBias = 0.5f;
+                params.horizontalBias = 0.69f;
+                  constrainLayoutProgress.setLayoutParams(params);*/
+
+
+
+                seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
+                    @Override
+                    public void onProgressChanged(float v) {
+/*
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
+                        params.verticalBias = 0.5f;
+                        params.horizontalBias = (float) (v/100);
+
+                        constrainLayoutProgress.setLayoutParams(params);*/
+                        ConstraintSet set = new ConstraintSet();
+                        set.clone(constrainLayoutProgress);
+                        set.connect(movingPercent.getId(),ConstraintSet.TOP,constrainLayoutProgress.getId(),ConstraintSet.TOP,height/2+(int)v);
+                        set.connect(movingPercent.getId(),ConstraintSet.START,constrainLayoutProgress.getId(),ConstraintSet.START,width/2+(int)v);
+                        set.applyTo(constrainLayoutProgress);
+
+                    }
+                });
+            }
+
+
+
+
+
+
+        } else {
+            seekBar.setAnimationDurationMillis(3000);
+            seekBar.setBarWidth(20);
+            seekBar.setInteractive(false);
+            seekBar.setInnerThumbRadius(getContext().getResources().getDimension(R.dimen.progress_inner_radius));
+            seekBar.setInnerThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_inner_stroke));
+            seekBar.setOuterThumbRadius(getContext().getResources().getDimension(R.dimen.progress_outer_radius));
+            seekBar.setOuterThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_outer_stroke));
+
+            seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
+                @Override
+                public void onProgressChanged(float v) {
+                    if(((TextView)returnFragView.findViewById(R.id.mainframe_progress_text))!=null){
+                        ((TextView)returnFragView.findViewById(R.id.mainframe_progress_text)).setText(((int)v)+" %");
+                    }
+
+                    if(((TextView)returnFragView.findViewById(R.id.mainframe_progress_page_text))!=null) {
+                        if (book.getMaxPages() != null && book.getMaxPages() > 0) {
+                            ((TextView) returnFragView.findViewById(R.id.mainframe_progress_page_text)).setText("(" + book.getCurrentPage() + "/" + book.getMaxPages() + " pages)");
+                        } else {
+                            returnFragView.findViewById(R.id.mainframe_progress_page_text).setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+        }
+
         seekBar.setBarStrokeCap(BarStrokeCap.BUTT);
-
         seekBar.setInnerThumbColor(getContext().getColor(R.color.primary_dark_purple));
-        seekBar.setInnerThumbRadius(getContext().getResources().getDimension(R.dimen.progress_inner_radius));
-        seekBar.setInnerThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_inner_stroke));
-
-
         seekBar.setOuterThumbColor(getContext().getColor(R.color.primary_middle_purple));
-        seekBar.setOuterThumbRadius(getContext().getResources().getDimension(R.dimen.progress_outer_radius));
-        seekBar.setOuterThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_outer_stroke));
-
-
-        // seekBar.setMin(0);
-        // seekBar.setMax(100);
-
         seekBar.setProgressGradientColorsArray(getContext().getResources().getIntArray(R.array.rainbow));
         seekBar.setStartAngle(45);
         seekBar.setSweepAngle(270);

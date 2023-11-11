@@ -45,6 +45,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
     private ListBookAdapter bookAdapter;
     private boolean resultShown = false;
     private Book selectedBook;
+    private ImageButton backButton;
 
     public MainActivityFragmentSearchBooks() {
     }
@@ -102,7 +103,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main_searsh_books, container, false);
 
-        ImageButton backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
+        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
 
         Animation left = AnimationUtils.loadAnimation(getContext(), R.anim.infromleft);
 
@@ -122,6 +123,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
             }
         });
+
         backButton.startAnimation(left);
 
 
@@ -129,6 +131,14 @@ public class MainActivityFragmentSearchBooks extends Fragment {
             mLoadedListner.onEvent();
         }
         return returnFragView;
+    }
+
+
+    public void clearAnimation() {
+       if(backButton!=null){
+           backButton.clearAnimation();
+           ((ViewGroup)backButton.getParent()).removeView(backButton);
+       }
     }
 
     public void startSearch() {

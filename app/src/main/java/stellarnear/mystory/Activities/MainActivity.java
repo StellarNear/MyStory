@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         searchFrag = new MainActivityFragmentSearchBooks();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
-        startFragment(R.id.fragment_main, searchFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
+
         window.setStatusBarColor(getColor(R.color.primary_middle_yellow));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_yellow));
 
@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 searchFrag.getBackButtonView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        searchFrag.clearAnimation();
                         restartMainFramemnt();
                         toSearch = true;
                     }
@@ -144,22 +145,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        startFragment(R.id.fragment_main, searchFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
     }
 
     private void restartMainFramemnt() {
         mainFrag = new MainActivityFragment();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
-        startFragment(R.id.fragment_search, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
+
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
-
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
         set.clear(fabSearchPanel.getId(), ConstraintSet.START);
         set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
         set.applyTo(mConstraintLayout);
         fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
+
+
+        startFragment(R.id.fragment_search, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
+        mainFrag.addProgressCircle();
     }
 
 
@@ -171,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(fragId, ActivityFragment, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
     }
 
 
