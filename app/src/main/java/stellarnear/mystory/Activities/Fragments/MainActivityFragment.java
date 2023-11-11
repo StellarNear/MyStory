@@ -242,7 +242,7 @@ public class MainActivityFragment extends Fragment {
                 }
 
                 if (((TextView) returnFragView.findViewById(R.id.mainframe_progress_page_text)) != null) {
-                    if (book.getMaxPages() != null && book.getMaxPages() > 0) {
+                    if (book!=null && book.getMaxPages() != null && book.getMaxPages() > 0) {
                         ((TextView) returnFragView.findViewById(R.id.mainframe_progress_page_text)).setText("(" + book.getCurrentPage() + "/" + book.getMaxPages() + " pages)");
                     } else {
                         returnFragView.findViewById(R.id.mainframe_progress_page_text).setVisibility(View.GONE);

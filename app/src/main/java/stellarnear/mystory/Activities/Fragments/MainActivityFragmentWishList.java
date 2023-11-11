@@ -150,6 +150,7 @@ public class MainActivityFragmentWishList extends Fragment {
                     author.setText(selectedBook.getAutor().getFullName());
                     if(selectedBook.getMaxPages()!=null){
                         TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
+                        pages.setVisibility(View.VISIBLE);
                         pages.setText(selectedBook.getMaxPages() +" pages");
                     }
                 }
@@ -314,7 +315,7 @@ public class MainActivityFragmentWishList extends Fragment {
         cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
         MyLottieDialog dialog = new MyLottieDialog(getContext())
-                .setAnimation(R.raw.swap_book)
+                .setAnimation(R.raw.add_shelf)
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Tu as un livre en cours")
@@ -340,17 +341,12 @@ public class MainActivityFragmentWishList extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(MainActivity.getCurrentBook()==null){
                     MainActivity.putCurrentToShelf();
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromWishList(selectedBook);
                     loadWishList();
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
                     dialog.dismiss();
-                } else {
-                    popupPutCurrentToShelf();
-                    dialog.dismiss();
-                }
             }
         });
         dialog.show();
