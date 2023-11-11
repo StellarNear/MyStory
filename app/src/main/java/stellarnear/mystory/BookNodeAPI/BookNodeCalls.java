@@ -1,11 +1,6 @@
 package stellarnear.mystory.BookNodeAPI;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +19,6 @@ import java.util.List;
 
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
-import stellarnear.mystory.R;
 
 public class BookNodeCalls {
 

@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 

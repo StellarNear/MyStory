@@ -5,6 +5,7 @@
     android:id="@+id/fragment_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     android:animateLayoutChanges="true"
     android:background="@drawable/background_main_frag"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -13,15 +14,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainfrag_center"
+        android:clipChildren="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/general_margin"
         android:orientation="vertical"
-        app:layout_constraintVertical_bias="0.10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.10">
 
         <FrameLayout
             android:id="@+id/mainframe_center_for_progress"
@@ -57,53 +59,53 @@
                 app:circularSeekBar_sweepAngle="270" />
 
 
-
         </FrameLayout>
+
         <LinearLayout
             android:id="@+id/mainframe_progress_allcenter_info"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:animateLayoutChanges="true"
             android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-        <TextView
-            android:animateLayoutChanges="true"
-            android:id="@+id/mainframe_progress_text"
-            android:layout_width="match_parent"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/mainfrag_percent_text"
-            android:text="10 %"
-            android:textColor="@color/primary_light_purple"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/mainframe_progress_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
+                android:gravity="center"
+                android:text="10 %"
+                android:textAlignment="center"
+                android:textColor="@color/primary_light_purple"
+                android:textSize="@dimen/mainfrag_percent_text" />
+
+            <TextView
                 android:id="@+id/mainframe_progress_page_text"
                 android:layout_width="match_parent"
-                android:textAlignment="center"
-                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/mainfrag_percent_page_text"
+                android:animateLayoutChanges="true"
+                android:gravity="center"
                 android:text="(-/--- pages)"
+                android:textAlignment="center"
                 android:textColor="@color/primary_light_purple"
-                />
+                android:textSize="@dimen/mainfrag_percent_page_text" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/mainframe_linear_for_book"
-            android:animateLayoutChanges="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
+
             <ImageView
                 android:id="@+id/mainframe_book_open"
                 android:layout_width="@dimen/main_page_icon"
@@ -113,62 +115,60 @@
         </LinearLayout>
 
 
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/mainfrag_info_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/general_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainfrag_center"
-        android:padding="@dimen/general_margin"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/mainfrag_center">
+
         <TextView
             android:id="@+id/mainfram_title"
             android:layout_width="match_parent"
-            android:textAlignment="center"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/mainfrag_title_text"
             android:text="My long ass current book title infinite edition lol"
-            android:textColor="@color/primary_light_purple"/>
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_purple"
+            android:textSize="@dimen/mainfrag_title_text" />
+
         <TextView
             android:id="@+id/mainfram_author"
             android:layout_width="match_parent"
-            android:textAlignment="center"
             android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:textSize="@dimen/mainfrag_author_text"
             android:text="the cool author"
-            android:textColor="@color/primary_light_purple"/>
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_purple"
+            android:textSize="@dimen/mainfrag_author_text"
+            android:textStyle="italic" />
 
         <ImageView
-            android:padding="@dimen/general_margin"
             android:id="@+id/mainfram_cover"
             android:layout_width="@dimen/mainframe_cover_book_width"
-            android:layout_height="@dimen/mainframe_cover_book_height"/>
+            android:layout_height="@dimen/mainframe_cover_book_height"
+            android:padding="@dimen/general_margin" />
 
     </LinearLayout>
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/mainframe_no_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:shadowColor="@color/primary_light_purple"
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="20"
-        android:shadowColor="@color/primary_light_purple"
-        android:textColor="@color/primary_middle_purple"
         android:text="Aucun livre en cours..."
+        android:textColor="@color/primary_middle_purple"
         android:textSize="30sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

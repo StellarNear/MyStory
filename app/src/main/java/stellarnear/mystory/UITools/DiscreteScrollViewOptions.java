@@ -1,12 +1,5 @@
 package stellarnear.mystory.UITools;
 
-import android.view.View;
-
-import com.yarolegovich.discretescrollview.DiscreteScrollView;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +7,8 @@ import android.view.View;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
-
-import java.lang.ref.WeakReference;
 
 public class DiscreteScrollViewOptions {
    private static DiscreteScrollViewOptions instance;

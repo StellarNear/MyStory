@@ -6,11 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,10 +16,6 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -45,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fabSearchPanel;
     private static  TinyDB tinyDB;
-
 
 
 
@@ -220,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    // part to handle libbrary
+    // part to handle library
 
     public static Book getCurrentBook() {
         return library.getCurrentBook();
@@ -230,4 +222,9 @@ public class MainActivity extends AppCompatActivity {
         library.setCurrentBook(selectedBook);
         tinyDB.saveLibrary(MainActivity.library);
     }
+
+    public static void saveLibrary() {
+        tinyDB.saveLibrary(library);
+    }
+
 }
