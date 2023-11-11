@@ -96,12 +96,14 @@ public class MainActivityFragmentSearchBooks extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        int themeId = getResources().getIdentifier("AppThemeYellow", "style", getActivity().getPackageName());
+        getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);
         if (container != null) {
             container.removeAllViews();
         }
 
-        returnFragView = inflater.inflate(R.layout.fragment_main_searsh_books, container, false);
+        returnFragView = inflater.inflate(R.layout.fragment_main_search_books, container, false);
 
         backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
 
@@ -256,7 +258,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
         View alert = inflater.inflate(R.layout.my_lottie_alert, null);
 
-        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null);
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_infos, null);
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
@@ -303,6 +305,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.addToWishList(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
                 dialog.dismiss();
             }
@@ -317,7 +320,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
         View alert = inflater.inflate(R.layout.my_lottie_alert, null);
 
-        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_add_to_wish_infos, null);
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_infos, null);
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
@@ -468,6 +471,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.putCurrentToShelf();
                 MainActivity.setCurrentBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();

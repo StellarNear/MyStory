@@ -1,18 +1,51 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.MyStory" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primary_dark_purple</item>
-        <item name="colorPrimaryVariant">@color/primary_middle_purple</item>
+
+        <!-- Status bar color. -->
+
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/yellow</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorPrimaryVariant">@color/blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/primary_dark_yellow</item>
-        <item name="colorSecondaryVariant">@color/primary_middle_yellow</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/red</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
     </style>
+
+
+    <attr name="colorLightVariant" format="reference" />
+    <attr name="colorMiddleVariant" format="reference" />
+
+    <style name="AppThemePurple" parent="Theme.MyStory">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/primary_dark_purple</item>
+        <item name="colorMiddleVariant">@color/primary_middle_purple</item>
+        <item name="colorLightVariant">@color/primary_light_purple</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemePink" parent="Theme.MyStory">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/primary_dark_pink</item>
+        <item name="colorMiddleVariant">@color/primary_middle_pink</item>
+        <item name="colorLightVariant">@color/primary_light_pink</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeYellow" parent="Theme.MyStory">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primary_dark_yellow</item>
+        <item name="colorMiddleVariant">@color/primary_middle_yellow</item>
+        <item name="colorLightVariant">@color/primary_light_yellow</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

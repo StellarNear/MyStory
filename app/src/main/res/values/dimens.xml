@@ -45,4 +45,6 @@
     <dimen name="mainframe_cover_book_width">150dp</dimen>
     <dimen name="mainfrag_percent_text">30sp</dimen>
     <dimen name="mainfrag_percent_page_text">14sp</dimen>
+    <dimen name="alert_simple_message_padding">20dp</dimen>
+    <dimen name="min_height_alert_message">150dp</dimen>
 </resources>

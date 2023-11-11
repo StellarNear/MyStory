@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +32,7 @@ import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
+import stellarnear.mystory.UITools.MyLottieDialog;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -58,6 +60,8 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+        int themeId = getResources().getIdentifier("AppThemePurple", "style", getActivity().getPackageName());
+        getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);
         if (container != null) {
             container.removeAllViews();
@@ -67,12 +71,12 @@ public class MainActivityFragment extends Fragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        addProgressCircle();
+        setScreen();
 
         return returnFragView;
     }
 
-    public void addProgressCircle() {
+    public void setScreen() {
         book = MainActivity.getCurrentBook();
         if (book != null) {
             mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
@@ -89,32 +93,34 @@ public class MainActivityFragment extends Fragment {
             ((TextView) returnFragView.findViewById(R.id.mainfram_author)).setText(book.getAutor().getFullName());
 
             setImage(book);
+
+            returnFragView.findViewById(R.id.mainframe_book_open).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!zoomedProgress) {
+                        zoomedProgress = true;
+                        zoomProgress();
+
+                    } else {
+                        zoomedProgress = false;
+                        if (seekBar != null) {
+                            book.setCurrentPercent((int) seekBar.getProgress());
+                            if (seekBar.getProgress() == 100) {
+                                popupEndBookPutOnShelf();
+                            }
+                            MainActivity.saveLibrary();
+                        }
+                        unzoomProgress();
+                    }
+                }
+            });
         } else {
             returnFragView.findViewById(R.id.mainfrag_info_linear).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainfrag_center).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainframe_no_current).setVisibility(View.VISIBLE);
         }
 
-        returnFragView.findViewById(R.id.mainframe_book_open).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!zoomedProgress) {
-                    zoomedProgress = true;
-                    zoomProgress();
 
-                } else {
-                    zoomedProgress = false;
-                    if (seekBar != null) {
-                        book.setCurrentPercent((int) seekBar.getProgress());
-                        if (seekBar.getProgress() == 100) {
-                            //todo shelf
-                        }
-                        MainActivity.saveLibrary();
-                    }
-                    unzoomProgress();
-                }
-            }
-        });
     }
 
     private void zoomProgress() {
@@ -139,8 +145,13 @@ public class MainActivityFragment extends Fragment {
     private void unzoomProgress() {
         returnFragView.findViewById(R.id.mainfram_cover).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.mainframe_progress_allcenter_info).setVisibility(View.VISIBLE);
-        ((ViewGroup) movingPercent.getParent()).removeView(movingPercent);
-        ((ViewGroup) centerPageInfo.getParent()).removeView(centerPageInfo);
+        if(movingPercent!=null){
+            ((ViewGroup) movingPercent.getParent()).removeView(movingPercent);
+        }
+       if(centerPageInfo!=null){
+            ((ViewGroup) centerPageInfo.getParent()).removeView(centerPageInfo);
+        }
+
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
         params.verticalBias = 0.1f;
@@ -327,6 +338,116 @@ public class MainActivityFragment extends Fragment {
             }
         });
     }
+
+    private void popupEndBookPutOnShelf() {
+        String text = "Bravo tu as fini " + book.getName() +" !\nIl va être mit sur l'étagère. Si tu ne souhaites pas le conserver tu peux le supprimer.";
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Etagère");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Supprimer");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext())
+                .setAnimation(R.raw.add_shelf)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Fin de lecture")
+                .setTitleColor(getContext().getColor(R.color.primary_light_purple))
+                .setMessage(text)
+                .setMessageColor(getContext().getColor(R.color.primary_light_purple))
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                popupDeleteBook();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.putCurrentToShelf();
+                setScreen();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+    }
+
+    private void popupDeleteBook() {
+        String text = "Le livre " + book.getName() +" sera supprimé de la bibliotheque.";
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Supprimer");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext())
+                .setAnimation(R.raw.deletion)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Suppression du livre")
+                .setTitleColor(getContext().getColor(R.color.primary_light_purple))
+                .setMessage(text)
+                .setMessageColor(getContext().getColor(R.color.primary_light_purple))
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.deleteCurrent();
+                setScreen();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+    }
+
 
 
     private void unlockOrient() {

@@ -3,15 +3,15 @@
     android:shape="rectangle">
 
     <gradient
-        android:endColor="@color/primary_dark_yellow"
+        android:endColor="?attr/colorPrimaryDark"
         android:gradientRadius="150%p"
-        android:startColor="@color/primary_middle_yellow"
+        android:startColor="?attr/colorMiddleVariant"
         android:type="radial" />
 
     <corners android:radius="20dp" />
     <stroke
         android:width="3dp"
-        android:color="@color/primary_middle_yellow" />
+        android:color="?attr/colorMiddleVariant" />
 
 
 </shape>

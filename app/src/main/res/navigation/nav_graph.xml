@@ -9,7 +9,7 @@
         android:id="@+id/FirstFragment"
         android:name="stellarnear.mystory.Activities.Fragments.MainActivityFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_main_searsh_books">
+        tools:layout="@layout/fragment_main_search_books">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"

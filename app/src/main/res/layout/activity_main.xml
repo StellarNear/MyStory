@@ -49,9 +49,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="@dimen/fab_margin"
-            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginEnd="@dimen/fab_margin"
             android:src="@drawable/ic_book_add"
             app:tint="@color/primary_light_yellow" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabWishList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@color/primary_middle_pink"
+            android:outlineSpotShadowColor="@color/primary_light_pink"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:src="@drawable/ic_book_heart"
+            app:tint="@color/primary_light_pink" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -19,8 +19,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
+import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Library;
 import stellarnear.mystory.R;
@@ -31,18 +34,25 @@ public class MainActivity extends AppCompatActivity {
     private static Library library=null;
     private FrameLayout mainFrameFrag;
     private boolean toSearch = true;
-    private MainActivityFragment mainFrag;
-    private MainActivityFragmentSearchBooks searchFrag;
+
     private ConstraintLayout mConstraintLayout;
     private Window window;
     private Toolbar toolbar;
-    private FloatingActionButton fabSearchPanel;
+
     private static  TinyDB tinyDB;
 
+    private MainActivityFragment mainFrag;
+    private MainActivityFragmentSearchBooks searchFrag;
+    private MainActivityFragmentWishList wishListFrag;
+
+    private FloatingActionButton fabSearchPanel;
+    private FloatingActionButton fabWishList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
+        setTheme(themeId);
         super.onCreate(savedInstanceState);
         tinyDB = new TinyDB(getApplicationContext());
         if(library==null){
@@ -61,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().show();
 
-
         fabSearchPanel = findViewById(R.id.fabSearch);
+        fabWishList = findViewById(R.id.fabWishList);
+
         mainFrag = new MainActivityFragment();
         searchFrag = new MainActivityFragmentSearchBooks();
+        wishListFrag =  new MainActivityFragmentWishList();
         window = getWindow();
 
         mConstraintLayout = (ConstraintLayout) findViewById(R.id.main_constrain);
@@ -92,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        fabWishList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startWishListFragment();
+            }
+        });
+
         initMainFragment();
     }
 
@@ -104,8 +123,10 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.primary_middle_yellow));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_yellow));
 
-
-
+        //make the wish button out of bound
+        set.clear(fabWishList.getId(),ConstraintSet.START);
+        set.connect(fabWishList.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.START, 0);
+        //then move the other center
         set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, 0);
         set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, 0);
         set.applyTo(mConstraintLayout);
@@ -119,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         searchFrag.clearAnimation();
-                        restartMainFramemnt();
+                        restartMainFramemnt(R.id.fragment_search);
                         toSearch = true;
                     }
                 });
@@ -140,23 +161,77 @@ public class MainActivity extends AppCompatActivity {
         startFragment(R.id.fragment_main, searchFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
     }
 
-    private void restartMainFramemnt() {
-        mainFrag = new MainActivityFragment();
+
+    private void startWishListFragment() {
+        wishListFrag = new MainActivityFragmentWishList();
+        ConstraintSet set = new ConstraintSet();
+        set.clone(mConstraintLayout);
+
+        window.setStatusBarColor(getColor(R.color.primary_middle_pink));
+        toolbar.setBackgroundColor(getColor(R.color.primary_dark_pink));
+
+        //make the wish button out of bound
+        set.clear(fabSearchPanel.getId(),ConstraintSet.END);
+        set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
+        //then make the other center
+        set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, 0);
+        set.connect(fabWishList.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, 0);
+        set.applyTo(mConstraintLayout);
+
+        //set the back button
+        wishListFrag.setOnFramentViewCreatedEventListener(new MainActivityFragmentWishList.OnFramentViewCreatedEventListener() {
+            @Override
+            public void onEvent() {
+                wishListFrag.getBackButtonView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        wishListFrag.clearAnimation();
+                        restartMainFramemnt(R.id.fragment_wish);
+                    }
+                });
+            }
+        });
+
+        startFragment(R.id.fragment_main, wishListFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_wishlist");
+    }
+
+
+    private void restartMainFramemnt(int previousFragmentId) {
+         mainFrag = new MainActivityFragment();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
 
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
-        toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
+       toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
-        set.clear(fabSearchPanel.getId(), ConstraintSet.START);
-        set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
-        set.applyTo(mConstraintLayout);
-        fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
 
+        if(previousFragmentId==R.id.fragment_wish){
+            startFragment(previousFragmentId, mainFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_main");
 
-        startFragment(R.id.fragment_search, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
-        mainFrag.addProgressCircle();
+            set.clear(fabWishList.getId(), ConstraintSet.END);
+            set.connect(fabWishList.getId(),ConstraintSet.START,mConstraintLayout.getId(),ConstraintSet.START,margin);
+
+            set.clear(fabSearchPanel.getId(),ConstraintSet.START);
+            set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
+
+            set.applyTo(mConstraintLayout);
+        }
+        if(previousFragmentId==R.id.fragment_search){
+
+            fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
+
+            startFragment(previousFragmentId, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
+
+            set.clear(fabSearchPanel.getId(), ConstraintSet.START);
+            set.connect(fabSearchPanel.getId(),ConstraintSet.END,mConstraintLayout.getId(),ConstraintSet.END,margin);
+
+            set.clear(fabWishList.getId(),ConstraintSet.END);
+            set.connect(fabWishList.getId(),ConstraintSet.START,mConstraintLayout.getId(),ConstraintSet.START,margin);
+
+            set.applyTo(mConstraintLayout);
+        }
+        mainFrag.setScreen();
     }
 
 
@@ -186,6 +261,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(mainFrameFrag.getId(), mainFrag, "frag_main");
         fragmentTransaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
+        window.setStatusBarColor(getColor(R.color.primary_middle_purple));
+        toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
     }
 
     @Override
@@ -214,17 +292,46 @@ public class MainActivity extends AppCompatActivity {
 
     // part to handle library
 
+    public static void saveLibrary() {
+        tinyDB.saveLibrary(library);
+    }
+
     public static Book getCurrentBook() {
         return library.getCurrentBook();
     }
 
-    public static void setCurrentBook(Book selectedBook) {
-        library.setCurrentBook(selectedBook);
-        tinyDB.saveLibrary(MainActivity.library);
+    public static List<Book> getWishList() {
+        return library.getWishList();
     }
 
-    public static void saveLibrary() {
-        tinyDB.saveLibrary(library);
+    public static void setCurrentBook(Book selectedBook) {
+        library.setCurrentBook(selectedBook);
+
     }
+
+
+    public static void putCurrentToShelf() {
+        library.putCurrentToShelf();
+        saveLibrary();
+    }
+
+
+    public static void deleteCurrent() {
+        library.deleteCurrent();
+        saveLibrary();
+    }
+
+    public static void removeBookFromWishList(Book selectedBook) {
+        library.removeFromWishList(selectedBook);
+        saveLibrary();
+    }
+
+    public static void addToWishList(Book selectedBook) {
+        library.addToWishList(selectedBook);
+        saveLibrary();
+    }
+
+
+
 
 }

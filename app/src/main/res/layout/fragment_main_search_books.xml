@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_search_frag"
+    tools:context=".Activities.Fragments.MainActivityFragmentSearchBooks">
+
+    <ImageButton
+        android:id="@+id/back_main_from_search"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="@dimen/general_margin"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_baseline_arrow_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/primary_light_yellow"
+        tools:ignore="ContentDescription" />
+
+
+    <LinearLayout
+        android:id="@+id/linearSearchPrompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/general_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/search_title_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Titre"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_yellow"
+            android:textSize="@dimen/text_prompt" />
+
+        <EditText
+            android:id="@+id/search_author_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Auteur"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_yellow"
+            android:textSize="@dimen/text_prompt" />
+
+        <TextView
+            android:id="@+id/loading_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recherche en cours..."
+            android:textColor="@color/primary_middle_yellow"
+            android:textSize="@dimen/list_book_title_size"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
+        android:id="@+id/pickerScroller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:dsv_orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/pickerScroller">
+
+        <LinearLayout
+            android:id="@+id/add_book_linear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/general_margin"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/add_to_wishlist"
+                android:layout_width="@dimen/add_book_from_search"
+                android:layout_height="@dimen/add_book_from_search"
+                android:layout_marginRight="@dimen/padding_add_book_from_search"
+                android:src="@drawable/ic_book_heart"
+                app:tint="@color/primary_light_yellow" />
+
+            <ImageView
+                android:id="@+id/add_to_current"
+                android:layout_width="@dimen/add_book_from_search"
+                android:layout_height="@dimen/add_book_from_search"
+                android:src="@drawable/ic_book_open_page"
+                app:tint="@color/primary_light_yellow" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearBooksFoundInfosSub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/general_margin"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/pickerScroller">
+
+        <TextView
+            android:id="@+id/list_book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MyTitle"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_yellow"
+            android:textSize="@dimen/list_book_title_size"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/list_book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MyAutor"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_yellow"
+            android:textSize="@dimen/list_book_author_size"
+            android:textStyle="italic"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/list_book_page_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MyPages"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light_yellow"
+            android:textSize="@dimen/list_book_page_size"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

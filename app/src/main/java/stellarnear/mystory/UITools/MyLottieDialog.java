@@ -62,6 +62,7 @@ public class MyLottieDialog {
    private final View lottieDialogInnerMessageView;
 
    private final Context mC;
+   private final View view;
 
    /**
     * Start playing the animation after setup if only if it true
@@ -83,7 +84,7 @@ public class MyLottieDialog {
 
    public MyLottieDialog(Context context) {
       this.mC=context;
-      final View view = LayoutInflater.from(context).inflate(R.layout.my_lottie_alert, null);
+      view = LayoutInflater.from(context).inflate(R.layout.my_lottie_alert, null);
 
       this.lottieDialog = new Dialog(context,R.style.CustomDialog);
       this.lottieDialog.setContentView(view);
@@ -99,6 +100,7 @@ public class MyLottieDialog {
 
    public MyLottieDialog(Context context,View view) {
       this.mC=context;
+      this.view=view;
       this.lottieDialog = new Dialog(context,R.style.CustomDialog);
       this.lottieDialog.setContentView(view);
 
@@ -523,6 +525,4 @@ public class MyLottieDialog {
       this.lottieDialog.setOnDismissListener(listener);
       return this;
    }
-
-
 }

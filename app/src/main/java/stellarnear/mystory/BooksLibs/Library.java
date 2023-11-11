@@ -27,4 +27,20 @@ public class Library {
       return shelfList;
    }
 
+    public void putCurrentToShelf() {
+      this.shelfList.add(this.currentBook);
+      this.currentBook=null;
+    }
+
+    public void deleteCurrent() {
+       this.currentBook=null;
+    }
+
+    public void removeFromWishList(Book selectedBook) {
+       this.wishList.remove(selectedBook);
+    }
+
+    public void addToWishList(Book selectedBook) {
+       this.wishList.add(selectedBook);
+    }
 }

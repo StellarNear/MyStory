@@ -8,6 +8,11 @@
     <color name="primary_middle_yellow">#723727</color>
     <color name="primary_light_yellow">#BF972C</color>
 
+    <color name="primary_dark_pink">#381638</color>
+    <color name="primary_middle_pink">#612B61</color>
+    <color name="primary_light_pink">#AC4DAC</color>
+
+
     <color name="primary_light_yellowOLD">#fed464</color>
 
     <color name="black">#FF000000</color>

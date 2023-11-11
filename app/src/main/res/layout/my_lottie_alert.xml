@@ -27,7 +27,7 @@
         android:id="@+id/alert_background_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_alert_add_book_from_search"
+        android:background="@drawable/background_alert"
         android:orientation="vertical">
 
 
@@ -57,10 +57,12 @@
            >
 
             <TextView
+                android:gravity="center"
+                android:minHeight="@dimen/min_height_alert_message"
                 android:id="@+id/lottie_dialog_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/general_margin"
+                android:padding="@dimen/alert_simple_message_padding"
                 android:text="Message"
                 android:textAlignment="center"
                 android:textColor="@color/primary_light_yellow" />
