@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+              android:text="Titre :"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorVariantLight"/>
+        <EditText
+            android:id="@+id/note_creat_title"
+            android:hint="Ton titre de note"
+            android:textColorHint="?attr/colorPrimaryDark"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorVariantLight"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="La note :"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorVariantLight"/>
+        <EditText
+            android:id="@+id/note_creat_note"
+            android:hint="Ton commentaire"
+            android:textColorHint="?attr/colorPrimaryDark"
+            android:gravity="top|start"
+            android:layout_weight="1"
+            android:inputType="textMultiLine"
+            android:layout_width="0dp"
+            android:scrollbars="vertical"
+            android:maxLines="10"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorVariantLight"/>
+    </LinearLayout>
+
+</LinearLayout>

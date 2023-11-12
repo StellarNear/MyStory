@@ -1,7 +1,9 @@
 package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -122,6 +124,14 @@ public class Book {
         mListenerImageRefreshed = eventListener;
     }
 
+    private List<Note> notes=new ArrayList<>();
+
+    public List<Note> getNotes() {
+        return this.notes;
+    }
+
+
+
 
     public interface OnImageRefreshedEventListener {
         void onEvent();
@@ -177,4 +187,14 @@ public class Book {
             return "";
         }
     }
+
+    public void deleteNote(Note note) {
+        this.notes.remove(note);
+    }
+
+    public void createNote(String title, String note) {
+        this.notes.add(new Note(title,note));
+    }
+
+
 }

@@ -114,11 +114,9 @@ public class Tools extends SelfCustomLog {
 
     public void customToast(Context mC, String txt) {
         // Set the toast and duration
-
         Toast mToastToShow = Toast.makeText(mC, txt, Toast.LENGTH_LONG);
         mToastToShow.setGravity(Gravity.CENTER, 0, 0);
         mToastToShow.show();
-
     }
 
     public void customSnack(Context mC, View v, String txt, String... option) {

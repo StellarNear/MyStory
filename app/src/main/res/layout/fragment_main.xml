@@ -12,6 +12,29 @@
     tools:context=".Activities.Fragments.MainActivityFragment">
 
 
+
+    <LinearLayout
+        android:id="@+id/mainfrag_top_icons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/general_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mainfrag_center">
+
+        <ImageView
+            android:id="@+id/mainframe_book_notes"
+            android:layout_width="@dimen/main_page_icon"
+            android:layout_height="@dimen/main_page_icon"
+            android:src="@drawable/ic_baseline_edit_note_24"
+            app:tint="@color/primary_light_purple" />
+
+
+    </LinearLayout>
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainfrag_center"
         android:clipChildren="false"

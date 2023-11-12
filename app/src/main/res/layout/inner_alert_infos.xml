@@ -15,7 +15,7 @@
         >
         <TextView
             android:padding="@dimen/general_margin"
-            android:textColor="@color/primary_light_yellow"
+            android:textColor="?attr/colorVariantLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Titre :"
@@ -24,7 +24,7 @@
         <TextView
             android:id="@+id/alert_title_info"
             android:padding="@dimen/general_margin"
-            android:textColor="@color/primary_light_yellow"
+            android:textColor="?attr/colorVariantLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -40,7 +40,7 @@
         >
         <TextView
             android:padding="@dimen/general_margin"
-            android:textColor="@color/primary_light_yellow"
+            android:textColor="?attr/colorVariantLight"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -50,7 +50,7 @@
         <TextView
             android:id="@+id/alert_author_info"
             android:padding="@dimen/general_margin"
-            android:textColor="@color/primary_light_yellow"
+            android:textColor="?attr/colorVariantLight"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -61,7 +61,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/primary_light_yellow"
+        android:textColor="?attr/colorVariantLight"
         android:text="Nombre de page :"/>
     <RadioGroup
         android:id="@+id/radio_page_group"
@@ -74,10 +74,10 @@
 
         <RadioButton
             android:id="@+id/radio_page_other"
-            android:buttonTint="@color/primary_light_yellow"
+            android:buttonTint="?attr/colorVariantLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/primary_light_yellow"
+            android:textColor="?attr/colorVariantLight"
             android:text="Autre"/>
 
     </RadioGroup>
@@ -87,9 +87,9 @@
         android:visibility="gone"
         android:textAlignment="center"
         android:inputType="number"
-        android:textColorHint="@color/primary_dark_yellow"
+        android:textColorHint="?attr/colorPrimaryDark"
         android:layout_width="wrap_content"
-        android:textColor="@color/primary_light_yellow"
+        android:textColor="?attr/colorVariantLight"
         android:layout_height="wrap_content"
         android:hint="nombre de pages"/>
 

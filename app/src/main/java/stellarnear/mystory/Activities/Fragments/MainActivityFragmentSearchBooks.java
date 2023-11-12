@@ -19,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -306,9 +307,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Souhaites tu ajouter ce livre à ta liste d'envie ?")
-                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
                 .setMessage(alertInnerInfo)
-                .setMessageColor(getContext().getColor(R.color.primary_middle_yellow))
                 .setCancelable(false)
                 .addActionButton(cancelButton)
                 .addActionButton(okButton)
@@ -409,7 +408,6 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Souhaites commencer la lecture de ce livre ?")
-                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
                 .setMessage(alertInnerInfo)
                 .setCancelable(false)
                 .addActionButton(cancelButton)
@@ -488,9 +486,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Tu as un livre en cours")
-                .setTitleColor(getContext().getColor(R.color.primary_light_yellow))
                 .setMessage(text)
-                .setMessageColor(getContext().getColor(R.color.primary_light_yellow))
                 .setCancelable(false)
                 .addActionButton(cancelButton)
                 .addActionButton(okButton)

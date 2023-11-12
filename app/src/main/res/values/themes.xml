@@ -16,14 +16,14 @@
     </style>
 
 
-    <attr name="colorLightVariant" format="reference" />
-    <attr name="colorMiddleVariant" format="reference" />
+    <attr name="colorVariantLight" format="reference" />
+    <attr name="colorVariantMiddle" format="reference" />
 
     <style name="AppThemePurple" parent="Theme.MyStory">
         <!-- Customize your theme here. -->
         <item name="colorPrimaryDark">@color/primary_dark_purple</item>
-        <item name="colorMiddleVariant">@color/primary_middle_purple</item>
-        <item name="colorLightVariant">@color/primary_light_purple</item>
+        <item name="colorVariantMiddle">@color/primary_middle_purple</item>
+        <item name="colorVariantLight">@color/primary_light_purple</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -31,8 +31,8 @@
     <style name="AppThemePink" parent="Theme.MyStory">
         <!-- Customize your theme here. -->
         <item name="colorPrimaryDark">@color/primary_dark_pink</item>
-        <item name="colorMiddleVariant">@color/primary_middle_pink</item>
-        <item name="colorLightVariant">@color/primary_light_pink</item>
+        <item name="colorVariantMiddle">@color/primary_middle_pink</item>
+        <item name="colorVariantLight">@color/primary_light_pink</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -40,8 +40,8 @@
     <style name="AppThemeYellow" parent="Theme.MyStory">
         <!-- Customize your theme here. -->
         <item name="colorPrimaryDark">@color/primary_dark_yellow</item>
-        <item name="colorMiddleVariant">@color/primary_middle_yellow</item>
-        <item name="colorLightVariant">@color/primary_light_yellow</item>
+        <item name="colorVariantMiddle">@color/primary_middle_yellow</item>
+        <item name="colorVariantLight">@color/primary_light_yellow</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

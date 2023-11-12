@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +96,17 @@ public class MyLottieDialog {
       this.lottieDialogLayout = view.findViewById(R.id.lottie_dialog_layout);
       this.lottieDialogButtonsLayout = view.findViewById(R.id.lottie_dialog_buttons_layout);
       this.lottieDialogAnimationContainer = view.findViewById(R.id.lottie_dialog_animation_container);
+      lottieDialogAnimationContainer.setVisibility(View.GONE);
       this.lottieDialogInnerMessageView = view.findViewById(R.id.lottie_dialog_inner_view);
+
+      /*
+      TypedValue valueLight = new TypedValue();
+      mC.getTheme().resolveAttribute(R.attr.colorVariantLight, valueLight, true);
+      lottieDialogTitle.setTextColor(valueLight.data);
+      TypedValue valueMiddle = new TypedValue();
+      mC.getTheme().resolveAttribute(R.attr.colorVariantMiddle, valueMiddle, true);
+      lottieDialogMessage.setTextColor(valueMiddle.data);*/
+
    }
 
    public MyLottieDialog(Context context,View view) {
@@ -110,7 +121,16 @@ public class MyLottieDialog {
       this.lottieDialogLayout = view.findViewById(R.id.lottie_dialog_layout);
       this.lottieDialogButtonsLayout = view.findViewById(R.id.lottie_dialog_buttons_layout);
       this.lottieDialogAnimationContainer = view.findViewById(R.id.lottie_dialog_animation_container);
+      lottieDialogAnimationContainer.setVisibility(View.GONE);
       this.lottieDialogInnerMessageView = view.findViewById(R.id.lottie_dialog_inner_view);
+
+      /*
+      TypedValue valueLight = new TypedValue();
+      mC.getTheme().resolveAttribute(R.attr.colorVariantLight, valueLight, true);
+      lottieDialogTitle.setTextColor(valueLight.data);
+      TypedValue valueMiddle = new TypedValue();
+       mC.getTheme().resolveAttribute(R.attr.colorVariantMiddle, valueMiddle, true);
+      lottieDialogMessage.setTextColor(valueMiddle.data);*/
    }
 
    /**
@@ -128,7 +148,7 @@ public class MyLottieDialog {
     * @param color for lottie dialog title
     * @return the instance of lottie dialog to make a chain of function easily
     */
-   public MyLottieDialog setTitleColor(int color) {
+   private MyLottieDialog setTitleColor(int color) {
       this.lottieDialogTitle.setTextColor(color);
       return this;
    }
@@ -181,7 +201,7 @@ public class MyLottieDialog {
     * @param color for lottie dialog message
     * @return the instance of lottie dialog to make a chain of function easily
     */
-   public MyLottieDialog setMessageColor(int color) {
+   private MyLottieDialog setMessageColor(int color) {
       this.lottieDialogMessage.setTextColor(color);
       return this;
    }
@@ -310,6 +330,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimationViewHeight(int height) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       ViewGroup.LayoutParams layoutParams = lottieDialogAnimationContainer.getLayoutParams();
       layoutParams.height = height;
       lottieDialogAnimationContainer.setLayoutParams(layoutParams);
@@ -322,6 +343,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimationViewWidth(int width) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       ViewGroup.LayoutParams layoutParams = lottieDialogAnimationContainer.getLayoutParams();
       layoutParams.width = width;
       lottieDialogAnimationContainer.setLayoutParams(layoutParams);
@@ -334,6 +356,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimation(@RawRes int rawRes) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setAnimation(rawRes);
       return this;
    }
@@ -344,6 +367,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimation(Animation animation) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setAnimation(animation);
       return this;
    }
@@ -354,6 +378,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimation(String assetName) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setAnimation(assetName);
       return this;
    }
@@ -364,6 +389,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimationFromUrl(String url) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setAnimationFromUrl(url);
       return this;
    }
@@ -374,6 +400,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimationRepeatCount(int count) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setRepeatCount(count);
       return this;
    }
@@ -384,6 +411,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAnimationSpeed(float speed) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.setSpeed(speed);
       return this;
    }
@@ -414,6 +442,7 @@ public class MyLottieDialog {
     * @return the instance of lottie dialog to make a chain of function easily
     */
    public MyLottieDialog setAutoPlayAnimation(boolean autoplay) {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       isAutoPlayedAnimation = autoplay;
       return this;
    }
@@ -429,6 +458,7 @@ public class MyLottieDialog {
     * Play the current animation
     */
    public void playAnimation() {
+      lottieDialogAnimationContainer.setVisibility(View.VISIBLE);
       this.lottieDialogAnimationView.playAnimation();
    }
 

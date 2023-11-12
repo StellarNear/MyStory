@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lottie_dialog_layout"
-    android:layout_width="@dimen/popup_add_book_width"
+    android:layout_width="@dimen/popup_alert"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/general_margin">
@@ -30,9 +30,6 @@
         android:background="@drawable/background_alert"
         android:orientation="vertical">
 
-
-
-
             <TextView
                 android:shadowColor="#000000"
                 android:shadowDx="0"
@@ -45,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="Super long titre qui demande une confirmation random ? "
                 android:textAlignment="center"
-                android:textColor="@color/primary_light_yellow"
+                android:textColor="?attr/colorVariantLight"
                 android:textSize="@dimen/size_popup_alert_title"
                 android:background="@drawable/title_alert_background"/>
 
@@ -65,7 +62,7 @@
                 android:padding="@dimen/alert_simple_message_padding"
                 android:text="Message"
                 android:textAlignment="center"
-                android:textColor="@color/primary_light_yellow" />
+                android:textColor="?attr/colorVariantLight" />
 
             <View
                 android:id="@+id/lottie_dialog_inner_view"

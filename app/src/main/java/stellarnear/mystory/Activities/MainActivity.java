@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         window.setStatusBarColor(getColor(R.color.primary_middle_yellow));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_yellow));
+        toolbar.setTitleTextColor(getColor(R.color.primary_light_yellow));
 
         //make the wish button out of bound
         set.clear(fabWishList.getId(),ConstraintSet.START);
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
         window.setStatusBarColor(getColor(R.color.primary_middle_pink));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_pink));
+        toolbar.setTitleTextColor(getColor(R.color.primary_light_pink));
 
         //make the wish button out of bound
         set.clear(fabSearchPanel.getId(),ConstraintSet.END);
@@ -203,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
        toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
+        toolbar.setTitleTextColor(getColor(R.color.primary_light_purple));
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
@@ -264,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
+        toolbar.setTitleTextColor(getColor(R.color.primary_light_purple));
     }
 
     @Override
