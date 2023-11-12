@@ -14,6 +14,7 @@
     <dimen name="padding_add_book_from_search">100dp</dimen>
 
     <dimen name="popup_alert">350dp</dimen>
+    <dimen name="popup_alert_land">200dp</dimen>
     <dimen name="popup_add_book_height">250dp</dimen>
 
     <dimen name="animation_popup_size">200dp</dimen>
@@ -41,6 +42,10 @@
     <dimen name="cover_book_height">300dp</dimen>
     <dimen name="cover_book_width">200dp</dimen>
 
+    <dimen name="cover_book_small_width">100dp</dimen>
+    <dimen name="cover_book_small_height">150dp</dimen>
+
+
     <dimen name="mainframe_cover_book_height">225dp</dimen>
     <dimen name="mainframe_cover_book_width">150dp</dimen>
     <dimen name="mainfrag_percent_text">30sp</dimen>
@@ -51,4 +56,10 @@
 
     <dimen name="list_notes_minheight">200dp</dimen>
     <dimen name="list_notes_minwidth">200dp</dimen>
+
+    <dimen name="button_width_land">100dp</dimen>
+
+    <dimen name="popup_alert_message_width_land">300dp</dimen>
+
+
 </resources>

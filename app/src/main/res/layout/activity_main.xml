@@ -9,7 +9,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MyStory.AppBarOverlay">
+        android:theme="@style/Theme.MyStory.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -23,9 +24,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_constrain"
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -43,14 +44,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
             android:animateLayoutChanges="true"
             android:backgroundTint="@color/primary_middle_yellow"
             android:outlineSpotShadowColor="@color/primary_light_yellow"
+            android:src="@drawable/ic_book_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:src="@drawable/ic_book_add"
             app:tint="@color/primary_light_yellow" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,14 +59,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:layout_marginStart="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
             android:animateLayoutChanges="true"
             android:backgroundTint="@color/primary_middle_pink"
             android:outlineSpotShadowColor="@color/primary_light_pink"
+            android:src="@drawable/ic_book_heart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="@dimen/fab_margin"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:src="@drawable/ic_book_heart"
             app:tint="@color/primary_light_pink" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

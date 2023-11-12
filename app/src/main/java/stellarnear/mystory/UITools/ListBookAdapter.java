@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,17 +27,31 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     private DiscreteScrollView scrollView;
     private List<Book> data;
+    private boolean small=false;
 
-    public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView) {
+    public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView,boolean... small) {
         this.data = data;
         this.scrollView = scrollView;
+        if(small.length>0 && small[0]){
+            this.small=true;
+        }
+    }
+
+    public void setSmallViews(){
+        this.small=true;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.item_book_card, parent, false);
+        View v;
+        if(small){
+            v = inflater.inflate(R.layout.item_book_card_small, parent, false);
+        } else {
+            v= inflater.inflate(R.layout.item_book_card, parent, false);
+        }
+
         return new ViewHolder(v);
     }
 

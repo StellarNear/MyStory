@@ -109,6 +109,7 @@ public class MainActivityFragment extends Fragment {
                     } else {
                         zoomedProgress = false;
                         if (seekBar != null) {
+                            book.setLastRead();
                             book.setCurrentPercent((int) seekBar.getProgress());
                             if (seekBar.getProgress() == 100) {
                                 popupEndBookPutOnShelf();
@@ -158,6 +159,9 @@ public class MainActivityFragment extends Fragment {
         cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
         MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                .setAnimation(R.raw.writting)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
                 .setTitle("Les notes sur ce livre")
                 .setMessage(notes)
                 .setCancelable(false)
@@ -524,7 +528,7 @@ public class MainActivityFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.putCurrentToShelf();
+                MainActivity.endBookAndPutToShelf();
                 setScreen();
                 dialog.dismiss();
             }

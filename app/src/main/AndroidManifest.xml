@@ -35,6 +35,17 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyStory.NoActionBar"/>
+
+        <activity android:label="L'étagère"
+            android:name=".Activities.ShelfActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.MyStory.NoActionBar"/>
+
+        <activity android:label="L'observatoire"
+            android:name=".Activities.ObservatoryActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.MyStory.NoActionBar"/>
+
     </application>
 
 </manifest>

@@ -12,6 +12,14 @@
     <color name="primary_middle_pink">#612B61</color>
     <color name="primary_light_pink">#AC4DAC</color>
 
+    <color name="primary_dark_blue">#0D213E</color>
+    <color name="primary_middle_blue">#1f3048</color>
+    <color name="primary_light_blue">#5C82B6</color>
+
+
+    <color name="primary_dark_brown">#40220B</color>
+    <color name="primary_middle_brown">#58361b</color>
+    <color name="primary_light_brown">#A8652F</color>
 
     <color name="primary_light_yellowOLD">#fed464</color>
 

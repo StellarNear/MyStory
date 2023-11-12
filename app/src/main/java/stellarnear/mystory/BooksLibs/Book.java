@@ -1,6 +1,8 @@
 package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,33 +10,48 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import stellarnear.mystory.Constants;
+
 public class Book {
 
     private byte[] imageByte=null;
     private boolean pageDataRecieved = false;
 
-    public Instant getStartTime() {
-        return startTime;
+
+    private List<String> startTimes=new ArrayList<>();
+
+    public List<String> getStartTimes() {
+        return startTimes;
     }
 
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
+    public void addStartTime() {
+        setLastRead();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
+                .withZone(ZoneId.systemDefault());
+        this.startTimes.add(formatter.format(Instant.now()));
     }
 
-    public Instant getEndTime() {
-        return endTime;
+    private List<String> endTimes=new ArrayList<>();
+
+    public List<String> getEndTimes() {
+        return endTimes;
     }
 
-    public void setEndTime(Instant endTime) {
-        this.endTime = endTime;
+    public void addEndTime() {
+        setLastRead();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
+                .withZone(ZoneId.systemDefault());
+        this.endTimes.add(formatter.format(Instant.now()));
     }
-
-    public Instant getLastRead() {
+    private String lastRead;
+    public String getLastRead() {
         return lastRead;
     }
 
-    public void setLastRead(Instant lastRead) {
-        this.lastRead = lastRead;
+    public void setLastRead() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
+                .withZone(ZoneId.systemDefault());
+        this.lastRead = formatter.format(Instant.now());
     }
 
     public long getId() {
@@ -69,9 +86,7 @@ public class Book {
         this.cover_url = cover_url;
     }
 
-    private Instant startTime;
-    private Instant endTime;
-    private Instant lastRead;
+
     private long id;
     private String name;
     private Autor autor;
@@ -130,7 +145,15 @@ public class Book {
         return this.notes;
     }
 
+    public void saveNewStartInstant(String toInstant) {
+        this.startTimes=new ArrayList<>();
+        this.startTimes.add(toInstant);
+    }
 
+    public void saveNewEndInstant(String toInstant) {
+        this.endTimes=new ArrayList<>();
+        this.endTimes.add(toInstant);
+    }
 
 
     public interface OnImageRefreshedEventListener {
@@ -195,6 +218,23 @@ public class Book {
     public void createNote(String title, String note) {
         this.notes.add(new Note(title,note));
     }
+
+
+
+    public String getLastStartTime() {
+        if(this.startTimes.size()>0){
+            return this.startTimes.get(this.startTimes.size()-1);
+        }
+        return null;
+    }
+
+    public String getLastEndTime() {
+        if(this.endTimes.size()>0){
+            return this.endTimes.get(this.endTimes.size()-1);
+        }
+        return null;
+    }
+
 
 
 }

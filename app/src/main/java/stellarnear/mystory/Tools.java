@@ -142,6 +142,9 @@ public class Tools extends SelfCustomLog {
             } else if (option[0].contains("pink")) {
                 snack.setTextColor(mC.getColor(R.color.primary_light_pink));
                 view.setBackgroundColor(mC.getColor(R.color.primary_middle_pink));
+            } else if (option[0].contains("brown")) {
+                snack.setTextColor(mC.getColor(R.color.primary_light_brown));
+                view.setBackgroundColor(mC.getColor(R.color.primary_middle_brown));
             }
         }
 

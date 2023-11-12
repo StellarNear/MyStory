@@ -99,6 +99,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                              Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemeYellow", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
+
         super.onCreate(savedInstanceState);
         if (container != null) {
             container.removeAllViews();
@@ -449,7 +450,9 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                     }
                 }
                 if (MainActivity.getCurrentBook() == null) {
+                    selectedBook.addStartTime();
                     MainActivity.setCurrentBook(selectedBook);
+
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 } else {
                     popupSwapBooks();
@@ -482,7 +485,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
         MyLottieDialog dialog = new MyLottieDialog(getContext())
-                .setAnimation(R.raw.swap_book)
+                .setAnimation(R.raw.add_shelf)
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Tu as un livre en cours")
@@ -507,6 +510,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
             @Override
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
+                selectedBook.addStartTime();
                 MainActivity.setCurrentBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();

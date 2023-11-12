@@ -1,24 +1,38 @@
 package stellarnear.mystory.Activities;
 
 import android.animation.LayoutTransition;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.graphics.BlendModeColorFilterCompat;
+import androidx.core.graphics.BlendModeCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
@@ -47,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fabSearchPanel;
     private FloatingActionButton fabWishList;
+
 
 
     @Override
@@ -114,8 +129,27 @@ public class MainActivity extends AppCompatActivity {
         initMainFragment();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    private void checkOrientStart(int screenOrientation) {
+        if (getResources().getConfiguration().orientation != screenOrientation) {
+            setRequestedOrientation(screenOrientation);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                }
+            }, 1000);
+        }
+    }
 
     private void startSearchFragment() {
+        lockOrient();
         searchFrag = new MainActivityFragmentSearchBooks();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
@@ -123,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.primary_middle_yellow));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_yellow));
         toolbar.setTitleTextColor(getColor(R.color.primary_light_yellow));
+        toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_yellow), BlendModeCompat.SRC_ATOP));
+        toolbar.setTitle("Recherche d'un nouveau livre");
 
         //make the wish button out of bound
         set.clear(fabWishList.getId(),ConstraintSet.START);
@@ -143,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         searchFrag.clearAnimation();
                         restartMainFramemnt(R.id.fragment_search);
                         toSearch = true;
+                        unlockOrient();
                     }
                 });
             }
@@ -164,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startWishListFragment() {
+        lockOrient();
         wishListFrag = new MainActivityFragmentWishList();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
@@ -171,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.primary_middle_pink));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_pink));
         toolbar.setTitleTextColor(getColor(R.color.primary_light_pink));
+        toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_pink), BlendModeCompat.SRC_ATOP));
+        toolbar.setTitle("Liste d'envies");
 
         //make the wish button out of bound
         set.clear(fabSearchPanel.getId(),ConstraintSet.END);
@@ -189,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         wishListFrag.clearAnimation();
                         restartMainFramemnt(R.id.fragment_wish);
+                        unlockOrient();
                     }
                 });
             }
@@ -206,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
        toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
         toolbar.setTitleTextColor(getColor(R.color.primary_light_purple));
+        toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_purple), BlendModeCompat.SRC_ATOP));
+        toolbar.setTitle("Livre du jour");
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
@@ -239,7 +282,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startFragment(final int fragId, final Fragment ActivityFragment, final int animIn, final int animOut, final String tag) {
-        lockOrient();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(animIn, animOut);
@@ -268,6 +310,44 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.primary_middle_purple));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_purple));
         toolbar.setTitleTextColor(getColor(R.color.primary_light_purple));
+        toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_purple), BlendModeCompat.SRC_ATOP));
+        toolbar.post(new Runnable() {
+            @Override
+            public void run() {
+                toolbar.setTitle("Livre du jour");
+            }
+        });
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setActivityFromOrientation();
+    }
+
+    private void setActivityFromOrientation() {
+        final Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        switch (display.getRotation()) {
+            case Surface.ROTATION_0:
+                //on y est déja
+                break;
+
+            case Surface.ROTATION_90:
+                Intent intent_shelf = new Intent(MainActivity.this, ShelfActivity.class);
+                startActivity(intent_shelf);
+                finish();
+                break;
+
+            case Surface.ROTATION_180:
+                break;
+
+            case Surface.ROTATION_270:
+                Intent intent_observatory = new Intent(MainActivity.this, ObservatoryActivity.class);
+                startActivity(intent_observatory);
+                finish();
+                break;
+        }
     }
 
     @Override
@@ -309,16 +389,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void setCurrentBook(Book selectedBook) {
-        library.setCurrentBook(selectedBook);
-
+        if(selectedBook!=null) {
+            library.setCurrentBook(selectedBook);
+            saveLibrary();
+        }
     }
 
 
     public static void putCurrentToShelf() {
-        library.putCurrentToShelf();
-        saveLibrary();
+        if(getCurrentBook()!=null){
+            library.putCurrentToShelf();
+            saveLibrary();
+        }
     }
 
+    public static void endBookAndPutToShelf() {
+        library.getCurrentBook().addEndTime();
+        putCurrentToShelf();
+        saveLibrary();
+    }
 
     public static void deleteCurrent() {
         library.deleteCurrent();
@@ -326,14 +415,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void removeBookFromWishList(Book selectedBook) {
-        library.removeFromWishList(selectedBook);
-        saveLibrary();
+        if(selectedBook!=null){
+            library.removeFromWishList(selectedBook);
+            saveLibrary();
+        }
     }
 
-    public static void addToWishList(Book selectedBook) {
-        library.addToWishList(selectedBook);
-        saveLibrary();
+    public static void removeBookFromShelf(Book selectedBook) {
+        if(selectedBook!=null){
+            library.removeFromShelf(selectedBook);
+            saveLibrary();
+        }
     }
+
+
+    public static void addToWishList(Book selectedBook) {
+        if(selectedBook!=null){
+            library.addToWishList(selectedBook);
+            saveLibrary();
+        }
+    }
+
+    public static List<Book> getShelf() {
+        return  library.getShelfList();
+    }
+
 
 
 

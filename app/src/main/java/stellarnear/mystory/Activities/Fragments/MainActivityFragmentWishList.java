@@ -152,6 +152,8 @@ public class MainActivityFragmentWishList extends Fragment {
                         TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
                         pages.setVisibility(View.VISIBLE);
                         pages.setText(selectedBook.getMaxPages() +" pages");
+                    } else {
+                        returnFragView.findViewById(R.id.list_book_page_count).setVisibility(View.GONE);
                     }
                 }
             });
@@ -170,6 +172,8 @@ public class MainActivityFragmentWishList extends Fragment {
                 }
             });
         } else {
+            returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
+                    returnFragView.findViewById(R.id.wishScroller).setVisibility(View.GONE);
              returnFragView.findViewById(R.id.icon_book_linear).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.no_wish_list).setVisibility(View.VISIBLE);
         }
@@ -252,7 +256,7 @@ public class MainActivityFragmentWishList extends Fragment {
         cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
         MyLottieDialog dialog = new MyLottieDialog(getContext())
-                .setAnimation(R.raw.swap_book)
+                .setAnimation(R.raw.reading_blank_bakground)
                 .setAnimationRepeatCount(-1)
                 .setAutoPlayAnimation(true)
                 .setTitle("Commencer la lecture")
@@ -277,6 +281,7 @@ public class MainActivityFragmentWishList extends Fragment {
             @Override
             public void onClick(View view) {
                 if(MainActivity.getCurrentBook()==null){
+                    selectedBook.addStartTime();
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromWishList(selectedBook);
                     loadWishList();
@@ -336,6 +341,7 @@ public class MainActivityFragmentWishList extends Fragment {
             @Override
             public void onClick(View view) {
                     MainActivity.putCurrentToShelf();
+                    selectedBook.addStartTime();
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromWishList(selectedBook);
                     loadWishList();

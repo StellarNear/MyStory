@@ -14,7 +14,6 @@ public class Library {
       this.currentBook = currentBook;
    }
 
-
    private List<Book> wishList=new ArrayList<>();
 
    public List<Book> getWishList() {
@@ -42,5 +41,9 @@ public class Library {
 
     public void addToWishList(Book selectedBook) {
        this.wishList.add(selectedBook);
+    }
+
+    public void removeFromShelf(Book selectedBook) {
+        this.shelfList.remove(selectedBook);
     }
 }

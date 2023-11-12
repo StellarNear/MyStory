@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.MyStory.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.MyStory.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.66"
+        android:foregroundGravity="center"
+        android:background="@drawable/background_shelf">
+    </FrameLayout>
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/shelfPicker">
+
+        <LinearLayout
+            android:id="@+id/shelf_book_linear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/general_margin"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/shelf_delete_book"
+                android:layout_width="@dimen/add_book_from_search"
+                android:layout_height="@dimen/add_book_from_search"
+                android:layout_marginRight="@dimen/padding_add_book_from_search"
+             android:src="@drawable/ic_book_off"
+                app:tint="@color/primary_dark_brown"
+               android:background="@drawable/backdrop_light_brown"/>
+
+
+           <ImageView
+               android:id="@+id/shelf_book_note"
+
+               android:layout_width="@dimen/add_book_from_search"
+               android:layout_height="@dimen/add_book_from_search"
+               android:src="@drawable/ic_baseline_edit_note_24"
+               android:layout_marginRight="@dimen/padding_add_book_from_search"
+               app:tint="@color/primary_dark_brown"
+                android:background="@drawable/backdrop_light_brown"/>
+
+
+          <ImageView
+              android:id="@+id/shelf_add_to_current"
+              android:layout_width="@dimen/add_book_from_search"
+              android:layout_height="@dimen/add_book_from_search"
+              android:src="@drawable/ic_book_open_page"
+              app:tint="@color/primary_dark_brown"
+             android:background="@drawable/backdrop_light_brown"/>
+
+      </LinearLayout>
+  </LinearLayout>
+
+  <com.yarolegovich.discretescrollview.DiscreteScrollView
+      android:id="@+id/shelfPicker"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/cover_book_small_height"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
+
+  <LinearLayout
+      android:id="@+id/shelf_info_sub"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      android:padding="@dimen/general_margin"
+      android:visibility="visible"
+      app:layout_constraintBottom_toBottomOf="parent">
+
+
+      <LinearLayout
+          android:gravity="center"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+          android:id="@+id/shelf_book_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="MyTitle"
+              android:padding="@dimen/general_margin"
+          android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+          android:visibility="gone" />
+
+          <TextView
+              android:id="@+id/shelf_book_author"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="MyAutor"
+              android:padding="@dimen/general_margin"
+              android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+              android:textStyle="italic"
+              android:visibility="gone" />
+
+          <TextView
+              android:id="@+id/shelf_book_page_count"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="MyPages"
+              android:padding="@dimen/general_margin"
+              android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+              android:visibility="gone" />
+      </LinearLayout>
+
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:orientation="horizontal">
+
+          <TextView
+              android:id="@+id/shelf_start_date"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="started"
+              android:padding="@dimen/general_margin"
+              android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+              android:visibility="gone" />
+
+          <TextView
+              android:id="@+id/shelf_end_date"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="ended"
+              android:padding="@dimen/general_margin"
+              android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+              android:visibility="gone" />
+
+          <TextView
+              android:id="@+id/shelf_misc"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="autre"
+              android:padding="@dimen/general_margin"
+              android:textAlignment="center"
+              android:textColor="?attr/colorPrimaryDark"
+              android:shadowColor="?attr/colorVariantLight"
+              android:shadowDx="0"
+              android:shadowDy="0"
+              android:shadowRadius="5"
+              android:visibility="gone" />
+
+      </LinearLayout>
+
+  </LinearLayout>
+
+
+  <TextView
+      android:id="@+id/shelf_no_book"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:shadowColor="@color/primary_light_brown"
+      android:shadowDx="0"
+      android:shadowDy="0"
+      android:shadowRadius="20"
+      android:text="Aucun livre sur l'étagère..."
+      android:textColor="@color/primary_dark_brown"
+      android:textSize="30sp"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
