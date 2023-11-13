@@ -2,10 +2,12 @@ package stellarnear.mystory.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,12 +59,18 @@ public class ShelfActivity extends AppCompatActivity {
     private Tools tools=new Tools();
     
     private LinearLayout scrollviewNotes;
+    private SharedPreferences settings;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemeBrown", "style", getPackageName());
         setTheme(themeId);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_shelf);
@@ -84,6 +92,7 @@ public class ShelfActivity extends AppCompatActivity {
             @Override
             public void run() {
                 toolbar.setTitle("L'étagère");
+                toolbar.setBackground(getDrawable(R.drawable.shelf_bar_back));
             }
         });
 
@@ -110,63 +119,44 @@ public class ShelfActivity extends AppCompatActivity {
         scrollView.setAdapter(bookAdapter);
 
         scrollView.scrollToPosition(MainActivity.getShelf().size() - 1);
-
+        TextView infoLine1 = findViewById(R.id.shelf_book_info_line1);
+        infoLine1.setVisibility(View.VISIBLE);
+        TextView infoLine2 = findViewById(R.id.shelf_book_info_line2);
+        infoLine2.setVisibility(View.VISIBLE);
         scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
             @Override
             public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
                 selectedBook = bookAdapter.getBook(adapterPosition);
-                TextView title = findViewById(R.id.shelf_book_title);
-                title.setText(selectedBook.getName());
-                title.setVisibility(View.VISIBLE);
-                TextView author = findViewById(R.id.shelf_book_author);
-                author.setText("de " + selectedBook.getAutor().getFullName());
-                author.setVisibility(View.VISIBLE);
+
+                String info1 = selectedBook.getName();
+
+                info1+=" de " + selectedBook.getAutor().getFullName();
+
                 if (selectedBook.getMaxPages() != null) {
-                    TextView pages = findViewById(R.id.shelf_book_page_count);
-                    pages.setVisibility(View.VISIBLE);
-                    pages.setText("(" + selectedBook.getMaxPages() + " pages)");
-                } else {
-                    findViewById(R.id.shelf_book_page_count).setVisibility(View.GONE);
+                    info1+="(" + selectedBook.getMaxPages() + " pages)";
                 }
 
-                if (selectedBook.getLastStartTime() != null) {
-                    TextView start = findViewById(R.id.shelf_start_date);
-                    start.setVisibility(View.VISIBLE);
-                    start.setText("Débuté le " + selectedBook.getLastStartTime());
+                infoLine1.setText(info1);
 
-                    start.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook,selectedBook.getLastStartTime(),"start");
-                            datePickerFragment.show(getSupportFragmentManager(), "datePicker");
-                            return false;
-                        }
-                    });
-                } else {
-                    findViewById(R.id.shelf_start_date).setVisibility(View.GONE);
+                String info2 ="";
+                if (selectedBook.getLastStartTime() != null) {
+                    info2+="Débuté le " + selectedBook.getLastStartTime();
                 }
                 if (selectedBook.getLastEndTime() != null) {
-                    TextView end = findViewById(R.id.shelf_end_date);
-                    end.setVisibility(View.VISIBLE);
-                    end.setText("fini le " + selectedBook.getLastEndTime());
-                    end.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook,selectedBook.getLastEndTime(),"end");
-                            datePickerFragment.show(getSupportFragmentManager(), "datePicker");
-                            return false;
-                        }
-                    });
-                } else {
-                    findViewById(R.id.shelf_end_date).setVisibility(View.GONE);
+                   info2+=" fini le " + selectedBook.getLastEndTime();
                 }
                 if (selectedBook.getEndTimes().size() > 1) {
-                    TextView misc = findViewById(R.id.shelf_misc);
-                    misc.setVisibility(View.VISIBLE);
-                    misc.setText("lu " + selectedBook.getEndTimes().size() + " fois");
-                } else {
-                    findViewById(R.id.shelf_misc).setVisibility(View.GONE);
+                    info2+=" lu " + selectedBook.getEndTimes().size() + " fois";
                 }
+                infoLine2.setText(info2);
+                infoLine2.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook,selectedBook.getLastStartTime());
+                        datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+                        return false;
+                    }
+                });
             }
         });
 
@@ -240,6 +230,7 @@ public class ShelfActivity extends AppCompatActivity {
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromShelf(selectedBook);
                     tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
+                    initShelf();
                     dialog.dismiss();
                 } else {
                     popupPutCurrentToShelf();
@@ -299,6 +290,7 @@ public class ShelfActivity extends AppCompatActivity {
                 MainActivity.setCurrentBook(selectedBook);
                 MainActivity.removeBookFromShelf(selectedBook);
                 tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
+                initShelf();
                 dialog.dismiss();
             }
         });

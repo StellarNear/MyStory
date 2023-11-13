@@ -3,15 +3,20 @@ package stellarnear.mystory.Activities;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.Window;
@@ -47,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static Library library=null;
     private FrameLayout mainFrameFrag;
-    private boolean toSearch = true;
 
     private ConstraintLayout mConstraintLayout;
     private Window window;
@@ -61,13 +65,21 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fabSearchPanel;
     private FloatingActionButton fabWishList;
+    private SharedPreferences settings;
+    private GestureDetector gestureDetector;
 
+    private FragShown fragShown=null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
         setTheme(themeId);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         super.onCreate(savedInstanceState);
         tinyDB = new TinyDB(getApplicationContext());
         if(library==null){
@@ -79,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 tinyDB.saveLibrary(library);
             }
         }
-
+        gestureDetector = new GestureDetector(this, listener);
         setContentView(R.layout.activity_main);
         mainFrameFrag = findViewById(R.id.fragment_start_main_frame_layout);
         toolbar = findViewById(R.id.toolbar);
@@ -100,9 +112,8 @@ public class MainActivity extends AppCompatActivity {
         fabSearchPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (toSearch) {
+                if (fragShown==null || fragShown!=FragShown.SEARCH) {
                     startSearchFragment();
-                    toSearch = false;
                 } else {
                     if(searchFrag.hasResultShown()){
                         ConstraintSet set = new ConstraintSet();
@@ -149,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSearchFragment() {
-        lockOrient();
         searchFrag = new MainActivityFragmentSearchBooks();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
@@ -159,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(getColor(R.color.primary_light_yellow));
         toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_yellow), BlendModeCompat.SRC_ATOP));
         toolbar.setTitle("Recherche d'un nouveau livre");
+        toolbar.setBackground(getDrawable(R.drawable.search_bar_back));
 
         //make the wish button out of bound
         set.clear(fabWishList.getId(),ConstraintSet.START);
@@ -178,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         searchFrag.clearAnimation();
                         restartMainFramemnt(R.id.fragment_search);
-                        toSearch = true;
-                        unlockOrient();
                     }
                 });
             }
@@ -201,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startWishListFragment() {
-        lockOrient();
         wishListFrag = new MainActivityFragmentWishList();
         ConstraintSet set = new ConstraintSet();
         set.clone(mConstraintLayout);
@@ -211,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(getColor(R.color.primary_light_pink));
         toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_pink), BlendModeCompat.SRC_ATOP));
         toolbar.setTitle("Liste d'envies");
+        toolbar.setBackground(getDrawable(R.drawable.wish_list_bar_back));
 
         //make the wish button out of bound
         set.clear(fabSearchPanel.getId(),ConstraintSet.END);
@@ -229,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         wishListFrag.clearAnimation();
                         restartMainFramemnt(R.id.fragment_wish);
-                        unlockOrient();
                     }
                 });
             }
@@ -249,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(getColor(R.color.primary_light_purple));
         toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_purple), BlendModeCompat.SRC_ATOP));
         toolbar.setTitle("Livre du jour");
+        toolbar.setBackground(getDrawable(R.drawable.dayly_book_bar_back));
 
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
@@ -281,14 +290,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void startFragment(final int fragId, final Fragment ActivityFragment, final int animIn, final int animOut, final String tag) {
+    private void startFragment(final int fragId, final Fragment frag, final int animIn, final int animOut, final String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(animIn, animOut);
-        fragmentTransaction.replace(fragId, ActivityFragment, tag);
+        fragmentTransaction.replace(fragId, frag, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         getSupportFragmentManager().executePendingTransactions();
+        if(frag instanceof MainActivityFragment){
+           fragShown=FragShown.MAIN;
+           unlockOrient();
+        }
+        if(frag instanceof MainActivityFragmentSearchBooks){
+            fragShown=FragShown.SEARCH;
+            lockOrient();
+        }
+        if(frag instanceof MainActivityFragmentWishList){
+            fragShown=FragShown.WISH;
+            lockOrient();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(fragShown==FragShown.SEARCH){
+            restartMainFramemnt(R.id.fragment_search);
+        }  else if (fragShown==FragShown.WISH){
+            restartMainFramemnt(R.id.fragment_wish);
+        }
     }
 
 
@@ -315,6 +345,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 toolbar.setTitle("Livre du jour");
+                toolbar.setBackground(getDrawable(R.drawable.dayly_book_bar_back));
+                fragShown=FragShown.MAIN;
             }
         });
     }
@@ -372,6 +404,41 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (gestureDetector.onTouchEvent(event))
+            return true;
+        return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
+    }
+    private final GestureDetector.SimpleOnGestureListener listener =
+            new GestureDetector.SimpleOnGestureListener() {
+                public boolean onDown(MotionEvent e1) { return false; }
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float vx, float vy) {
+
+                    if(vx<-500){
+                        if(fragShown==FragShown.MAIN){
+                            startSearchFragment();
+                        }
+                        if(fragShown==FragShown.WISH){
+                            restartMainFramemnt(R.id.fragment_wish);
+                        }
+                    }
+                    if(vx>500){
+                        if(fragShown==FragShown.MAIN){
+                            startWishListFragment();
+                        }
+                        if(fragShown==FragShown.SEARCH){
+                            restartMainFramemnt(R.id.fragment_search);
+                        }
+                    }
+                    return false;
+                }
+            };
 
 
     // part to handle library
@@ -441,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
+    private enum FragShown {
+        MAIN,SEARCH,WISH
+    }
 }

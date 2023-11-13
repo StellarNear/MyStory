@@ -2,10 +2,12 @@ package stellarnear.mystory.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,12 +47,18 @@ public class ObservatoryActivity extends AppCompatActivity {
 
     private FloatingActionButton fabSearchPanel;
     private FloatingActionButton fabWishList;
+    private SharedPreferences settings;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemeBlue", "style", getPackageName());
         setTheme(themeId);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_observatory);
@@ -69,6 +77,7 @@ public class ObservatoryActivity extends AppCompatActivity {
             @Override
             public void run() {
                 toolbar.setTitle("L'observatoire");
+                toolbar.setBackground(getDrawable(R.drawable.observatory_bar_back));
             }
         });
     }

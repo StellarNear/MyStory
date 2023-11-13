@@ -533,7 +533,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
                 buttonMain.startAnimation(anim);
             }
-        }, getResources().getInteger(R.integer.translationFragDuration));
+        }, getContext().getResources().getInteger(R.integer.translationFragDuration));
     }
 
     public View getBackButtonView() {

@@ -46,8 +46,9 @@
     <dimen name="cover_book_small_height">150dp</dimen>
 
 
-    <dimen name="mainframe_cover_book_height">225dp</dimen>
-    <dimen name="mainframe_cover_book_width">150dp</dimen>
+    <dimen name="mainframe_cover_book_height">300dp</dimen>
+    <dimen name="mainframe_cover_book_width">200dp</dimen>
+
     <dimen name="mainfrag_percent_text">30sp</dimen>
     <dimen name="mainfrag_percent_page_text">14sp</dimen>
     <dimen name="alert_simple_message_padding">20dp</dimen>

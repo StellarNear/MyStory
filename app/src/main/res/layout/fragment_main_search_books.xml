@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:hint="Titre"
             android:textAlignment="center"
+            android:textColorHint="@color/primary_dark_yellow"
             android:textColor="@color/primary_light_yellow"
             android:textSize="@dimen/text_prompt" />
 
@@ -49,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Auteur"
+            android:textColorHint="@color/primary_dark_yellow"
             android:textAlignment="center"
             android:textColor="@color/primary_light_yellow"
             android:textSize="@dimen/text_prompt" />

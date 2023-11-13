@@ -155,6 +155,13 @@ public class Book {
         this.endTimes.add(toInstant);
     }
 
+    public void setCurrentPage(int page) {
+        this.currentPage=page;
+        if(this.maxPages!=null){
+            this.currentPercent= (int) ((1.0*currentPage/maxPages)*100.0);
+        }
+    }
+
 
     public interface OnImageRefreshedEventListener {
         void onEvent();

@@ -1,15 +1,21 @@
 package stellarnear.mystory.Activities.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +63,8 @@ public class MainActivityFragment extends Fragment {
     private TextView centerPageInfo;
 
     private LinearLayout scrollviewNotes;
+    private ImageView lockIcon;
+    private boolean locked=true;
 
 
     public MainActivityFragment() {
@@ -294,6 +302,9 @@ public class MainActivityFragment extends Fragment {
         if (movingPercent != null) {
             ((ViewGroup) movingPercent.getParent()).removeView(movingPercent);
         }
+        if(lockIcon != null){
+            ((ViewGroup) lockIcon.getParent()).removeView(lockIcon);
+        }
         if (centerPageInfo != null) {
             ((ViewGroup) centerPageInfo.getParent()).removeView(centerPageInfo);
         }
@@ -411,9 +422,35 @@ public class MainActivityFragment extends Fragment {
         if (book.getMaxPages() != null) {
             centerPageInfo = new TextView(getContext());
             centerPageInfo.setId(View.generateViewId());
+            centerPageInfo.setTextSize(18);
             centerPageInfo.setText("-/- pages");
             centerPageInfo.setTextColor(getContext().getColor(R.color.primary_light_purple));
             centerPageInfo.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+            centerPageInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Saisie de la page");
+                    final EditText input = new EditText(getContext());
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    input.setRawInputType(Configuration.KEYBOARD_12KEY);
+                    alert.setView(input);
+                    alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            int percent = (int) ((int) 100*(1.0*Integer.parseInt(input.getText().toString())/(1.0*book.getMaxPages())));
+                            seekBar.setProgress(percent);
+                        }
+                    });
+                    alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                        }
+                    });
+                    alert.show();
+                }
+            });
+
             constrainLayoutProgress.addView(centerPageInfo);
             ConstraintSet setPages = new ConstraintSet();
             setPages.clone(constrainLayoutProgress);
@@ -433,6 +470,14 @@ public class MainActivityFragment extends Fragment {
                 movingPercent.setId(View.generateViewId());
                 constrainLayoutProgress.addView(movingPercent);
 
+
+
+                lockIcon = new ImageView(getContext());
+                lockIcon.setId(View.generateViewId());
+                lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
+                constrainLayoutProgress.addView(lockIcon);
+                //ConstraintSet set2 = new ConstraintSet();
+                //set2.clone(constrainLayoutProgress);
 
                 int width = constrainLayoutProgress.getMeasuredWidth();
                 int height = constrainLayoutProgress.getMeasuredHeight();
@@ -464,18 +509,44 @@ public class MainActivityFragment extends Fragment {
                         set.connect(movingPercent.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP, y);
                         set.applyTo(constrainLayoutProgress);
 
-                        if (firstSet && (v <= MainActivity.getCurrentBook().getCurrentPercent())) {
+                        if (firstSet && (v ==0)) {
                             return;
                         }
                         firstSet = false;
 
-                        if ((int) v < 5 && v != 0 && !lockRefreshOnChange) {
+                        if ((int) v <= 5 && v != 0 && !lockRefreshOnChange) {
                             MainActivityFragment.this.seekBar.setProgress(0);
                             lockRefreshOnChange = true;
+                            return;
                         }
-                        if ((int) v > 95 && v != 100 && !lockRefreshOnChange) {
+                        if ((int) v >= 95 && v != 100 && !lockRefreshOnChange) {
                             MainActivityFragment.this.seekBar.setProgress(100);
                             lockRefreshOnChange = true;
+                            return;
+                        }
+                        if(locked && (int)v < 1.0*book.getCurrentPercent()){
+                            MainActivityFragment.this.seekBar.setProgress(book.getCurrentPercent());
+                        }
+                    }
+                });
+
+
+                int xLock = (int) ((width / 2) + 305 * Math.cos(((135 + 270 * (1.0*book.getCurrentPercent() / 100)) / 180) * Math.PI)) - 25;
+                int yLock = (int) ((height / 2) + 305 * Math.sin(((135 + 270 * (1.0*book.getCurrentPercent()  / 100)) / 180) * Math.PI)) - 25;
+
+                set.connect(lockIcon.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START, xLock);
+                set.connect(lockIcon.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP, yLock);
+                set.applyTo(constrainLayoutProgress);
+
+                lockIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(locked){
+                            lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_open_24));
+                            locked=false;
+                        } else {
+                            lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
+                            locked=true;
                         }
                     }
                 });

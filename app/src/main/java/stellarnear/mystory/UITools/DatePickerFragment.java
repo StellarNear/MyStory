@@ -7,9 +7,6 @@ import android.widget.DatePicker;
 
 import androidx.fragment.app.DialogFragment;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Calendar;
 
 import stellarnear.mystory.Activities.MainActivity;
@@ -20,25 +17,23 @@ public class DatePickerFragment extends DialogFragment
 
 
     private final Book book;
-    private final String mode;
     private final String previousDate;
 
-    public DatePickerFragment(Book book,String previousDate,String mode) {
-        this.book=book;
-        this.previousDate=previousDate;
-        this.mode=mode;
+    public DatePickerFragment(Book book, String previousDate) {
+        this.book = book;
+        this.previousDate = previousDate;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker.
-        try{
+        try {
             String[] dateParsed = previousDate.split("/");
-            int year =Integer.parseInt(dateParsed[2]);
+            int year = Integer.parseInt(dateParsed[2]);
             int month = Integer.parseInt(dateParsed[1]);
             int day = Integer.parseInt(dateParsed[0]);
-            return new DatePickerDialog(requireContext(), this, year, month-1, day);
-        } catch (Exception e){
+            return new DatePickerDialog(requireContext(), this, year, month - 1, day);
+        } catch (Exception e) {
             e.printStackTrace();
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
@@ -49,13 +44,8 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        if(this.mode.equalsIgnoreCase("end")){
-            book.saveNewEndInstant(day+"/"+(month+1)+"/"+year);
-        }
-        if(this.mode.equalsIgnoreCase("start")){
-            book.saveNewStartInstant(day+"/"+(month+1)+"/"+year);
-        }
-
+        book.saveNewEndInstant(day + "/" + (month + 1) + "/" + year);
+        book.saveNewStartInstant(day + "/" + (month + 1) + "/" + year);
         MainActivity.saveLibrary();
     }
 }
