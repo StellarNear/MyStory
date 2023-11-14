@@ -92,7 +92,7 @@ public class ShelfActivity extends AppCompatActivity {
             @Override
             public void run() {
                 toolbar.setTitle("L'étagère");
-                toolbar.setBackground(getDrawable(R.drawable.shelf_bar_back));
+                toolbar.setBackground(getDrawable(R.drawable.shelf_bar_back2));
             }
         });
 

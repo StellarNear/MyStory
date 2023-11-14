@@ -476,8 +476,6 @@ public class MainActivityFragment extends Fragment {
                 lockIcon.setId(View.generateViewId());
                 lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
                 constrainLayoutProgress.addView(lockIcon);
-                //ConstraintSet set2 = new ConstraintSet();
-                //set2.clone(constrainLayoutProgress);
 
                 int width = constrainLayoutProgress.getMeasuredWidth();
                 int height = constrainLayoutProgress.getMeasuredHeight();
@@ -523,9 +521,6 @@ public class MainActivityFragment extends Fragment {
                             MainActivityFragment.this.seekBar.setProgress(100);
                             lockRefreshOnChange = true;
                             return;
-                        }
-                        if(locked && (int)v < 1.0*book.getCurrentPercent()){
-                            MainActivityFragment.this.seekBar.setProgress(book.getCurrentPercent());
                         }
                     }
                 });
