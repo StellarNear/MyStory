@@ -19,6 +19,8 @@ public class Book {
 
 
     private List<String> startTimes=new ArrayList<>();
+    private String summary;
+    private String href;
 
     public List<String> getStartTimes() {
         return startTimes;
@@ -128,9 +130,7 @@ public class Book {
         return currentPercent;
     }
 
-    public byte[] getImage() {
-        return this.imageByte;
-    }
+
 
 
     private OnImageRefreshedEventListener mListenerImageRefreshed;
@@ -162,11 +162,29 @@ public class Book {
         }
     }
 
+    public void setSummary(String trim) {
+        this.summary=trim;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getHref() {
+        return this.href;
+    }
+
+    public void setHref(String href) {
+        this.href=href;
+    }
 
     public interface OnImageRefreshedEventListener {
         void onEvent();
     }
 
+    public byte[] getImage() {
+        return this.imageByte;
+    }
 
     public void setImageByte(byte[] byteChunk) {
         if(byteChunk!=null && byteChunk.length>1){

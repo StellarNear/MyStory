@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -424,19 +425,42 @@ public class MainActivity extends AppCompatActivity {
                     int totalScreenWidth = displayMetrics.widthPixels;
                     int startX = (int) e1.getAxisValue(MotionEvent.AXIS_X);
 
-                    if (vx < -500 && startX > (totalScreenWidth * 0.8)) {
+
+                    if (vx < -500 && startX > (totalScreenWidth * 0.75)) {
                         if (fragShown == FragShown.MAIN) {
                             startSearchFragment();
                         }
                         if (fragShown == FragShown.WISH) {
+                            View wishScroller = findViewById(R.id.wishScroller);
+                            if(wishScroller!=null && wishScroller.isShown()){
+                                int[] location= new int[2];
+                                wishScroller.getLocationInWindow(location);
+                                int y=location[1];
+                                //si le scroll a lieu sur le scroller on ignore
+                                if(e1.getAxisValue(MotionEvent.AXIS_Y)>y && e1.getAxisValue(MotionEvent.AXIS_Y)<y+wishScroller.getMeasuredHeight()){
+                                    return false;
+                                }
+                            }
                             restartMainFramemnt(R.id.fragment_wish);
                         }
                     }
-                    if (vx > 500 && startX < (totalScreenWidth * 0.2)) {
+                    if (vx > 500 && startX < (totalScreenWidth * 0.25)) {
+
                         if (fragShown == FragShown.MAIN) {
                             startWishListFragment();
                         }
                         if (fragShown == FragShown.SEARCH) {
+                            View pickerScroller = findViewById(R.id.pickerScroller);
+                            if(pickerScroller!=null && pickerScroller.isShown()){
+                                int[] location= new int[2];
+                                pickerScroller.getLocationInWindow(location);
+                                int y=location[1];
+                                //si le scroll a lieu sur le scroller on ignore
+                                if(e1.getAxisValue(MotionEvent.AXIS_Y)>y && e1.getAxisValue(MotionEvent.AXIS_Y)<y+pickerScroller.getMeasuredHeight()){
+                                    return false;
+                                }
+
+                            }
                             restartMainFramemnt(R.id.fragment_search);
                         }
                     }

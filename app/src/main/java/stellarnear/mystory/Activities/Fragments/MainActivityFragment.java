@@ -320,11 +320,7 @@ public class MainActivityFragment extends Fragment {
         FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
         seekBar.setLayoutParams(paramSeek);
         mainCenter.addView(seekBar);
-
-
         seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
-
-
     }
 
     private void setImage(Book book) {
@@ -335,6 +331,10 @@ public class MainActivityFragment extends Fragment {
                 @Override
                 public void onEvent() {
                     setImage(book);
+                    MainActivity.saveLibrary();
+                    byte[] b2 = book.getImage();
+                    Drawable image2 = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b2, 0, b2.length));
+                    ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image2);
                 }
             });
             String file = "res/raw/no_image.png";
@@ -348,7 +348,7 @@ public class MainActivityFragment extends Fragment {
                 byte[] bNoimg = buffer.toByteArray();
                 Drawable noImage = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(bNoimg, 0, bNoimg.length));
                 ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(noImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
@@ -470,12 +470,11 @@ public class MainActivityFragment extends Fragment {
                 movingPercent.setId(View.generateViewId());
                 constrainLayoutProgress.addView(movingPercent);
 
-
-
                 lockIcon = new ImageView(getContext());
                 lockIcon.setId(View.generateViewId());
                 lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
                 constrainLayoutProgress.addView(lockIcon);
+                locked=true;
 
                 int width = constrainLayoutProgress.getMeasuredWidth();
                 int height = constrainLayoutProgress.getMeasuredHeight();
@@ -494,6 +493,7 @@ public class MainActivityFragment extends Fragment {
                 seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
                     @Override
                     public void onProgressChanged(float v) {
+
                         if (centerPageInfo != null) {
                             int page = (int) ((1.0 * (int) v * book.getMaxPages()) / 100.0);
                             centerPageInfo.setText(page + "/" + book.getMaxPages() + " pages");
@@ -507,10 +507,16 @@ public class MainActivityFragment extends Fragment {
                         set.connect(movingPercent.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP, y);
                         set.applyTo(constrainLayoutProgress);
 
-                        if (firstSet && (v ==0)) {
+
+                        //le premier setup va nous mener à la valeur actuelle du coup apres ca set firstSet à false
+                        if (firstSet && v < book.getCurrentPercent()) {
                             return;
                         }
                         firstSet = false;
+
+                        if(locked && v < book.getCurrentPercent()){
+                            seekBar.setProgress(book.getCurrentPercent());
+                        }
 
                         if ((int) v <= 5 && v != 0 && !lockRefreshOnChange) {
                             MainActivityFragment.this.seekBar.setProgress(0);
@@ -545,8 +551,6 @@ public class MainActivityFragment extends Fragment {
                         }
                     }
                 });
-
-
             }
         });
     }

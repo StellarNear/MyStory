@@ -12,27 +12,19 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import androidx.core.graphics.BlendModeCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
-import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 
 public class ObservatoryActivity extends AppCompatActivity {
@@ -77,7 +69,7 @@ public class ObservatoryActivity extends AppCompatActivity {
             @Override
             public void run() {
                 toolbar.setTitle("L'observatoire");
-                toolbar.setBackground(getDrawable(R.drawable.observatory_bar_back));
+                toolbar.setBackground(getDrawable(R.drawable.observatory_bar_back2));
             }
         });
     }

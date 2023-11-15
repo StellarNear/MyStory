@@ -51,7 +51,6 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         } else {
             v= inflater.inflate(R.layout.item_book_card, parent, false);
         }
-
         return new ViewHolder(v);
     }
 

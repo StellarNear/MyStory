@@ -61,6 +61,8 @@
     <dimen name="button_width_land">100dp</dimen>
 
     <dimen name="popup_alert_message_width_land">300dp</dimen>
+    <dimen name="scroll_wish_list_height">300dp</dimen>
+    <dimen name="summary_popup_height">400dp</dimen>
 
 
 </resources>

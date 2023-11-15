@@ -2,9 +2,15 @@ package stellarnear.mystory.BookNodeAPI;
 
 import android.os.AsyncTask;
 
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.DomSerializer;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.NodeList;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +22,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
@@ -97,6 +108,12 @@ public class BookNodeCalls {
                     Autor autor = new Autor(autorJson.getLong("idauteur"), autorJson.getString("_prenom"), autorJson.getString("_nom"), autorJson.getString("nom"));
                     Book book = new Book(bookJson.getLong("id"), bookJson.getString("name"), bookJson.getString("cover_double"), autor);
                     getImage(book);
+                    if(bookJson.has("href")&&bookJson.getString("href")!=null){
+                        book.setHref(bookJson.getString("href"));
+                    }
+                    if(i<3){
+                        getSummary(book);
+                    }
                     new OpenLibraryCalls().addExtraMetadatas(book);
                     allBooks.add(book);
                 }
@@ -173,18 +190,23 @@ public class BookNodeCalls {
                     e.printStackTrace();
                 }
             }
-
-
         }
+
+
 
         @Override
         protected void onPostExecute(List<Book> allBooksFound) {
             super.onPostExecute(allBooksFound);
 
             try {
-
                 if (mListener != null) {
                     mListener.onEvent(allBooksFound);
+                }
+                if(allBooksFound.size()>3){
+                    //le premier livre a été fait en forcé
+                    for(int i=3;i<allBooksFound.size();i++){
+                        new JsonTaskSummary().execute(allBooksFound.get(i));
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -198,12 +220,78 @@ public class BookNodeCalls {
     }
 
 
-    private class JsonTaskRefreshImage extends AsyncTask<Book, String,byte[]> {
+
+    private class JsonTaskSummary extends AsyncTask<Book, String,Void> {
         private Book book;
 
         //private Set<Autor> autors;
         // private Set<Serie> series;
 
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        protected Void doInBackground(Book... books) {
+            this.book=books[0];
+            getSummary(book);
+            return null;
+        }
+    }
+
+    private void getSummary(Book book) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        InputStream stream = null;
+        try {
+            byte[] chunk = new byte[16384];
+            int bytesRead;
+            stream = new URL(book.getHref()).openStream();
+            while ((bytesRead = stream.read(chunk)) > 0) {
+                outputStream.write(chunk, 0, bytesRead);
+            }
+
+            TagNode tagNode = new HtmlCleaner().clean(outputStream.toString());
+            org.w3c.dom.Document doc = new DomSerializer(
+                    new CleanerProperties()).createDOM(tagNode);
+
+            XPath xpath = XPathFactory.newInstance().newXPath();
+
+            XPathExpression expr = xpath.compile("//span[descendant::span[@class='resume-title']]/p");
+            NodeList list= (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            String summary="";
+            if(list.getLength()>1){
+                for (int i = 1; i < list.getLength(); i++) {
+                    try {
+                        summary+=list.item(i).getTextContent()+"\n";
+                    } catch (Exception e) {
+                        //skip paragraph
+                    }
+                }
+                if(summary!=null && summary.trim().length()>1){
+                    book.setSummary(summary.trim());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class JsonTaskRefreshImage extends AsyncTask<Book, String,byte[]> {
+        private Book book;
+
+        //private Set<Autor> autors;
+        // private Set<Serie> series;
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -211,8 +299,6 @@ public class BookNodeCalls {
 
         protected byte[] doInBackground(Book... books) {
             this.book=books[0];
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 InputStream stream = null;
@@ -223,7 +309,6 @@ public class BookNodeCalls {
                     while ((bytesRead = stream.read(chunk)) > 0) {
                         outputStream.write(chunk, 0, bytesRead);
                     }
-
                     return  outputStream.toByteArray();
                 } catch (Exception e) {
                     e.printStackTrace();

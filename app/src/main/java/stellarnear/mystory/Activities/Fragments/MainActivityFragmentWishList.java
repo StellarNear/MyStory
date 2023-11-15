@@ -134,8 +134,8 @@ public class MainActivityFragmentWishList extends Fragment {
             TextView author = returnFragView.findViewById(R.id.list_book_author);
             author.setVisibility(View.VISIBLE);
             author.setText(bookZero.getAutor().getFullName());
+            TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
             if(bookZero.getMaxPages()!=null){
-                TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
                 pages.setVisibility(View.VISIBLE);
                 pages.setText(bookZero.getMaxPages()+" pages");
             }
@@ -144,16 +144,13 @@ public class MainActivityFragmentWishList extends Fragment {
                 @Override
                 public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
                     selectedBook = bookAdapter.getBook(adapterPosition);
-                    TextView title = returnFragView.findViewById(R.id.list_book_title);
                     title.setText(selectedBook.getName());
-                    TextView author = returnFragView.findViewById(R.id.list_book_author);
                     author.setText(selectedBook.getAutor().getFullName());
                     if(selectedBook.getMaxPages()!=null){
-                        TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
                         pages.setVisibility(View.VISIBLE);
                         pages.setText(selectedBook.getMaxPages() +" pages");
                     } else {
-                        returnFragView.findViewById(R.id.list_book_page_count).setVisibility(View.GONE);
+                        pages.setVisibility(View.GONE);
                     }
                 }
             });

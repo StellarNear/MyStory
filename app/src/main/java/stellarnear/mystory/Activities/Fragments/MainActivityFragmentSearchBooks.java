@@ -1,8 +1,11 @@
 package stellarnear.mystory.Activities.Fragments;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +13,18 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,6 +52,8 @@ public class MainActivityFragmentSearchBooks extends Fragment {
     private boolean resultShown = false;
     private Book selectedBook;
     private ImageButton backButton;
+    private EditText titlePrompt;
+    private EditText authorPrompt;
 
     public MainActivityFragmentSearchBooks() {
     }
@@ -55,28 +62,6 @@ public class MainActivityFragmentSearchBooks extends Fragment {
 
     public void setOnFramentViewCreatedEventListener(OnFramentViewCreatedEventListener eventListener) {
         mLoadedListner = eventListener;
-    }
-
-    public boolean hasResultShown() {
-        return this.resultShown;
-    }
-
-    public void clearResult() {
-        if(bookAdapter!=null){
-            bookAdapter.reset();
-        }
-
-        returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.GONE);
-        returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
-        returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
-        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
-
-        returnFragView.findViewById(R.id.linearSearchPrompt).setVisibility(View.VISIBLE);
-        returnFragView.findViewById(R.id.search_title_prompt).setVisibility(View.VISIBLE);
-        returnFragView.findViewById(R.id.search_author_prompt).setVisibility(View.VISIBLE);
-        returnFragView.findViewById(R.id.loading_search).clearAnimation();
-        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
-        resultShown = false;
     }
 
     public interface OnFramentViewCreatedEventListener {
@@ -134,20 +119,66 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         if (mLoadedListner != null) {
             mLoadedListner.onEvent();
         }
+
+        titlePrompt = returnFragView.findViewById(R.id.search_title_prompt);
+        titlePrompt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        titlePrompt.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        authorPrompt = returnFragView.findViewById(R.id.search_author_prompt);
+        authorPrompt.setImeOptions(EditorInfo.IME_ACTION_SEND);
+        authorPrompt.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        authorPrompt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    startSearch();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+
         return returnFragView;
     }
 
+    public boolean hasResultShown() {
+        return this.resultShown;
+    }
+
+    public void clearResult() {
+        if (bookAdapter != null) {
+            bookAdapter.reset();
+        }
+
+        returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
+        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
+
+        returnFragView.findViewById(R.id.linearSearchPrompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.search_title_prompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.search_author_prompt).setVisibility(View.VISIBLE);
+        returnFragView.findViewById(R.id.loading_search).clearAnimation();
+        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
+        resultShown = false;
+    }
 
     public void clearAnimation() {
-       if(backButton!=null){
-           backButton.clearAnimation();
-           ((ViewGroup)backButton.getParent()).removeView(backButton);
-       }
+        if (backButton != null) {
+            backButton.clearAnimation();
+            ((ViewGroup) backButton.getParent()).removeView(backButton);
+        }
     }
 
     public void startSearch() {
-        EditText authorPrompt = returnFragView.findViewById(R.id.search_author_prompt);
-        EditText titlePrompt = returnFragView.findViewById(R.id.search_title_prompt);
         String search = titlePrompt.getText().toString().trim() + " " + authorPrompt.getText().toString().trim();
         if (search.trim().length() < 3) {
             tools.customToast(getContext(), "Entres au moins un titre ou un auteur");
@@ -207,6 +238,14 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         TextView title = returnFragView.findViewById(R.id.list_book_title);
         title.setVisibility(View.VISIBLE);
         title.setText(bookZero.getName());
+
+        title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpSummary();
+            }
+        });
+
         TextView author = returnFragView.findViewById(R.id.list_book_author);
         author.setVisibility(View.VISIBLE);
         author.setText(bookZero.getAutor().getFullName());
@@ -225,11 +264,8 @@ public class MainActivityFragmentSearchBooks extends Fragment {
             @Override
             public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
                 selectedBook = bookAdapter.getBook(adapterPosition);
-                TextView title = returnFragView.findViewById(R.id.list_book_title);
                 title.setText(selectedBook.getName());
-                TextView author = returnFragView.findViewById(R.id.list_book_author);
                 author.setText(selectedBook.getAutor().getFullName());
-                TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
                 pages.setText(selectedBook.getMeanPagesFoundTxt());
                 selectedBook.setOnPageDataRecievedEventListener(new Book.OnPageDataRecievedEventListener() {
                     @Override
@@ -255,6 +291,50 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         });
     }
 
+    private void popUpSummary() {
+        if(selectedBook!=null){
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
+            View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+            View summary = inflater.inflate(R.layout.summary_scroll, null);
+
+            TextView sumTxt = summary.findViewById(R.id.summary_text);
+            sumTxt.setText(selectedBook.getSummary());
+
+            LinearLayout.LayoutParams paramInner = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.scroll_wish_list_height));
+            int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+            paramInner.setMargins(margin, margin, margin, margin);
+            summary.setLayoutParams(paramInner);
+
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            Button cancelButton = new Button(getContext());
+            cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+            cancelButton.setText("Fermer");
+            cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+            MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
+                    .setTitle("Résumé du livre")
+                    .setMessage(summary)
+                    .setCancelable(false)
+                    .addActionButton(cancelButton)
+                    .setOnShowListener(dialogInterface -> {
+                    })
+                    .setOnDismissListener(dialogInterface -> {
+                    })
+                    .setOnCancelListener(dialogInterface -> {
+                    });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            cancelButton.setLayoutParams(param);
+        }
+    }
+
     private void popupAddToWishList() {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -278,14 +358,14 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 new int[][]{
                         new int[]{android.R.attr.state_enabled} //enabled
                 },
-                new int[] {getContext().getColor(R.color.primary_light_yellow) }
+                new int[]{getContext().getColor(R.color.primary_light_yellow)}
         );
-        for(int i :selectedBook.getPagesFounds()){
+        for (int i : selectedBook.getPagesFounds()) {
             RadioButton button = new RadioButton(getContext());
             button.setTextColor(getContext().getColor(R.color.primary_light_yellow));
             button.setButtonTintList(colorStateList);
-            button.setText(i+" pages");
-            radioGroup.addView(button,0);
+            button.setText(i + " pages");
+            radioGroup.addView(button, 0);
         }
 
         Button okButton = new Button(getContext());
@@ -328,22 +408,22 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(radioGroup.getCheckedRadioButtonId()!=-1){
+                if (radioGroup.getCheckedRadioButtonId() != -1) {
                     //on check si other a été selectionner
-                    if(radioGroup.getCheckedRadioButtonId()==pageOtherRadio.getId()){
+                    if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
                         try {
                             EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                             Integer page = Integer.parseInt(valuePage.getText().toString());
                             selectedBook.setMaxPages(page);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
                         try {
                             RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages",""));
+                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
                             selectedBook.setMaxPages(page);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -381,14 +461,14 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 new int[][]{
                         new int[]{android.R.attr.state_enabled} //enabled
                 },
-                new int[] {getContext().getColor(R.color.primary_light_yellow) }
+                new int[]{getContext().getColor(R.color.primary_light_yellow)}
         );
-        for(int i :selectedBook.getPagesFounds()){
+        for (int i : selectedBook.getPagesFounds()) {
             RadioButton button = new RadioButton(getContext());
             button.setTextColor(getContext().getColor(R.color.primary_light_yellow));
             button.setButtonTintList(colorStateList);
-            button.setText(i+" pages");
-            radioGroup.addView(button,0);
+            button.setText(i + " pages");
+            radioGroup.addView(button, 0);
         }
 
         Button okButton = new Button(getContext());
@@ -429,22 +509,22 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(radioGroup.getCheckedRadioButtonId()!=-1){
+                if (radioGroup.getCheckedRadioButtonId() != -1) {
                     //on check si other a été selectionner
-                    if(radioGroup.getCheckedRadioButtonId()==pageOtherRadio.getId()){
+                    if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
                         try {
                             EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                             Integer page = Integer.parseInt(valuePage.getText().toString());
                             selectedBook.setMaxPages(page);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
                         try {
                             RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages",""));
+                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
                             selectedBook.setMaxPages(page);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
