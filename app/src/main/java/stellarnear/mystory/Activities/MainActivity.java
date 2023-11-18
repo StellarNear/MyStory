@@ -44,7 +44,7 @@ import stellarnear.mystory.BooksLibs.Library;
 import stellarnear.mystory.R;
 import stellarnear.mystory.TinyDB;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CustomActivity {
 
     private static Library library = null;
     private FrameLayout mainFrameFrag;
@@ -68,15 +68,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
         setTheme(themeId);
-        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        super.onCreate(savedInstanceState);
         tinyDB = new TinyDB(getApplicationContext());
         if (library == null) {
             try {
@@ -136,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
         initMainFragment();
     }
 
+
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onResumeCustom() throws Exception {
         checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
@@ -309,12 +303,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    protected void onBackPressedCustom() throws Exception {
         if (fragShown == FragShown.SEARCH) {
             restartMainFramemnt(R.id.fragment_search);
         } else if (fragShown == FragShown.WISH) {
             restartMainFramemnt(R.id.fragment_wish);
         }
+    }
+
+    @Override
+    protected void onDestroyCustom() {
+
     }
 
 
@@ -349,8 +348,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void onConfigurationChangedCustom() {
         setActivityFromOrientation();
     }
 
@@ -393,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    protected boolean onOptionsItemSelectedCustom(MenuItem item) throws Exception {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
