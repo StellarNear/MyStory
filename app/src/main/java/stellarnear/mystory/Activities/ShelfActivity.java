@@ -42,7 +42,7 @@ import stellarnear.mystory.UITools.DatePickerFragment;
 import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.UITools.MyLottieDialog;
 
-public class ShelfActivity extends AppCompatActivity {
+public class ShelfActivity extends CustomActivity {
 
 
     private Window window;
@@ -62,22 +62,15 @@ public class ShelfActivity extends AppCompatActivity {
     private SharedPreferences settings;
 
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemeBrown", "style", getPackageName());
         setTheme(themeId);
-        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_shelf);
 
         toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().show();
         window = getWindow();
 
         initShelf();
@@ -484,12 +477,19 @@ public class ShelfActivity extends AppCompatActivity {
         okButton.setLayoutParams(param);
     }
 
-
+    @Override
+    protected void onResumeCustom() throws Exception {
+        checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    protected void onBackPressedCustom() throws Exception {
+
+    }
+
+    @Override
+    protected void onDestroyCustom() {
+
     }
 
     private void checkOrientStart(int screenOrientation) {
@@ -505,10 +505,26 @@ public class ShelfActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelectedCustom(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra("fromActivity", "shelfActivity");
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void onConfigurationChangedCustom() {
         setActivityFromOrientation();
     }
 
@@ -542,20 +558,5 @@ public class ShelfActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

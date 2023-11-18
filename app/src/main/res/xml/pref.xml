@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_smartphone"
+            android:key="pref_appli"
+            android:summary="Paramètres et informations de l'application"
+            android:title="Gestion de l'application" />
+
+
+
+</PreferenceScreen>

@@ -27,7 +27,7 @@ import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.R;
 
-public class ObservatoryActivity extends AppCompatActivity {
+public class ObservatoryActivity extends CustomActivity {
 
 
     private Window window;
@@ -42,16 +42,13 @@ public class ObservatoryActivity extends AppCompatActivity {
     private SharedPreferences settings;
 
 
+
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemeBlue", "style", getPackageName());
         setTheme(themeId);
-        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (settings.getBoolean("switch_fullscreen_mode", getApplicationContext().getResources().getBoolean(R.bool.switch_fullscreen_mode_def))) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_observatory);
         toolbar = findViewById(R.id.toolbar);
@@ -75,9 +72,18 @@ public class ObservatoryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onResumeCustom() {
         checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+    }
+
+    @Override
+    protected void onBackPressedCustom() throws Exception {
+
+    }
+
+    @Override
+    protected void onDestroyCustom() {
+
     }
 
     private void checkOrientStart(int screenOrientation) {
@@ -93,11 +99,7 @@ public class ObservatoryActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setActivityFromOrientation();
-    }
+
 
     private void setActivityFromOrientation() {
         final Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -131,17 +133,25 @@ public class ObservatoryActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelectedCustom(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra("fromActivity", "observatoryActivity");
+            startActivity(intent);
+            finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onConfigurationChangedCustom() {
+        setActivityFromOrientation();
+    }
+
 }

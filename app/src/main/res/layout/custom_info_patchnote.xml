@@ -1,0 +1,58 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_border_infos"
+    android:fitsSystemWindows="true"
+    android:padding="@dimen/general_margin"
+    android:transitionName="transition">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/logo_near" />
+
+    <LinearLayout
+        android:id="@+id/toast_list_title_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|start"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/custom_info_patchnote_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/toast_list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Patch note"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/black"
+                android:textSize="22dp" />
+
+            <ImageView
+                android:id="@+id/toast_list_backarrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_margin="@dimen/general_margin"
+                android:src="@drawable/ic_undo_black_24dp" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/custom_info_patchnote"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/general_margin"></LinearLayout>
+    </LinearLayout>
+
+
+</FrameLayout>

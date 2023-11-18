@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="switch_fullscreen_mode_def">true</bool>
+    <bool name="switch_direct_add_to_shelf_def">false</bool>
 </resources>

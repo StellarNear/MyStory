@@ -28,48 +28,48 @@ public abstract class CustomActivity extends AppCompatActivity {
                 this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             }
             super.onCreate(savedInstanceState);
-            doActivity();
+            onCreateCustom();
         } catch (Exception e) {
             log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
         }
     }
 
-    abstract protected void doActivity() throws Exception;
+    abstract protected void onCreateCustom() throws Exception;
 
     @Override
     protected void onResume() {
         super.onResume();
         try {
-            onResumeActivity();
+            onResumeCustom();
         } catch (Exception e) {
             log.fatal(this,"Error in activity : "+ this.getLocalClassName(), e);
         }
     }
 
-    protected abstract void onResumeActivity() throws Exception;
+    protected abstract void onResumeCustom() throws Exception;
 
     @Override
     public void onBackPressed() {
         try {
-            onBackPressedActivity();
+            onBackPressedCustom();
         } catch (Exception e) {
             log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
         }
     }
 
-    protected abstract void onBackPressedActivity() throws Exception;
+    protected abstract void onBackPressedCustom() throws Exception;
 
     @Override
     protected void onDestroy() {
         try {
-            onDestroyActivity();
+            onDestroyCustom();
         } catch (Exception e) {
             log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
         }
         super.onDestroy();
     }
 
-    protected abstract void onDestroyActivity();
+    protected abstract void onDestroyCustom();
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -78,7 +78,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         boolean result = false;
         try {
-            result = onOptionsItemSelectedActivity(item);
+            result = onOptionsItemSelectedCustom(item);
         } catch (Exception e) {
             log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
         }
@@ -86,18 +86,17 @@ public abstract class CustomActivity extends AppCompatActivity {
         return result;
     }
 
-    protected abstract boolean onOptionsItemSelectedActivity(MenuItem item) throws Exception;
+    protected abstract boolean onOptionsItemSelectedCustom(MenuItem item) throws Exception;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         try {
-            onConfigurationChangedActivity();
+            onConfigurationChangedCustom();
         } catch (Exception e) {
             log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
         }
     }
 
-    protected abstract void onConfigurationChangedActivity();
+    protected abstract void onConfigurationChangedCustom();
 }

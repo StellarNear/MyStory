@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="@bool/switch_fullscreen_mode_def"
+        android:key="switch_fullscreen_mode"
+        android:summary="Masque la barre de statut du téléphone"
+        android:title="Mode plein écran" />
+
+    <SwitchPreference
+        android:defaultValue="@bool/switch_direct_add_to_shelf_def"
+        android:key="switch_direct_add_to_shelf"
+        android:title="Ajout direct à létagère"
+        android:summary="Permet d'ajouter directement les livres depuis la recherche à l'étagère"/>
+
+</PreferenceScreen>

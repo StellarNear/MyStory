@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -33,17 +36,8 @@ public class SplashActivity extends CustomActivity {
     private boolean touched = false;
 
     @Override
-    protected void doActivity() {
-
-        Thread loadListner = new Thread(new Runnable() {
-            public void run() {
-                setLoadCompleteListner();
-            }
-        });
-
-            loadListner.start();
-
-
+    protected void onCreateCustom() {
+// checking for rights
 
         //new PostConnectionVersion(getApplicationContext()); //sending connexion data to apk versionning usage page
 
@@ -60,9 +54,19 @@ public class SplashActivity extends CustomActivity {
                     PERMISSIONS_STORAGE,
                     1
             );
-        } else {
-            // checkUpdate();
         }
+
+        Thread loadListner = new Thread(new Runnable() {
+            public void run() {
+                setLoadCompleteListner();
+            }
+        });
+
+            loadListner.start();
+
+
+
+
     }
 
 
@@ -118,27 +122,27 @@ public class SplashActivity extends CustomActivity {
     }
 
     @Override
-    protected void onResumeActivity() {
+    protected void onResumeCustom() {
         //nothing
     }
 
     @Override
-    protected void onBackPressedActivity() {
+    protected void onBackPressedCustom() {
         //nothing
     }
 
     @Override
-    protected void onDestroyActivity() {
+    protected void onDestroyCustom() {
         //nothing
     }
 
     @Override
-    protected boolean onOptionsItemSelectedActivity(MenuItem item) {
+    protected boolean onOptionsItemSelectedCustom(MenuItem item) {
         return false;
     }
 
     @Override
-    protected void onConfigurationChangedActivity() {
+    protected void onConfigurationChangedCustom() {
         //nothing
     }
 

@@ -386,6 +386,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (gestureDetector.onTouchEvent(event))
+            return true;
+        return super.dispatchTouchEvent(event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -394,17 +401,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            unlockOrient();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra("fromActivity", "MainActivity");
+            startActivity(intent);
+            finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (gestureDetector.onTouchEvent(event))
-            return true;
-        return super.dispatchTouchEvent(event);
     }
 
     @Override

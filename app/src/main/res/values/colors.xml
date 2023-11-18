@@ -54,6 +54,7 @@
     <color name="blue">#FF2196F3</color>
     <color name="indigo">#FF3F51B5</color>
     <color name="purple">#FF9C27B0</color>
+    <color name="information">#0B77C7</color>
 
     <array name="rainbow">
         <item>@color/purple</item>
