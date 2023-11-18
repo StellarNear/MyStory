@@ -4,46 +4,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Library {
-   private Book currentBook=null;
+    private Book currentBook = null;
 
-   public Book getCurrentBook() {
-      return currentBook;
-   }
+    public Book getCurrentBook() {
+        return currentBook;
+    }
 
-   public void setCurrentBook(Book currentBook) {
-      this.currentBook = currentBook;
-   }
+    public void setCurrentBook(Book currentBook) {
+        this.currentBook = currentBook;
+    }
 
-   private List<Book> wishList=new ArrayList<>();
+    private final List<Book> wishList = new ArrayList<>();
 
-   public List<Book> getWishList() {
-      return wishList;
-   }
+    public List<Book> getWishList() {
+        return wishList;
+    }
 
-   private List<Book> shelfList=new ArrayList<>();
+    private final List<Book> shelfList = new ArrayList<>();
 
-   public List<Book> getShelfList() {
-      return shelfList;
-   }
+    public List<Book> getShelfList() {
+        return shelfList;
+    }
 
     public void putCurrentToShelf() {
-      this.shelfList.add(this.currentBook);
-      this.currentBook=null;
+        this.shelfList.add(this.currentBook);
+        this.currentBook = null;
     }
 
     public void deleteCurrent() {
-       this.currentBook=null;
+        this.currentBook = null;
     }
 
     public void removeFromWishList(Book selectedBook) {
-       this.wishList.remove(selectedBook);
+        this.wishList.remove(selectedBook);
     }
 
     public void addToWishList(Book selectedBook) {
-       this.wishList.add(selectedBook);
+        this.wishList.add(selectedBook);
     }
 
     public void removeFromShelf(Book selectedBook) {
         this.shelfList.remove(selectedBook);
+    }
+
+    public void addToShelf(Book selectedBook) {
+        this.shelfList.add(selectedBook);
     }
 }

@@ -5,10 +5,10 @@
         <!-- Status bar color. -->
 
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/yellow</item>
-        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorPrimary">@color/primary_middle_purple</item>
+        <item name="colorPrimaryDark">@color/primary_dark_purple</item>
         <item name="colorPrimaryVariant">@color/blue</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/primary_light_purple</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/black</item>
         <item name="colorSecondaryVariant">@color/red</item>
@@ -26,6 +26,8 @@
         <item name="colorVariantLight">@color/primary_light_purple</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <item name="android:textColorPrimary">@color/primary_light_purple</item>
     </style>
 
     <style name="AppThemePink" parent="Theme.MyStory">
@@ -76,6 +78,10 @@
     <style name="Theme.MyStory.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textColor">@color/primary_light_purple</item>
+        <item name="android:itemBackground">@color/primary_middle_purple</item>
+
+
     </style>
 
     <style name="Theme.MyStory.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

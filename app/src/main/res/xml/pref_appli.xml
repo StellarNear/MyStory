@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceScreen
-        android:icon="@drawable/ic_info_black_24dp"
+        android:icon="@drawable/ic_info_24dp"
         android:key="infos"
         android:summary="Résumé d'informations sur l'application"
         android:title="Infos" />
     <PreferenceScreen
-        android:icon="@drawable/ic_build_black_24dp"
+        android:icon="@drawable/ic_build_24dp"
         android:key="pref_appli_para"
         android:summary="Options de application"
         android:title="Paramètres de l'application" />

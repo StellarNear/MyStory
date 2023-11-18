@@ -17,7 +17,11 @@ public class DatePickerFragment extends DialogFragment
 
 
     private final Book book;
-    private final String previousDate;
+    private String previousDate = null;
+
+    public DatePickerFragment(Book book) {
+        this.book = book;
+    }
 
     public DatePickerFragment(Book book, String previousDate) {
         this.book = book;
@@ -28,19 +32,27 @@ public class DatePickerFragment extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker.
         try {
-            String[] dateParsed = previousDate.split("/");
-            int year = Integer.parseInt(dateParsed[2]);
-            int month = Integer.parseInt(dateParsed[1]);
-            int day = Integer.parseInt(dateParsed[0]);
-            return new DatePickerDialog(requireContext(), this, year, month - 1, day);
+            if (previousDate != null) {
+                String[] dateParsed = previousDate.split("/");
+                int year = Integer.parseInt(dateParsed[2]);
+                int month = Integer.parseInt(dateParsed[1]);
+                int day = Integer.parseInt(dateParsed[0]);
+                return new DatePickerDialog(requireContext(), this, year, month - 1, day);
+            } else {
+                return defaultPicker();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            return new DatePickerDialog(requireContext(), this, year, month, day);
+            return defaultPicker();
         }
+    }
+
+    private Dialog defaultPicker() {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return new DatePickerDialog(requireContext(), this, year, month, day);
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {

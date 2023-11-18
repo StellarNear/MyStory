@@ -9,7 +9,6 @@ import org.htmlcleaner.TagNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
 
 import java.io.BufferedReader;
@@ -34,7 +33,7 @@ import stellarnear.mystory.BooksLibs.Book;
 public class BookNodeCalls {
 
 
-    private static String baseUrl = "https://booknode.com/";
+    private static final String baseUrl = "https://booknode.com/";
 
     public void getBooksFromSearch(String search) throws JSONException {
         new JsonTaskGetBook().execute(baseUrl + "search-json?q=" + search.replace(" ", "+") + "&exclude_series_from_books=0");
@@ -59,7 +58,7 @@ public class BookNodeCalls {
         void onEvent();
     }
 
-    public void refreshImage(Book book){
+    public void refreshImage(Book book) {
         new JsonTaskRefreshImage().execute(book);
     }
 
@@ -93,7 +92,7 @@ public class BookNodeCalls {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
-                   // Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
+                    // Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
                 }
 
 
@@ -108,10 +107,10 @@ public class BookNodeCalls {
                     Autor autor = new Autor(autorJson.getLong("idauteur"), autorJson.getString("_prenom"), autorJson.getString("_nom"), autorJson.getString("nom"));
                     Book book = new Book(bookJson.getLong("id"), bookJson.getString("name"), bookJson.getString("cover_double"), autor);
                     getImage(book);
-                    if(bookJson.has("href")&&bookJson.getString("href")!=null){
+                    if (bookJson.has("href") && bookJson.getString("href") != null) {
                         book.setHref(bookJson.getString("href"));
                     }
-                    if(i<3){
+                    if (i < 3) {
                         getSummary(book);
                     }
                     new OpenLibraryCalls().addExtraMetadatas(book);
@@ -172,7 +171,7 @@ public class BookNodeCalls {
                 while ((bytesRead = stream.read(chunk)) > 0) {
                     outputStream.write(chunk, 0, bytesRead);
                 }
-                if(outputStream.toByteArray().length>0){
+                if (outputStream.toByteArray().length > 0) {
                     book.setImageByte(outputStream.toByteArray());
                 }
             } catch (Exception e) {
@@ -193,7 +192,6 @@ public class BookNodeCalls {
         }
 
 
-
         @Override
         protected void onPostExecute(List<Book> allBooksFound) {
             super.onPostExecute(allBooksFound);
@@ -202,9 +200,9 @@ public class BookNodeCalls {
                 if (mListener != null) {
                     mListener.onEvent(allBooksFound);
                 }
-                if(allBooksFound.size()>3){
+                if (allBooksFound.size() > 3) {
                     //le premier livre a été fait en forcé
-                    for(int i=3;i<allBooksFound.size();i++){
+                    for (int i = 3; i < allBooksFound.size(); i++) {
                         new JsonTaskSummary().execute(allBooksFound.get(i));
                     }
                 }
@@ -220,8 +218,7 @@ public class BookNodeCalls {
     }
 
 
-
-    private class JsonTaskSummary extends AsyncTask<Book, String,Void> {
+    private class JsonTaskSummary extends AsyncTask<Book, String, Void> {
         private Book book;
 
         //private Set<Autor> autors;
@@ -232,7 +229,7 @@ public class BookNodeCalls {
         }
 
         protected Void doInBackground(Book... books) {
-            this.book=books[0];
+            this.book = books[0];
             getSummary(book);
             return null;
         }
@@ -256,17 +253,17 @@ public class BookNodeCalls {
             XPath xpath = XPathFactory.newInstance().newXPath();
 
             XPathExpression expr = xpath.compile("//span[descendant::span[@class='resume-title']]/p");
-            NodeList list= (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-            String summary="";
-            if(list.getLength()>1){
+            NodeList list = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            String summary = "";
+            if (list.getLength() > 1) {
                 for (int i = 1; i < list.getLength(); i++) {
                     try {
-                        summary+=list.item(i).getTextContent()+"\n";
+                        summary += list.item(i).getTextContent() + "\n";
                     } catch (Exception e) {
                         //skip paragraph
                     }
                 }
-                if(summary!=null && summary.trim().length()>1){
+                if (summary != null && summary.trim().length() > 1) {
                     book.setSummary(summary.trim());
                 }
             }
@@ -287,7 +284,7 @@ public class BookNodeCalls {
         }
     }
 
-    private class JsonTaskRefreshImage extends AsyncTask<Book, String,byte[]> {
+    private class JsonTaskRefreshImage extends AsyncTask<Book, String, byte[]> {
         private Book book;
 
         //private Set<Autor> autors;
@@ -298,7 +295,7 @@ public class BookNodeCalls {
         }
 
         protected byte[] doInBackground(Book... books) {
-            this.book=books[0];
+            this.book = books[0];
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 InputStream stream = null;
@@ -309,7 +306,7 @@ public class BookNodeCalls {
                     while ((bytesRead = stream.read(chunk)) > 0) {
                         outputStream.write(chunk, 0, bytesRead);
                     }
-                    return  outputStream.toByteArray();
+                    return outputStream.toByteArray();
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -335,8 +332,8 @@ public class BookNodeCalls {
         @Override
         protected void onPostExecute(byte[] byteArray) {
             super.onPostExecute(byteArray);
-            if ( byteArray!=null && byteArray.length>1){
-                    book.setImageByte(byteArray);
+            if (byteArray != null && byteArray.length > 1) {
+                book.setImageByte(byteArray);
             }
         }
 

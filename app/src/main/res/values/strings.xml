@@ -2,14 +2,40 @@
     <string name="app_name">MyStory</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="cancel">non</string>
     <string name="ok">oui</string>
+
+
+        <string name="time_spend" >"65h"</string>
+        <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
+        <string name="patch_list">"
+valpha.5 :
+-ajout d'un systeme de menu
+-ajout d'un mailer si y a un crash
+-ajout d'un mode pour ajouter directement à l'étagère depuis la recherche
+
+valpha.4 :
+-fix du swipe quand il est fait sur un slider on change pas de sous tache
+-nouveaux appels pour aller chercher les résumé (disponible au clic sur le titre)
+-fix du titre de recherche quand il est torp long
+-amélioration de la video de lancement pour pas avoir de bord coupé
+
+valpha.3 :
+-améliorations de la recherche et bug fixes
+
+valpha.2 :
+-les images sont harmonisé avec les themes de couleur et les zone sous les titres sont legerement modifiées pour mieux lire les titres
+-les swipe gauche et droite sont plus intelligents
+
+valpha.1 :
+-ajout des images aux barres (images changable si t'aimes pas)
+-augmenter la taille de l'image centrale
+-fixé pas mal de bug que j'ai croisé
+-mis le systeme de swipe avec le doigt (smooth)
+-mis le clic sur les pages lors du changement de progres qui permet d'aller direct à une page (attention ca prend le % le plus proche genre si ton livre a 660 page et que tu met 333 ca fera 50% mais du coup ca correspond à 330 pages)"</string>
+
+
+
 </resources>

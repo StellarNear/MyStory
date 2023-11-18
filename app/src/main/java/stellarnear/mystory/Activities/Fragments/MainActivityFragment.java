@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputType;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,12 +18,10 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.fragment.app.Fragment;
 
 import com.seosh817.circularseekbar.BarStrokeCap;
 import com.seosh817.circularseekbar.CircularSeekBar;
@@ -32,7 +29,6 @@ import com.seosh817.circularseekbar.CircularSeekBarAnimation;
 import com.seosh817.circularseekbar.callbacks.OnProgressChangedListener;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import stellarnear.mystory.Activities.MainActivity;
@@ -46,7 +42,7 @@ import stellarnear.mystory.UITools.MyLottieDialog;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends CustomFragment {
     private View returnFragView;
     private boolean zoomedProgress = false;
     private ConstraintLayout constrainLayoutProgress;
@@ -64,18 +60,18 @@ public class MainActivityFragment extends Fragment {
 
     private LinearLayout scrollviewNotes;
     private ImageView lockIcon;
-    private boolean locked=true;
+    private boolean locked = true;
 
 
     public MainActivityFragment() {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateViewCustom(final LayoutInflater inflater, final ViewGroup container,
+                                   Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
-        super.onCreate(savedInstanceState);
+
         if (container != null) {
             container.removeAllViews();
         }
@@ -195,26 +191,26 @@ public class MainActivityFragment extends Fragment {
     private void addNotesToScrollView() {
         scrollviewNotes.removeAllViews();
 
-            for (Note note : book.getNotes()) {
-                View noteView = getActivity().getLayoutInflater().inflate(R.layout.note, null);
-                ((TextView) noteView.findViewById(R.id.note_creation_date)).setText(note.getCreationDate());
-                ((TextView) noteView.findViewById(R.id.note_title)).setText(note.getTitle());
-                ((TextView) noteView.findViewById(R.id.note_title)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new Tools().customToast(getContext(), note.getNote());
-                    }
-                });
-                noteView.findViewById(R.id.note_deletion).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        book.deleteNote(note);
-                        MainActivity.saveLibrary();
-                        addNotesToScrollView();
-                    }
-                });
-                scrollviewNotes.addView(noteView);
-            }
+        for (Note note : book.getNotes()) {
+            View noteView = getActivity().getLayoutInflater().inflate(R.layout.note, null);
+            ((TextView) noteView.findViewById(R.id.note_creation_date)).setText(note.getCreationDate());
+            ((TextView) noteView.findViewById(R.id.note_title)).setText(note.getTitle());
+            ((TextView) noteView.findViewById(R.id.note_title)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new Tools().customToast(getContext(), note.getNote());
+                }
+            });
+            noteView.findViewById(R.id.note_deletion).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    book.deleteNote(note);
+                    MainActivity.saveLibrary();
+                    addNotesToScrollView();
+                }
+            });
+            scrollviewNotes.addView(noteView);
+        }
     }
 
     private void popupCreateNote() {
@@ -302,7 +298,7 @@ public class MainActivityFragment extends Fragment {
         if (movingPercent != null) {
             ((ViewGroup) movingPercent.getParent()).removeView(movingPercent);
         }
-        if(lockIcon != null){
+        if (lockIcon != null) {
             ((ViewGroup) lockIcon.getParent()).removeView(lockIcon);
         }
         if (centerPageInfo != null) {
@@ -438,7 +434,7 @@ public class MainActivityFragment extends Fragment {
                     alert.setView(input);
                     alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            int percent = (int) ((int) 100*(1.0*Integer.parseInt(input.getText().toString())/(1.0*book.getMaxPages())));
+                            int percent = (int) ((int) 100 * (1.0 * Integer.parseInt(input.getText().toString()) / (1.0 * book.getMaxPages())));
                             seekBar.setProgress(percent);
                         }
                     });
@@ -474,7 +470,7 @@ public class MainActivityFragment extends Fragment {
                 lockIcon.setId(View.generateViewId());
                 lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
                 constrainLayoutProgress.addView(lockIcon);
-                locked=true;
+                locked = true;
 
                 int width = constrainLayoutProgress.getMeasuredWidth();
                 int height = constrainLayoutProgress.getMeasuredHeight();
@@ -514,7 +510,7 @@ public class MainActivityFragment extends Fragment {
                         }
                         firstSet = false;
 
-                        if(locked && v < book.getCurrentPercent()){
+                        if (locked && v < book.getCurrentPercent()) {
                             seekBar.setProgress(book.getCurrentPercent());
                         }
 
@@ -532,8 +528,8 @@ public class MainActivityFragment extends Fragment {
                 });
 
 
-                int xLock = (int) ((width / 2) + 305 * Math.cos(((135 + 270 * (1.0*book.getCurrentPercent() / 100)) / 180) * Math.PI)) - 25;
-                int yLock = (int) ((height / 2) + 305 * Math.sin(((135 + 270 * (1.0*book.getCurrentPercent()  / 100)) / 180) * Math.PI)) - 25;
+                int xLock = (int) ((width / 2) + 305 * Math.cos(((135 + 270 * (1.0 * book.getCurrentPercent() / 100)) / 180) * Math.PI)) - 25;
+                int yLock = (int) ((height / 2) + 305 * Math.sin(((135 + 270 * (1.0 * book.getCurrentPercent() / 100)) / 180) * Math.PI)) - 25;
 
                 set.connect(lockIcon.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START, xLock);
                 set.connect(lockIcon.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP, yLock);
@@ -542,12 +538,12 @@ public class MainActivityFragment extends Fragment {
                 lockIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(locked){
+                        if (locked) {
                             lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_open_24));
-                            locked=false;
+                            locked = false;
                         } else {
                             lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
-                            locked=true;
+                            locked = true;
                         }
                     }
                 });
@@ -668,5 +664,6 @@ public class MainActivityFragment extends Fragment {
     private void lockOrient() {
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+
 
 }

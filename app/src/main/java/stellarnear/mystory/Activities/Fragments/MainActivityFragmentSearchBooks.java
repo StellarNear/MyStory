@@ -1,6 +1,7 @@
 package stellarnear.mystory.Activities.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,11 +22,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
@@ -39,15 +39,16 @@ import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
+import stellarnear.mystory.UITools.DatePickerFragment;
 import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.UITools.MyLottieDialog;
 
 
-public class MainActivityFragmentSearchBooks extends Fragment {
+public class MainActivityFragmentSearchBooks extends CustomFragment {
 
     private View returnFragView;
 
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
     private ListBookAdapter bookAdapter;
     private boolean resultShown = false;
     private Book selectedBook;
@@ -80,8 +81,8 @@ public class MainActivityFragmentSearchBooks extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
+                                   Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemeYellow", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
 
@@ -135,7 +136,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     startSearch();
@@ -225,6 +226,18 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.VISIBLE);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (sharedPreferences.getBoolean("switch_direct_add_to_shelf", getContext().getResources().getBoolean(R.bool.switch_direct_add_to_shelf_def))) {
+            returnFragView.findViewById(R.id.add_to_shelf).setVisibility(View.VISIBLE);
+            returnFragView.findViewById(R.id.add_to_shelf).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popupAddToShelf();
+                }
+            });
+        } else {
+            returnFragView.findViewById(R.id.add_to_shelf).setVisibility(View.GONE);
+        }
 
         DiscreteScrollView scrollView = returnFragView.findViewById(R.id.pickerScroller);
         scrollView.setSlideOnFling(true);
@@ -291,8 +304,64 @@ public class MainActivityFragmentSearchBooks extends Fragment {
         });
     }
 
+    private void popupAddToShelf() {
+
+        String text = "Veux tu mettre " + selectedBook.getName() + " directement sur l'étagère ?";
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Etagère");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext())
+                .setAnimation(R.raw.add_shelf)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Mise sur l'étagère")
+                .setMessage(text)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.addBookToShelf(selectedBook);
+                DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook);
+                datePickerFragment.show(getParentFragmentManager(), "datePicker");
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+
+
+    }
+
     private void popUpSummary() {
-        if(selectedBook!=null){
+        if (selectedBook != null) {
             LayoutInflater inflater = requireActivity().getLayoutInflater();
             View alert = inflater.inflate(R.layout.my_lottie_alert, null);
 
@@ -312,7 +381,7 @@ public class MainActivityFragmentSearchBooks extends Fragment {
             cancelButton.setText("Fermer");
             cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
 
-            MyLottieDialog dialog = new MyLottieDialog(getContext(),alert)
+            MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
                     .setTitle("Résumé du livre")
                     .setMessage(summary)
                     .setCancelable(false)

@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,20 +24,20 @@ import stellarnear.mystory.R;
 
 public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHolder> {
 
-    private DiscreteScrollView scrollView;
+    private final DiscreteScrollView scrollView;
     private List<Book> data;
-    private boolean small=false;
+    private boolean small = false;
 
-    public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView,boolean... small) {
+    public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView, boolean... small) {
         this.data = data;
         this.scrollView = scrollView;
-        if(small.length>0 && small[0]){
-            this.small=true;
+        if (small.length > 0 && small[0]) {
+            this.small = true;
         }
     }
 
-    public void setSmallViews(){
-        this.small=true;
+    public void setSmallViews() {
+        this.small = true;
     }
 
     @NonNull
@@ -46,10 +45,10 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v;
-        if(small){
+        if (small) {
             v = inflater.inflate(R.layout.item_book_card_small, parent, false);
         } else {
-            v= inflater.inflate(R.layout.item_book_card, parent, false);
+            v = inflater.inflate(R.layout.item_book_card, parent, false);
         }
         return new ViewHolder(v);
     }
@@ -76,7 +75,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
                 book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                     @Override
                     public void onEvent() {
-                        onBindViewHolder(holder,position);
+                        onBindViewHolder(holder, position);
                     }
                 });
             } catch (Exception e) {
@@ -115,7 +114,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView image;
+        private final ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);

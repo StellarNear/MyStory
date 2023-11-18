@@ -22,7 +22,7 @@ public class OpenLibraryCalls {
 
     //LOOK AT https://openlibrary.org/developers/api
 
-    private static String baseUrl = "https://openlibrary.org";
+    private static final String baseUrl = "https://openlibrary.org";
     private Book book;
 
     public void addExtraMetadatas(Book book) throws JSONException {
@@ -65,7 +65,7 @@ public class OpenLibraryCalls {
                 //books
                 JSONArray booksJsonArray = (JSONArray) allResults.get("docs");
                 SortedSet<Integer> maxPagesFounds = new TreeSet<>();
-                for(int i=0 ;i<booksJsonArray.length();i++) {
+                for (int i = 0; i < booksJsonArray.length(); i++) {
                     JSONObject booksJson = booksJsonArray.getJSONObject(i);
                     for (int j = 0; j < booksJson.getJSONArray("seed").length(); j++) {
                         String value = booksJson.getJSONArray("seed").getString(j);
@@ -137,7 +137,7 @@ public class OpenLibraryCalls {
             super.onPostExecute(result);
 
             try {
-                if (result !=null && result.size() > 0) {
+                if (result != null && result.size() > 0) {
                     book.addMultipleMaxPagesFound(result);
                 }
             } catch (Exception e) {

@@ -5,29 +5,23 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import stellarnear.mystory.Activities.MainActivity;
-import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -35,13 +29,13 @@ import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.UITools.MyLottieDialog;
 
 
-public class MainActivityFragmentWishList extends Fragment {
+public class MainActivityFragmentWishList extends CustomFragment {
 
     private View returnFragView;
 
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
     private ListBookAdapter bookAdapter;
-    private boolean resultShown = false;
+    private final boolean resultShown = false;
     private Book selectedBook;
     private ImageButton backButton;
 
@@ -60,8 +54,8 @@ public class MainActivityFragmentWishList extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
+                                   Bundle savedInstanceState) {
         int themeId = getResources().getIdentifier("AppThemePink", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);
@@ -104,15 +98,15 @@ public class MainActivityFragmentWishList extends Fragment {
 
 
     public void clearAnimation() {
-       if(backButton!=null){
-           backButton.clearAnimation();
-           ((ViewGroup)backButton.getParent()).removeView(backButton);
-       }
+        if (backButton != null) {
+            backButton.clearAnimation();
+            ((ViewGroup) backButton.getParent()).removeView(backButton);
+        }
     }
 
     private void loadWishList() {
         List<Book> wishList = MainActivity.getWishList();
-        if(wishList.size()>0){
+        if (wishList.size() > 0) {
 
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.VISIBLE);
             returnFragView.findViewById(R.id.wishScroller).setVisibility(View.VISIBLE);
@@ -135,9 +129,9 @@ public class MainActivityFragmentWishList extends Fragment {
             author.setVisibility(View.VISIBLE);
             author.setText(bookZero.getAutor().getFullName());
             TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
-            if(bookZero.getMaxPages()!=null){
+            if (bookZero.getMaxPages() != null) {
                 pages.setVisibility(View.VISIBLE);
-                pages.setText(bookZero.getMaxPages()+" pages");
+                pages.setText(bookZero.getMaxPages() + " pages");
             }
 
             scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
@@ -146,9 +140,9 @@ public class MainActivityFragmentWishList extends Fragment {
                     selectedBook = bookAdapter.getBook(adapterPosition);
                     title.setText(selectedBook.getName());
                     author.setText(selectedBook.getAutor().getFullName());
-                    if(selectedBook.getMaxPages()!=null){
+                    if (selectedBook.getMaxPages() != null) {
                         pages.setVisibility(View.VISIBLE);
-                        pages.setText(selectedBook.getMaxPages() +" pages");
+                        pages.setText(selectedBook.getMaxPages() + " pages");
                     } else {
                         pages.setVisibility(View.GONE);
                     }
@@ -170,18 +164,16 @@ public class MainActivityFragmentWishList extends Fragment {
             });
         } else {
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
-                    returnFragView.findViewById(R.id.wishScroller).setVisibility(View.GONE);
-             returnFragView.findViewById(R.id.icon_book_linear).setVisibility(View.GONE);
+            returnFragView.findViewById(R.id.wishScroller).setVisibility(View.GONE);
+            returnFragView.findViewById(R.id.icon_book_linear).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.no_wish_list).setVisibility(View.VISIBLE);
         }
 
     }
 
 
-
-
     private void popupDeleteBook() {
-        String text = "Le livre " + selectedBook.getName() +" sera supprimé de la bibliotheque.";
+        String text = "Le livre " + selectedBook.getName() + " sera supprimé de la bibliotheque.";
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -234,7 +226,6 @@ public class MainActivityFragmentWishList extends Fragment {
     }
 
 
-
     private void popupAddToCurrent() {
         String text = "Commencer la lecture de " + selectedBook.getName() + " ?";
 
@@ -277,7 +268,7 @@ public class MainActivityFragmentWishList extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(MainActivity.getCurrentBook()==null){
+                if (MainActivity.getCurrentBook() == null) {
                     selectedBook.addStartTime();
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromWishList(selectedBook);
@@ -337,13 +328,13 @@ public class MainActivityFragmentWishList extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    MainActivity.putCurrentToShelf();
-                    selectedBook.addStartTime();
-                    MainActivity.setCurrentBook(selectedBook);
-                    MainActivity.removeBookFromWishList(selectedBook);
-                    loadWishList();
-                    tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
-                    dialog.dismiss();
+                MainActivity.putCurrentToShelf();
+                selectedBook.addStartTime();
+                MainActivity.setCurrentBook(selectedBook);
+                MainActivity.removeBookFromWishList(selectedBook);
+                loadWishList();
+                tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
+                dialog.dismiss();
             }
         });
         dialog.show();

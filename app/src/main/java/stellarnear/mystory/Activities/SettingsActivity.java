@@ -1,18 +1,10 @@
 package stellarnear.mystory.Activities;
 
-import android.Manifest;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 
 import stellarnear.mystory.R;
 import stellarnear.mystory.SettingsFraments.SettingsFragment;
@@ -32,7 +24,6 @@ public class SettingsActivity extends CustomActivity {
     SettingsFragment settingsFragment;
 
 
-
     @Override
     protected boolean onOptionsItemSelectedCustom(MenuItem item) throws Exception {
         switch (item.getItemId()) {
@@ -50,7 +41,12 @@ public class SettingsActivity extends CustomActivity {
 
     @Override
     protected void onCreateCustom() throws Exception {
+        int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
+        setTheme(themeId);
+
         setContentView(R.layout.activity_settings);
+
+        findViewById(R.id.setting_total_window).setBackgroundColor(getResources().getColor(R.color.primary_dark_purple));
 
         settingsFragment = new SettingsFragment();
 
@@ -63,7 +59,7 @@ public class SettingsActivity extends CustomActivity {
                 .replace(R.id.pref_content, settingsFragment)
                 .commit();
 
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     }
 

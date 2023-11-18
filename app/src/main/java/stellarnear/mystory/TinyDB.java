@@ -46,7 +46,7 @@ import stellarnear.mystory.BooksLibs.Library;
 
 public class TinyDB {
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
     private String lastImagePath = "";
 
@@ -609,13 +609,12 @@ public class TinyDB {
     public Library getLibrary() {
         String json = getString("my_save_library_key");
         Library value = new Gson().fromJson(json, Library.class);
-        if (value == null){
+        if (value == null) {
             throw new NullPointerException();
         }
 
         return (value);
     }
-
 
 
 }

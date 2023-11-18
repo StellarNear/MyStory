@@ -3,12 +3,12 @@ package stellarnear.mystory.Activities;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import stellarnear.mystory.Log.CustomLog;
 import stellarnear.mystory.R;
@@ -30,7 +30,7 @@ public abstract class CustomActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             onCreateCustom();
         } catch (Exception e) {
-            log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
 
@@ -42,7 +42,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onResumeCustom();
         } catch (Exception e) {
-            log.fatal(this,"Error in activity : "+ this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onBackPressedCustom();
         } catch (Exception e) {
-            log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onDestroyCustom();
         } catch (Exception e) {
-            log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
         super.onDestroy();
     }
@@ -80,7 +80,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             result = onOptionsItemSelectedCustom(item);
         } catch (Exception e) {
-            log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
 
         return result;
@@ -94,7 +94,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onConfigurationChangedCustom();
         } catch (Exception e) {
-            log.fatal(this, "Error in activity : "+this.getLocalClassName(), e);
+            log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
 

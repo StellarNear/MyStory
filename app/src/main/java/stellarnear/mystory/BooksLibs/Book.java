@@ -14,11 +14,11 @@ import stellarnear.mystory.Constants;
 
 public class Book {
 
-    private byte[] imageByte=null;
+    private byte[] imageByte = null;
     private boolean pageDataRecieved = false;
 
 
-    private List<String> startTimes=new ArrayList<>();
+    private List<String> startTimes = new ArrayList<>();
     private String summary;
     private String href;
 
@@ -33,7 +33,7 @@ public class Book {
         this.startTimes.add(formatter.format(Instant.now()));
     }
 
-    private List<String> endTimes=new ArrayList<>();
+    private List<String> endTimes = new ArrayList<>();
 
     public List<String> getEndTimes() {
         return endTimes;
@@ -45,7 +45,9 @@ public class Book {
                 .withZone(ZoneId.systemDefault());
         this.endTimes.add(formatter.format(Instant.now()));
     }
+
     private String lastRead;
+
     public String getLastRead() {
         return lastRead;
     }
@@ -95,7 +97,6 @@ public class Book {
     private String cover_url;
 
 
-
     public Book(long id, String name, String cover_url, Autor autor) {
         this.id = id;
         this.name = name;
@@ -103,12 +104,12 @@ public class Book {
         this.cover_url = cover_url;
     }
 
-    private Integer currentPercent=0;
-    private Integer currentPage= 0;
-    private Integer maxPages=null;
+    private Integer currentPercent = 0;
+    private Integer currentPage = 0;
+    private Integer maxPages = null;
 
     public void setMaxPages(int page) {
-        this.maxPages=page;
+        this.maxPages = page;
     }
 
     public Integer getMaxPages() {
@@ -121,8 +122,8 @@ public class Book {
 
     public void setCurrentPercent(int currentPercent) {
         this.currentPercent = currentPercent;
-        if(this.maxPages!=null){
-            this.currentPage= (int) ((1.0*currentPercent*maxPages)/100.0);
+        if (this.maxPages != null) {
+            this.currentPage = (int) ((1.0 * currentPercent * maxPages) / 100.0);
         }
     }
 
@@ -131,39 +132,37 @@ public class Book {
     }
 
 
-
-
     private OnImageRefreshedEventListener mListenerImageRefreshed;
 
     public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener eventListener) {
         mListenerImageRefreshed = eventListener;
     }
 
-    private List<Note> notes=new ArrayList<>();
+    private final List<Note> notes = new ArrayList<>();
 
     public List<Note> getNotes() {
         return this.notes;
     }
 
     public void saveNewStartInstant(String toInstant) {
-        this.startTimes=new ArrayList<>();
+        this.startTimes = new ArrayList<>();
         this.startTimes.add(toInstant);
     }
 
     public void saveNewEndInstant(String toInstant) {
-        this.endTimes=new ArrayList<>();
+        this.endTimes = new ArrayList<>();
         this.endTimes.add(toInstant);
     }
 
     public void setCurrentPage(int page) {
-        this.currentPage=page;
-        if(this.maxPages!=null){
-            this.currentPercent= (int) ((1.0*currentPage/maxPages)*100.0);
+        this.currentPage = page;
+        if (this.maxPages != null) {
+            this.currentPercent = (int) ((1.0 * currentPage / maxPages) * 100.0);
         }
     }
 
     public void setSummary(String trim) {
-        this.summary=trim;
+        this.summary = trim;
     }
 
     public String getSummary() {
@@ -175,7 +174,7 @@ public class Book {
     }
 
     public void setHref(String href) {
-        this.href=href;
+        this.href = href;
     }
 
     public interface OnImageRefreshedEventListener {
@@ -187,9 +186,9 @@ public class Book {
     }
 
     public void setImageByte(byte[] byteChunk) {
-        if(byteChunk!=null && byteChunk.length>1){
+        if (byteChunk != null && byteChunk.length > 1) {
             this.imageByte = byteChunk;
-            if(mListenerImageRefreshed!=null){
+            if (mListenerImageRefreshed != null) {
                 mListenerImageRefreshed.onEvent();
             }
         }
@@ -219,7 +218,7 @@ public class Book {
         if (!pageDataRecieved && mListenerPageData != null) {
             mListenerPageData.onEvent();
         }
-        pageDataRecieved =true;
+        pageDataRecieved = true;
     }
 
     public String getMeanPagesFoundTxt() {
@@ -227,9 +226,9 @@ public class Book {
             int min = Collections.min(this.maxPagesFound);
             int max = Collections.max(this.maxPagesFound);
             if (min == max) {
-                return String.valueOf(min) +" pages";
+                return min + " pages";
             } else {
-                return min + " - " + max+" pages";
+                return min + " - " + max + " pages";
             }
         } else {
             return "";
@@ -241,25 +240,23 @@ public class Book {
     }
 
     public void createNote(String title, String note) {
-        this.notes.add(new Note(title,note));
+        this.notes.add(new Note(title, note));
     }
 
 
-
     public String getLastStartTime() {
-        if(this.startTimes.size()>0){
-            return this.startTimes.get(this.startTimes.size()-1);
+        if (this.startTimes.size() > 0) {
+            return this.startTimes.get(this.startTimes.size() - 1);
         }
         return null;
     }
 
     public String getLastEndTime() {
-        if(this.endTimes.size()>0){
-            return this.endTimes.get(this.endTimes.size()-1);
+        if (this.endTimes.size() > 0) {
+            return this.endTimes.get(this.endTimes.size() - 1);
         }
         return null;
     }
-
 
 
 }

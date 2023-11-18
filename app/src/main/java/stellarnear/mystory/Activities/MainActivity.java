@@ -5,12 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -22,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -65,7 +60,6 @@ public class MainActivity extends CustomActivity {
     private GestureDetector gestureDetector;
 
     private FragShown fragShown = null;
-
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -434,12 +428,12 @@ public class MainActivity extends CustomActivity {
                         }
                         if (fragShown == FragShown.WISH) {
                             View wishScroller = findViewById(R.id.wishScroller);
-                            if(wishScroller!=null && wishScroller.isShown()){
-                                int[] location= new int[2];
+                            if (wishScroller != null && wishScroller.isShown()) {
+                                int[] location = new int[2];
                                 wishScroller.getLocationInWindow(location);
-                                int y=location[1];
+                                int y = location[1];
                                 //si le scroll a lieu sur le scroller on ignore
-                                if(e1.getAxisValue(MotionEvent.AXIS_Y)>y && e1.getAxisValue(MotionEvent.AXIS_Y)<y+wishScroller.getMeasuredHeight()){
+                                if (e1.getAxisValue(MotionEvent.AXIS_Y) > y && e1.getAxisValue(MotionEvent.AXIS_Y) < y + wishScroller.getMeasuredHeight()) {
                                     return false;
                                 }
                             }
@@ -453,12 +447,12 @@ public class MainActivity extends CustomActivity {
                         }
                         if (fragShown == FragShown.SEARCH) {
                             View pickerScroller = findViewById(R.id.pickerScroller);
-                            if(pickerScroller!=null && pickerScroller.isShown()){
-                                int[] location= new int[2];
+                            if (pickerScroller != null && pickerScroller.isShown()) {
+                                int[] location = new int[2];
                                 pickerScroller.getLocationInWindow(location);
-                                int y=location[1];
+                                int y = location[1];
                                 //si le scroll a lieu sur le scroller on ignore
-                                if(e1.getAxisValue(MotionEvent.AXIS_Y)>y && e1.getAxisValue(MotionEvent.AXIS_Y)<y+pickerScroller.getMeasuredHeight()){
+                                if (e1.getAxisValue(MotionEvent.AXIS_Y) > y && e1.getAxisValue(MotionEvent.AXIS_Y) < y + pickerScroller.getMeasuredHeight()) {
                                     return false;
                                 }
 
@@ -514,6 +508,13 @@ public class MainActivity extends CustomActivity {
     public static void removeBookFromWishList(Book selectedBook) {
         if (selectedBook != null) {
             library.removeFromWishList(selectedBook);
+            saveLibrary();
+        }
+    }
+
+    public static void addBookToShelf(Book selectedBook) {
+        if (selectedBook != null) {
+            library.addToShelf(selectedBook);
             saveLibrary();
         }
     }

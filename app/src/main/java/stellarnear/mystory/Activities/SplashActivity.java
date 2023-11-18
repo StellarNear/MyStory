@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,7 +26,7 @@ import stellarnear.mystory.Tools;
  */
 
 public class SplashActivity extends CustomActivity {
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
     private ProgressDialog pDialog;
     public static final int progress_bar_type = 0;
     private boolean loading = true;
@@ -62,9 +59,7 @@ public class SplashActivity extends CustomActivity {
             }
         });
 
-            loadListner.start();
-
-
+        loadListner.start();
 
 
     }
@@ -96,7 +91,6 @@ public class SplashActivity extends CustomActivity {
                                 openning.start();
 
 
-
                                 openning.setOnTouchListener(new View.OnTouchListener() {
                                     @Override
                                     public boolean onTouch(View arg0, MotionEvent arg1) {
@@ -108,12 +102,12 @@ public class SplashActivity extends CustomActivity {
                                         return true;//always return true to consume event
                                     }
                                 });
-                                loading=false;
+                                loading = false;
                             }
                         });
 
-                    }catch (Exception e){
-                        loading=false;
+                    } catch (Exception e) {
+                        loading = false;
                     }
 
                 }

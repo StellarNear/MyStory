@@ -97,6 +97,15 @@
             android:visibility="gone">
 
             <ImageView
+                android:id="@+id/add_to_shelf"
+                android:layout_width="@dimen/add_book_from_search"
+                android:layout_height="@dimen/add_book_from_search"
+                android:layout_marginRight="@dimen/padding_add_book_from_search"
+                android:src="@drawable/ic_book_shelf"
+                app:tint="@color/primary_light_yellow"
+                android:visibility="gone"/>
+
+            <ImageView
                 android:id="@+id/add_to_wishlist"
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"

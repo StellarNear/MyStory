@@ -4,13 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
@@ -21,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import androidx.core.graphics.BlendModeCompat;
@@ -56,11 +51,10 @@ public class ShelfActivity extends CustomActivity {
     private FloatingActionButton fabWishList;
     private ListBookAdapter bookAdapter;
     private Book selectedBook;
-    private Tools tools=new Tools();
-    
+    private final Tools tools = new Tools();
+
     private LinearLayout scrollviewNotes;
     private SharedPreferences settings;
-
 
 
     @Override
@@ -123,29 +117,29 @@ public class ShelfActivity extends CustomActivity {
 
                 String info1 = selectedBook.getName();
 
-                info1+=" de " + selectedBook.getAutor().getFullName();
+                info1 += " de " + selectedBook.getAutor().getFullName();
 
                 if (selectedBook.getMaxPages() != null) {
-                    info1+="(" + selectedBook.getMaxPages() + " pages)";
+                    info1 += "(" + selectedBook.getMaxPages() + " pages)";
                 }
 
                 infoLine1.setText(info1);
 
-                String info2 ="";
+                String info2 = "";
                 if (selectedBook.getLastStartTime() != null) {
-                    info2+="Débuté le " + selectedBook.getLastStartTime();
+                    info2 += "Débuté le " + selectedBook.getLastStartTime();
                 }
                 if (selectedBook.getLastEndTime() != null) {
-                   info2+=" fini le " + selectedBook.getLastEndTime();
+                    info2 += " fini le " + selectedBook.getLastEndTime();
                 }
                 if (selectedBook.getEndTimes().size() > 1) {
-                    info2+=" lu " + selectedBook.getEndTimes().size() + " fois";
+                    info2 += " lu " + selectedBook.getEndTimes().size() + " fois";
                 }
                 infoLine2.setText(info2);
                 infoLine2.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook,selectedBook.getLastStartTime());
+                        DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook, selectedBook.getLastStartTime());
                         datePickerFragment.show(getSupportFragmentManager(), "datePicker");
                         return false;
                     }
@@ -425,7 +419,7 @@ public class ShelfActivity extends CustomActivity {
 
 
     private void popupDeleteBook() {
-        String text = "Le livre " + selectedBook.getName() +" sera supprimé de la bibliotheque.";
+        String text = "Le livre " + selectedBook.getName() + " sera supprimé de la bibliotheque.";
 
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));

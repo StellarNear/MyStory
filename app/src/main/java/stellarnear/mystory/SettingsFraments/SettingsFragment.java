@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.Preference;
-import android.preference.PreferenceScreen;
 import android.view.Surface;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +20,13 @@ import stellarnear.mystory.Tools;
 public class SettingsFragment extends CustomPreferenceFragment {
     private Activity mA;
     private Context mC;
-    private List<String> histoPrefKeys = new ArrayList<>();
-    private List<String> histoTitle = new ArrayList<>();
+    private final List<String> histoPrefKeys = new ArrayList<>();
+    private final List<String> histoTitle = new ArrayList<>();
 
     private String currentPageKey;
     private String currentPageTitle;
 
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
     private PrefInfoScreenFragment prefInfoScreenFragment;
 
 /*
@@ -51,8 +48,8 @@ public class SettingsFragment extends CustomPreferenceFragment {
         this.mA = getActivity();
         this.mC = getContext();
 
-            addPreferencesFromResource(R.xml.pref);
-            this.histoPrefKeys.add("pref");
+        addPreferencesFromResource(R.xml.pref);
+        this.histoPrefKeys.add("pref");
 
         this.histoTitle.add("Paramètres");
 

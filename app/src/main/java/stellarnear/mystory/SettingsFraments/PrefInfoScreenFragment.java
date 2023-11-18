@@ -10,23 +10,21 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import stellarnear.mystory.Activities.ShelfActivity;
 import stellarnear.mystory.BuildConfig;
 import stellarnear.mystory.R;
-
 import stellarnear.mystory.UITools.MyLottieDialog;
 
 
 public class PrefInfoScreenFragment {
-    private Activity mA;
-    private Context mC;
+    private final Activity mA;
+    private final Context mC;
 
     public PrefInfoScreenFragment(Activity mA, Context mC) {
         this.mA = mA;
         this.mC = mC;
     }
 
-    public void showInfo(){
+    public void showInfo() {
         LayoutInflater inflater = LayoutInflater.from(mC);
         View mainView = inflater.inflate(R.layout.custom_info_patchnote, null);
         LinearLayout mainLin = mainView.findViewById(R.id.custom_info_patchnote);
@@ -35,19 +33,22 @@ public class PrefInfoScreenFragment {
         version.setText("Version actuelle : " + BuildConfig.VERSION_NAME);
         version.setTextSize(22);
         mainLin.addView(version);
+        version.setTextColor(mC.getColor(R.color.primary_light_purple));
+
         TextView time = new TextView(mC);
+        time.setTextColor(mC.getColor(R.color.primary_light_purple));
         time.setText("Temps de travail nécessaire : " + mC.getResources().getString(R.string.time_spend));
         mainLin.addView(time);
 
         final TextView texte_infos = new TextView(mC);
         texte_infos.setSingleLine(false);
-        texte_infos.setTextColor(Color.DKGRAY);
+        texte_infos.setTextColor(mC.getColor(R.color.primary_light_purple));
         texte_infos.setText(mC.getString(R.string.basic_infos));
         mainLin.addView(texte_infos);
 
         final TextView titlePatch = new TextView(mC);
         titlePatch.setTextSize(20);
-        titlePatch.setTextColor(Color.DKGRAY);
+        titlePatch.setTextColor(mC.getColor(R.color.primary_light_purple));
         titlePatch.setText("Liste des changements de version :");
         mainLin.addView(titlePatch);
 
@@ -57,6 +58,7 @@ public class PrefInfoScreenFragment {
         textePatch.setSingleLine(false);
         textePatch.setTextColor(Color.DKGRAY);
         textePatch.setText(mC.getString(R.string.patch_list));
+        textePatch.setTextColor(mC.getColor(R.color.primary_light_purple));
         scroll_info.addView(textePatch);
 
 
