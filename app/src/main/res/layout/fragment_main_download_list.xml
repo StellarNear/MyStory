@@ -1,27 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_wish"
+    android:id="@+id/fragment_download"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.Fragments.MainActivityFragmentWishList"
-    android:background="@drawable/background_wish_list_frag">
+    tools:context=".Activities.Fragments.MainActivityFragmentDownloadList"
+    android:background="@drawable/background_download_list_frag">
 
     <ImageButton
-        android:id="@+id/back_main_from_wish_list"
+        android:id="@+id/back_main_from_download_list"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:adjustViewBounds="true"
         android:background="@null"
         android:layout_margin="@dimen/general_margin"
         android:scaleType="fitXY"
-        app:tint="@color/primary_light_pink"
-        android:src="@drawable/ic_baseline_arrow_forward_24"
+        app:tint="@color/primary_light_green"
+        android:src="@drawable/ic_baseline_arrow_upward_24"
         tools:ignore="ContentDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/email_download_list"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:layout_margin="@dimen/general_margin"
+        android:scaleType="fitXY"
+        app:tint="@color/primary_light_green"
+        android:src="@drawable/ic_baseline_email_24"
+        tools:ignore="ContentDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -37,11 +50,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/no_wish_list"
+            android:id="@+id/no_download_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aucune liste d'envie..."
-            android:textColor="@color/primary_middle_pink"
+            android:text="Aucune liste de téléchargement..."
+            android:textColor="@color/primary_middle_green"
             android:textSize="@dimen/list_book_title_size"
             android:visibility="gone" />
 
@@ -49,10 +62,10 @@
 
 
     <com.yarolegovich.discretescrollview.DiscreteScrollView
-        android:id="@+id/wishScroller"
+        android:id="@+id/downloadScroller"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/scroll_wish_list_height"
+        android:layout_height="@dimen/scroll_download_list_height"
         app:dsv_orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -66,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/wishScroller"
+        app:layout_constraintBottom_toTopOf="@id/downloadScroller"
         android:gravity="center">
        <LinearLayout
            android:id="@+id/icon_book_linear"
@@ -75,7 +88,6 @@
            android:layout_height="wrap_content"
            android:gravity="center"
            android:padding="@dimen/general_margin">
-
            <LinearLayout
                android:layout_width="0dp"
                android:layout_height="wrap_content"
@@ -85,7 +97,7 @@
                android:id="@+id/delete_book"
                android:layout_width="@dimen/add_book_from_search"
                android:layout_height="@dimen/add_book_from_search"
-               app:tint="@color/primary_light_pink"
+               app:tint="@color/primary_light_green"
                android:src="@drawable/ic_book_off"/>
            </LinearLayout>
            <LinearLayout
@@ -97,7 +109,7 @@
                android:id="@+id/start_reading"
                android:layout_width="@dimen/add_book_from_search"
                android:layout_height="@dimen/add_book_from_search"
-               app:tint="@color/primary_light_pink"
+               app:tint="@color/primary_light_green"
                android:src="@drawable/ic_book_open_page"/>
            </LinearLayout>
        </LinearLayout>
@@ -115,7 +127,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="@dimen/general_margin"
-        app:layout_constraintTop_toBottomOf="@id/wishScroller">
+        app:layout_constraintTop_toBottomOf="@id/downloadScroller">
 
         <TextView
             android:visibility="gone"
@@ -123,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/primary_light_pink"
+            android:textColor="@color/primary_light_green"
             android:text="MyTitle"
             android:textSize="@dimen/list_book_title_size" />
 
@@ -134,19 +146,10 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textStyle="italic"
-            android:textColor="@color/primary_light_pink"
+            android:textColor="@color/primary_light_green"
             android:text="MyAutor"
             android:textSize="@dimen/list_book_author_size" />
 
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/list_book_page_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/primary_light_pink"
-            android:text="MyPages"
-            android:textSize="@dimen/list_book_page_size" />
     </LinearLayout>
 
 

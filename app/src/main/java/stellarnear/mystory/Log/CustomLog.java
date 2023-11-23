@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BuildConfig;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -83,7 +84,7 @@ public class CustomLog {
         alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
-                    sendEmail(mA, edittext.getText().toString());
+                    sendReportEmail(mA, edittext.getText().toString());
                 } catch (Exception ex) {
                     tools.customToast(mA, "Erreur lors de l'envoi du mail rapport");
                 }
@@ -98,7 +99,7 @@ public class CustomLog {
     }
 
 
-    private void sendEmail(Activity mA, String comment) throws Exception {
+    private void sendReportEmail(Activity mA, String comment) throws Exception {
         String pathReportTemp = Environment.getExternalStorageDirectory().toString()
                 + "/REPORT_" + BuildConfig.APPLICATION_ID + ".html";
         File report = new File(pathReportTemp);
@@ -139,8 +140,31 @@ public class CustomLog {
         mA.startActivity(chooser);
     }
 
+
+    public static void sendDownloadEmail(Activity mA, List<Book> books) throws Exception {
+
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent.setType("vnd.android.cursor.dir/email");
+        String[] to = {"jeremie.chatron@free.fr"};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Liste des livres à télécharger " + BuildConfig.APPLICATION_ID.replace("stellarnear.", "") + " " + formater.format(new Date()));
+
+        String message="La liste : \n";
+
+        for(Book book: books){
+            message+=book.getName() + " (de "+book.getAutor().getFullName()+")\n";
+        }
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        Intent chooser = Intent.createChooser(emailIntent, "Envoi des téléchargements");
+
+        mA.startActivity(chooser);
+    }
+
     public void sendReport(Activity mA) throws Exception {
-        sendEmail(mA, "");
+        sendReportEmail(mA, "");
     }
 
     private class LogMsg {

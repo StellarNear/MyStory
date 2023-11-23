@@ -302,6 +302,13 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 popupAddToCurrent();
             }
         });
+
+        returnFragView.findViewById(R.id.add_to_download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupAddToDownload();
+            }
+        });
     }
 
     private void popupAddToShelf() {
@@ -348,6 +355,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
             @Override
             public void onClick(View view) {
                 MainActivity.addBookToShelf(selectedBook);
+                tools.customSnack(getContext(), returnFragView, "Livre ajouté à l'étagère !", "yellowshort");
                 DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook);
                 datePickerFragment.show(getParentFragmentManager(), "datePicker");
                 dialog.dismiss();
@@ -499,6 +507,59 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 }
                 MainActivity.addToWishList(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+    }
+
+
+    private void popupAddToDownload() {
+        String text = "Veux tu ajouter " + selectedBook.getName() + " à ta liste de téléchargements ?";
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Oui");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext())
+                .setAnimation(R.raw.book_download)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Ajout aux téléchargemnts")
+                .setMessage(text)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.addBookToDownload(selectedBook);
+                tools.customSnack(getContext(), returnFragView, "Livre ajouté aux téléchargements !", "yellowshort");
                 dialog.dismiss();
             }
         });

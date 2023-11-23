@@ -68,6 +68,15 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppThemeGreen" parent="Theme.MyStory">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/primary_dark_green</item>
+        <item name="colorVariantMiddle">@color/primary_middle_green</item>
+        <item name="colorVariantLight">@color/primary_light_green</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

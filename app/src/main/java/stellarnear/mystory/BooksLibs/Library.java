@@ -6,6 +6,7 @@ import java.util.List;
 public class Library {
     private Book currentBook = null;
 
+
     public Book getCurrentBook() {
         return currentBook;
     }
@@ -49,5 +50,18 @@ public class Library {
 
     public void addToShelf(Book selectedBook) {
         this.shelfList.add(selectedBook);
+    }
+
+    private List<Book> downloadList= new ArrayList<>();
+    public List<Book> getDownloadList() {
+        return this.downloadList;
+    }
+
+    public void removeBookFromDownloadList(Book selectedBook) {
+        this.downloadList.remove(selectedBook);
+    }
+
+    public void addToDownloadList(Book selectedBook) {
+        this.downloadList.add(selectedBook);
     }
 }

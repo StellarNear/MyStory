@@ -11,7 +11,6 @@
     <dimen name="text_prompt">40sp</dimen>
 
     <dimen name="add_book_from_search">35dp</dimen>
-    <dimen name="padding_add_book_from_search">100dp</dimen>
 
     <dimen name="popup_alert">350dp</dimen>
     <dimen name="popup_alert_land">200dp</dimen>
@@ -63,6 +62,8 @@
     <dimen name="popup_alert_message_width_land">300dp</dimen>
     <dimen name="scroll_wish_list_height">300dp</dimen>
     <dimen name="summary_popup_height">400dp</dimen>
+
+    <dimen name="scroll_download_list_height">300dp</dimen>
 
 
 </resources>

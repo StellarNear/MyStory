@@ -38,40 +38,58 @@
 
         <LinearLayout
             android:id="@+id/shelf_book_linear"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/general_margin"
             android:visibility="visible">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
             <ImageView
                 android:id="@+id/shelf_delete_book"
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
-                android:layout_marginRight="@dimen/padding_add_book_from_search"
+                android:layout_margin="@dimen/general_margin"
                 android:background="@drawable/backdrop_light_brown"
                 android:src="@drawable/ic_book_off"
                 app:tint="@color/primary_dark_brown" />
+            </LinearLayout>
 
-
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
             <ImageView
                 android:id="@+id/shelf_book_note"
 
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
-                android:layout_marginRight="@dimen/padding_add_book_from_search"
+                android:layout_margin="@dimen/general_margin"
                 android:background="@drawable/backdrop_light_brown"
                 android:src="@drawable/ic_baseline_edit_note_24"
                 app:tint="@color/primary_dark_brown" />
+            </LinearLayout>
 
-
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
             <ImageView
                 android:id="@+id/shelf_add_to_current"
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
+                android:layout_margin="@dimen/general_margin"
                 android:background="@drawable/backdrop_light_brown"
                 android:src="@drawable/ic_book_open_page"
                 app:tint="@color/primary_dark_brown" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

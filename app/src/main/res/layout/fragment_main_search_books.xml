@@ -90,35 +90,73 @@
 
         <LinearLayout
             android:id="@+id/add_book_linear"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:orientation="horizontal"
             android:padding="@dimen/general_margin"
             android:visibility="gone">
 
-            <ImageView
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
                 android:id="@+id/add_to_shelf"
+                android:visibility="gone">
+
+            <ImageView
+
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
-                android:layout_marginRight="@dimen/padding_add_book_from_search"
                 android:src="@drawable/ic_book_shelf"
                 app:tint="@color/primary_light_yellow"
-                android:visibility="gone"/>
+                />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:id="@+id/add_to_download">
+
+                <ImageView
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:src="@drawable/ic_book_download"
+                    app:tint="@color/primary_light_yellow"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_to_wishlist"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/add_to_wishlist"
+
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
-                android:layout_marginRight="@dimen/padding_add_book_from_search"
                 android:src="@drawable/ic_book_heart"
                 app:tint="@color/primary_light_yellow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_to_current"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/add_to_current"
                 android:layout_width="@dimen/add_book_from_search"
                 android:layout_height="@dimen/add_book_from_search"
                 android:src="@drawable/ic_book_open_page"
                 app:tint="@color/primary_light_yellow" />
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 

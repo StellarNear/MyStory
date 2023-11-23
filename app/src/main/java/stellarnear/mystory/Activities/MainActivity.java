@@ -32,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
+import stellarnear.mystory.Activities.Fragments.MainActivityFragmentDownloadList;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.BooksLibs.Book;
@@ -53,13 +54,17 @@ public class MainActivity extends CustomActivity {
     private MainActivityFragment mainFrag;
     private MainActivityFragmentSearchBooks searchFrag;
     private MainActivityFragmentWishList wishListFrag;
+    private MainActivityFragmentDownloadList downloadFrag;
 
     private FloatingActionButton fabSearchPanel;
     private FloatingActionButton fabWishList;
+    private FloatingActionButton fabDownload;
+
     private SharedPreferences settings;
     private GestureDetector gestureDetector;
 
     private FragShown fragShown = null;
+
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -84,10 +89,13 @@ public class MainActivity extends CustomActivity {
 
         fabSearchPanel = findViewById(R.id.fabSearch);
         fabWishList = findViewById(R.id.fabWishList);
+        fabDownload = findViewById(R.id.fabDownloadList);
 
         mainFrag = new MainActivityFragment();
         searchFrag = new MainActivityFragmentSearchBooks();
         wishListFrag = new MainActivityFragmentWishList();
+        downloadFrag = new MainActivityFragmentDownloadList();
+
         window = getWindow();
 
         mConstraintLayout = (ConstraintLayout) findViewById(R.id.main_constrain);
@@ -118,6 +126,13 @@ public class MainActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 startWishListFragment();
+            }
+        });
+
+        fabDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDownloadFragment();
             }
         });
 
@@ -155,6 +170,9 @@ public class MainActivity extends CustomActivity {
         toolbar.setTitle("Recherche d'un nouveau livre");
         toolbar.setBackground(getDrawable(R.drawable.search_bar_back2));
 
+        //make the download button out of bound
+        set.clear(fabDownload.getId(), ConstraintSet.BOTTOM);
+        set.connect(fabDownload.getId(), ConstraintSet.TOP, mConstraintLayout.getId(), ConstraintSet.BOTTOM, 0);
         //make the wish button out of bound
         set.clear(fabWishList.getId(), ConstraintSet.START);
         set.connect(fabWishList.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.START, 0);
@@ -205,7 +223,11 @@ public class MainActivity extends CustomActivity {
         toolbar.setTitle("Liste d'envies");
         toolbar.setBackground(getDrawable(R.drawable.wish_list_bar_back2));
 
-        //make the wish button out of bound
+        //make the download button out of bound
+        set.clear(fabDownload.getId(), ConstraintSet.BOTTOM);
+        set.connect(fabDownload.getId(), ConstraintSet.TOP, mConstraintLayout.getId(), ConstraintSet.BOTTOM, 0);
+
+        //make the search button out of bound
         set.clear(fabSearchPanel.getId(), ConstraintSet.END);
         set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
         //then make the other center
@@ -231,6 +253,48 @@ public class MainActivity extends CustomActivity {
     }
 
 
+    private void startDownloadFragment() {
+        downloadFrag = new MainActivityFragmentDownloadList();
+        ConstraintSet set = new ConstraintSet();
+        set.clone(mConstraintLayout);
+
+        window.setStatusBarColor(getColor(R.color.primary_middle_green));
+        toolbar.setBackgroundColor(getColor(R.color.primary_dark_green));
+        toolbar.setTitleTextColor(getColor(R.color.primary_light_green));
+        toolbar.getOverflowIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(getColor(R.color.primary_light_green), BlendModeCompat.SRC_ATOP));
+        toolbar.setTitle("Liste des téléchargements");
+        toolbar.setBackground(getDrawable(R.drawable.download_bar_back));
+
+        //make the wish button out of bound
+        set.clear(fabWishList.getId(), ConstraintSet.START);
+        set.connect(fabWishList.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.START, 0);
+
+        //make the search button out of bound
+        set.clear(fabSearchPanel.getId(), ConstraintSet.END);
+        set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
+
+
+        set.applyTo(mConstraintLayout);
+
+        //set the back button
+        downloadFrag.setOnFramentViewCreatedEventListener(new MainActivityFragmentDownloadList.OnFramentViewCreatedEventListener() {
+            @Override
+            public void onEvent() {
+                downloadFrag.getBackButtonView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        downloadFrag.clearAnimation();
+                        restartMainFramemnt(R.id.fragment_download);
+                    }
+                });
+            }
+        });
+
+        startFragment(R.id.fragment_main, downloadFrag, R.animator.infrombotfrag, R.animator.outfadefrag, "frag_downloadlist");
+    }
+
+
+
     private void restartMainFramemnt(int previousFragmentId) {
         mainFrag = new MainActivityFragment();
         ConstraintSet set = new ConstraintSet();
@@ -254,6 +318,9 @@ public class MainActivity extends CustomActivity {
             set.clear(fabSearchPanel.getId(), ConstraintSet.START);
             set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, margin);
 
+            set.clear(fabDownload.getId(), ConstraintSet.TOP);
+            set.connect(fabDownload.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.BOTTOM, margin);
+
             set.applyTo(mConstraintLayout);
         }
         if (previousFragmentId == R.id.fragment_search) {
@@ -267,6 +334,26 @@ public class MainActivity extends CustomActivity {
 
             set.clear(fabWishList.getId(), ConstraintSet.END);
             set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, margin);
+
+            set.clear(fabDownload.getId(), ConstraintSet.TOP);
+            set.connect(fabDownload.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.BOTTOM, margin);
+
+            set.applyTo(mConstraintLayout);
+        }
+        if (previousFragmentId == R.id.fragment_download) {
+            startFragment(previousFragmentId, mainFrag, R.animator.infromtopfrag, R.animator.outfadefrag, "frag_main");
+
+            set.clear(fabWishList.getId(), ConstraintSet.END);
+            set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, margin);
+
+            set.clear(fabSearchPanel.getId(), ConstraintSet.START);
+            set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, margin);
+
+            set.clear(fabSearchPanel.getId(), ConstraintSet.START);
+            set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, margin);
+
+            set.clear(fabDownload.getId(), ConstraintSet.TOP);
+            set.connect(fabDownload.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.BOTTOM, margin);
 
             set.applyTo(mConstraintLayout);
         }
@@ -294,6 +381,10 @@ public class MainActivity extends CustomActivity {
             fragShown = FragShown.WISH;
             lockOrient();
         }
+        if (frag instanceof MainActivityFragmentDownloadList) {
+            fragShown = FragShown.DOWNLOAD;
+            lockOrient();
+        }
     }
 
     @Override
@@ -302,6 +393,8 @@ public class MainActivity extends CustomActivity {
             restartMainFramemnt(R.id.fragment_search);
         } else if (fragShown == FragShown.WISH) {
             restartMainFramemnt(R.id.fragment_wish);
+        } else if (fragShown == FragShown.DOWNLOAD) {
+            restartMainFramemnt(R.id.fragment_download);
         }
     }
 
@@ -419,7 +512,30 @@ public class MainActivity extends CustomActivity {
                     DisplayMetrics displayMetrics = new DisplayMetrics();
                     getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
                     int totalScreenWidth = displayMetrics.widthPixels;
+                    int totalScreenHeight = displayMetrics.heightPixels;
                     int startX = (int) e1.getAxisValue(MotionEvent.AXIS_X);
+                    int startY = (int) e1.getAxisValue(MotionEvent.AXIS_Y);
+
+                    if (vy < -500 && startY > (totalScreenHeight * 0.75)) {
+                        if (fragShown == FragShown.MAIN && !mainFrag.isZoomedProgress()) {
+                            startDownloadFragment();
+                        }
+                    }
+                    if (vy > 500 && startY < (totalScreenHeight * 0.25)) {
+                        if (fragShown == FragShown.DOWNLOAD) {
+                            View downloadScroller = findViewById(R.id.downloadScroller);
+                            if (downloadScroller != null && downloadScroller.isShown()) {
+                                int[] location = new int[2];
+                                downloadScroller.getLocationInWindow(location);
+                                int y = location[1];
+                                //si le scroll a lieu sur le scroller on ignore
+                                if (e1.getAxisValue(MotionEvent.AXIS_Y) > y && e1.getAxisValue(MotionEvent.AXIS_Y) < y + downloadScroller.getMeasuredHeight()) {
+                                    return false;
+                                }
+                            }
+                            restartMainFramemnt(R.id.fragment_download);
+                        }
+                    }
 
 
                     if (vx < -500 && startX > (totalScreenWidth * 0.75)) {
@@ -538,7 +654,29 @@ public class MainActivity extends CustomActivity {
     }
 
 
+
+    public static List<Book> getDownloadList() {
+        return library.getDownloadList();
+    }
+
+    public static void removeBookFromDownloadList(Book selectedBook) {
+        if (selectedBook != null) {
+            library.removeBookFromDownloadList(selectedBook);
+            saveLibrary();
+        }
+    }
+
+    public static void addBookToDownload(Book selectedBook) {
+        if (selectedBook != null) {
+            library.addToDownloadList(selectedBook);
+            saveLibrary();
+        }
+    }
+
+
+
+
     private enum FragShown {
-        MAIN, SEARCH, WISH
+        MAIN, SEARCH, WISH, DOWNLOAD
     }
 }

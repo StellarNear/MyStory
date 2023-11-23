@@ -23,13 +23,14 @@ import java.util.List;
 
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.Log.CustomLog;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.ListBookAdapter;
 import stellarnear.mystory.UITools.MyLottieDialog;
 
 
-public class MainActivityFragmentWishList extends CustomFragment {
+public class MainActivityFragmentDownloadList extends CustomFragment {
 
     private View returnFragView;
 
@@ -38,8 +39,9 @@ public class MainActivityFragmentWishList extends CustomFragment {
     private final boolean resultShown = false;
     private Book selectedBook;
     private ImageButton backButton;
+    private ImageButton email;
 
-    public MainActivityFragmentWishList() {
+    public MainActivityFragmentDownloadList() {
     }
 
     private OnFramentViewCreatedEventListener mLoadedListner;
@@ -56,20 +58,22 @@ public class MainActivityFragmentWishList extends CustomFragment {
     @Override
     public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
                                    Bundle savedInstanceState) {
-        int themeId = getResources().getIdentifier("AppThemePink", "style", getActivity().getPackageName());
+        int themeId = getResources().getIdentifier("AppThemeGreen", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);
         if (container != null) {
             container.removeAllViews();
         }
 
-        returnFragView = inflater.inflate(R.layout.fragment_main_wish_list, container, false);
+        returnFragView = inflater.inflate(R.layout.fragment_main_download_list, container, false);
 
-        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_wish_list);
+        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_download_list);
 
-        Animation right = AnimationUtils.loadAnimation(getContext(), R.anim.infromright);
+        email = (ImageButton) returnFragView.findViewById(R.id.email_download_list);
 
-        right.setAnimationListener(new Animation.AnimationListener() {
+        Animation top = AnimationUtils.loadAnimation(getContext(), R.anim.infromtop);
+
+        top.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -86,9 +90,21 @@ public class MainActivityFragmentWishList extends CustomFragment {
             }
         });
 
-        backButton.startAnimation(right);
+        email.startAnimation(top);
+        backButton.startAnimation(top);
 
-        loadWishList();
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    CustomLog.sendDownloadEmail(getActivity(),MainActivity.getDownloadList());
+                } catch (Exception e) {
+                    tools.customToast(getContext(),"L'email n'a pas pu être envoyé : "+e.getMessage());
+                }
+            }
+        });
+
+        loadDownloadList();
 
         if (mLoadedListner != null) {
             mLoadedListner.onEvent();
@@ -102,23 +118,26 @@ public class MainActivityFragmentWishList extends CustomFragment {
             backButton.clearAnimation();
             ((ViewGroup) backButton.getParent()).removeView(backButton);
         }
+        if (email != null) {
+        email.clearAnimation();
+        ((ViewGroup) email.getParent()).removeView(email);
+        }
     }
 
-    private void loadWishList() {
-        List<Book> wishList = MainActivity.getWishList();
-        if (wishList.size() > 0) {
+    private void loadDownloadList() {
+        List<Book> downloadList = MainActivity.getDownloadList();
+        if (downloadList.size() > 0) {
 
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.VISIBLE);
-            returnFragView.findViewById(R.id.wishScroller).setVisibility(View.VISIBLE);
+            returnFragView.findViewById(R.id.downloadScroller).setVisibility(View.VISIBLE);
             returnFragView.findViewById(R.id.icon_book_linear).setVisibility(View.VISIBLE);
 
-
-            DiscreteScrollView scrollView = returnFragView.findViewById(R.id.wishScroller);
+            DiscreteScrollView scrollView = returnFragView.findViewById(R.id.downloadScroller);
             scrollView.setSlideOnFling(true);
             scrollView.setItemTransformer(new ScaleTransformer.Builder()
                     .setMinScale(0.8f)
                     .build());
-            bookAdapter = new ListBookAdapter(wishList, scrollView);
+            bookAdapter = new ListBookAdapter(downloadList, scrollView);
             scrollView.setAdapter(bookAdapter);
 
             Book bookZero = bookAdapter.getBook(0);
@@ -128,11 +147,8 @@ public class MainActivityFragmentWishList extends CustomFragment {
             TextView author = returnFragView.findViewById(R.id.list_book_author);
             author.setVisibility(View.VISIBLE);
             author.setText(bookZero.getAutor().getFullName());
-            TextView pages = returnFragView.findViewById(R.id.list_book_page_count);
-            if (bookZero.getMaxPages() != null) {
-                pages.setVisibility(View.VISIBLE);
-                pages.setText(bookZero.getMaxPages() + " pages");
-            }
+
+
 
             scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
                 @Override
@@ -140,12 +156,6 @@ public class MainActivityFragmentWishList extends CustomFragment {
                     selectedBook = bookAdapter.getBook(adapterPosition);
                     title.setText(selectedBook.getName());
                     author.setText(selectedBook.getAutor().getFullName());
-                    if (selectedBook.getMaxPages() != null) {
-                        pages.setVisibility(View.VISIBLE);
-                        pages.setText(selectedBook.getMaxPages() + " pages");
-                    } else {
-                        pages.setVisibility(View.GONE);
-                    }
                 }
             });
 
@@ -164,16 +174,16 @@ public class MainActivityFragmentWishList extends CustomFragment {
             });
         } else {
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
-            returnFragView.findViewById(R.id.wishScroller).setVisibility(View.GONE);
+            returnFragView.findViewById(R.id.downloadScroller).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.icon_book_linear).setVisibility(View.GONE);
-            returnFragView.findViewById(R.id.no_wish_list).setVisibility(View.VISIBLE);
+            returnFragView.findViewById(R.id.no_download_list).setVisibility(View.VISIBLE);
         }
 
     }
 
 
     private void popupDeleteBook() {
-        String text = "Le livre " + selectedBook.getName() + " sera supprimé de la liste des envies.";
+        String text = "Le livre " + selectedBook.getName() + " sera supprimé de la liste des téléchargement.";
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -214,9 +224,9 @@ public class MainActivityFragmentWishList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.removeBookFromWishList(selectedBook);
-                loadWishList();
-                tools.customSnack(getContext(), returnFragView, "Livre supprimé !", "pinkshort");
+                MainActivity.removeBookFromDownloadList(selectedBook);
+                loadDownloadList();
+                tools.customSnack(getContext(), returnFragView, "Livre supprimé !", "greenshort");
                 dialog.dismiss();
             }
         });
@@ -271,9 +281,9 @@ public class MainActivityFragmentWishList extends CustomFragment {
                 if (MainActivity.getCurrentBook() == null) {
                     selectedBook.addStartTime();
                     MainActivity.setCurrentBook(selectedBook);
-                    MainActivity.removeBookFromWishList(selectedBook);
-                    loadWishList();
-                    tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
+                    MainActivity.removeBookFromDownloadList(selectedBook);
+                    loadDownloadList();
+                    tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "greenshort");
                     dialog.dismiss();
                 } else {
                     popupPutCurrentToShelf();
@@ -331,9 +341,9 @@ public class MainActivityFragmentWishList extends CustomFragment {
                 MainActivity.putCurrentToShelf();
                 selectedBook.addStartTime();
                 MainActivity.setCurrentBook(selectedBook);
-                MainActivity.removeBookFromWishList(selectedBook);
-                loadWishList();
-                tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
+                MainActivity.removeBookFromDownloadList(selectedBook);
+                loadDownloadList();
+                tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "greenshort");
                 dialog.dismiss();
             }
         });
@@ -358,7 +368,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
     }
 
     public View getBackButtonView() {
-        return returnFragView.findViewById(R.id.back_main_from_wish_list);
+        return returnFragView.findViewById(R.id.back_main_from_download_list);
     }
 
  /*

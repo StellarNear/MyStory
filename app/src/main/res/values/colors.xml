@@ -16,12 +16,14 @@
     <color name="primary_middle_blue">#1f3048</color>
     <color name="primary_light_blue">#5C82B6</color>
 
-
     <color name="primary_dark_brown">#40220B</color>
     <color name="primary_middle_brown">#58361b</color>
     <color name="primary_light_brown">#A8652F</color>
 
-    <color name="primary_light_yellowOLD">#fed464</color>
+    <color name="primary_dark_green">#032914</color>
+    <color name="primary_middle_green">#114529</color>
+    <color name="primary_light_green">#209354</color>
+
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

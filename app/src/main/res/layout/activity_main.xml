@@ -69,6 +69,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:tint="@color/primary_light_pink" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabDownloadList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@color/primary_middle_green"
+            android:outlineSpotShadowColor="@color/primary_light_green"
+            android:src="@drawable/ic_book_download"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/primary_light_green" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

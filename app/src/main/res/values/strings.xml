@@ -8,9 +8,18 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"66h"</string>
+        <string name="time_spend" >"68h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+valpha.7 :
+-ajout du menu de telechargement
+-ajout d'un bouton pour ajouter aux téléchargement depuis la recherche
+-ajout d'un nouveau theme de couleur pour les téléchargements
+-creation d'une image pour la barre de menu telechargement
+-animations des divers boutons lors des transitions
+-swipe up et down possible pour naviger vers et depuis le menu telechargement
+-possibilité d'envoyer un mail avec la liste des livres à télécharger
+
 valpha.6 :
 -les bornes d'autocompletion passent de 5-95 à 1-99
 -quand la completion est ouverte on ne peut plus swiper
