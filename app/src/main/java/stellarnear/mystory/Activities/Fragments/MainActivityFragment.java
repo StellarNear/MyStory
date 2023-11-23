@@ -52,7 +52,9 @@ public class MainActivityFragment extends CustomFragment {
 
     private boolean lockRefreshOnChange = false;
     private boolean firstSet;
+
     private Handler handler;
+
     private Book book;
 
     private TextView movingPercent;
@@ -109,7 +111,6 @@ public class MainActivityFragment extends CustomFragment {
                     if (!zoomedProgress) {
                         zoomedProgress = true;
                         zoomProgress();
-
                     } else {
                         zoomedProgress = false;
                         if (seekBar != null) {
@@ -477,6 +478,7 @@ public class MainActivityFragment extends CustomFragment {
                 ConstraintSet set = new ConstraintSet();
                 set.clone(constrainLayoutProgress);
 
+
                 handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -514,12 +516,13 @@ public class MainActivityFragment extends CustomFragment {
                             seekBar.setProgress(book.getCurrentPercent());
                         }
 
-                        if ((int) v <= 5 && v != 0 && !lockRefreshOnChange) {
+
+                        if ((int) v <= 1 && v != 0 && !lockRefreshOnChange) {
                             MainActivityFragment.this.seekBar.setProgress(0);
                             lockRefreshOnChange = true;
                             return;
                         }
-                        if ((int) v >= 95 && v != 100 && !lockRefreshOnChange) {
+                        if ((int) v >= 99 && v != 100 && !lockRefreshOnChange) {
                             MainActivityFragment.this.seekBar.setProgress(100);
                             lockRefreshOnChange = true;
                             return;
@@ -666,4 +669,7 @@ public class MainActivityFragment extends CustomFragment {
     }
 
 
+    public boolean isZoomedProgress() {
+        return zoomedProgress;
+    }
 }

@@ -423,7 +423,7 @@ public class MainActivity extends CustomActivity {
 
 
                     if (vx < -500 && startX > (totalScreenWidth * 0.75)) {
-                        if (fragShown == FragShown.MAIN) {
+                        if (fragShown == FragShown.MAIN && !mainFrag.isZoomedProgress()) {
                             startSearchFragment();
                         }
                         if (fragShown == FragShown.WISH) {
@@ -441,8 +441,7 @@ public class MainActivity extends CustomActivity {
                         }
                     }
                     if (vx > 500 && startX < (totalScreenWidth * 0.25)) {
-
-                        if (fragShown == FragShown.MAIN) {
+                        if (fragShown == FragShown.MAIN && !mainFrag.isZoomedProgress()) {
                             startWishListFragment();
                         }
                         if (fragShown == FragShown.SEARCH) {
