@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionInflater;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
@@ -58,6 +59,9 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
     @Override
     public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
                                    Bundle savedInstanceState) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(requireContext());
+        setExitTransition(inflaterTrannsi.inflateTransition(R.transition.slide_top));
+        setEnterTransition(inflaterTrannsi.inflateTransition(R.transition.slide_bottom));
         int themeId = getResources().getIdentifier("AppThemeGreen", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);
@@ -96,10 +100,14 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    CustomLog.sendDownloadEmail(getActivity(),MainActivity.getDownloadList());
-                } catch (Exception e) {
-                    tools.customToast(getContext(),"L'email n'a pas pu être envoyé : "+e.getMessage());
+                if (MainActivity.getDownloadList() != null && MainActivity.getDownloadList().size() > 0) {
+                    try {
+                        CustomLog.sendDownloadEmail(getActivity(), MainActivity.getDownloadList());
+                    } catch (Exception e) {
+                        tools.customToast(getContext(), "L'email n'a pas pu être envoyé : " + e.getMessage());
+                    }
+                } else {
+                    tools.customToast(getContext(), "Aucun livres à envoyer...");
                 }
             }
         });
@@ -112,15 +120,14 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         return returnFragView;
     }
 
-
     public void clearAnimation() {
         if (backButton != null) {
             backButton.clearAnimation();
             ((ViewGroup) backButton.getParent()).removeView(backButton);
         }
         if (email != null) {
-        email.clearAnimation();
-        ((ViewGroup) email.getParent()).removeView(email);
+            email.clearAnimation();
+            ((ViewGroup) email.getParent()).removeView(email);
         }
     }
 
@@ -147,7 +154,6 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
             TextView author = returnFragView.findViewById(R.id.list_book_author);
             author.setVisibility(View.VISIBLE);
             author.setText(bookZero.getAutor().getFullName());
-
 
 
             scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {

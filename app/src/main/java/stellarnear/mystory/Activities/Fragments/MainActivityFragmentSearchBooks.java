@@ -27,6 +27,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionInflater;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
@@ -83,6 +84,9 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
     @Override
     public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
                                    Bundle savedInstanceState) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(requireContext());
+        setExitTransition(inflaterTrannsi.inflateTransition(R.transition.slide_left));
+        setEnterTransition(inflaterTrannsi.inflateTransition(R.transition.slide_right));
         int themeId = getResources().getIdentifier("AppThemeYellow", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
 
@@ -145,7 +149,6 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 return handled;
             }
         });
-
 
         return returnFragView;
     }

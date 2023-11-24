@@ -1,6 +1,7 @@
 package stellarnear.mystory.Activities.Fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.transition.TransitionInflater;
 
 import com.seosh817.circularseekbar.BarStrokeCap;
 import com.seosh817.circularseekbar.CircularSeekBar;
@@ -64,13 +66,15 @@ public class MainActivityFragment extends CustomFragment {
     private ImageView lockIcon;
     private boolean locked = true;
 
-
     public MainActivityFragment() {
     }
 
     @Override
     public View onCreateViewCustom(final LayoutInflater inflater, final ViewGroup container,
                                    Bundle savedInstanceState) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(requireContext());
+        setExitTransition(inflaterTrannsi.inflateTransition(R.transition.fade_out));
+
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
 
@@ -85,6 +89,11 @@ public class MainActivityFragment extends CustomFragment {
         setScreen();
 
         return returnFragView;
+    }
+
+    public void setNewEnterTransition(int anim, Context applicationContext) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(applicationContext);
+        setEnterTransition(inflaterTrannsi.inflateTransition(anim));
     }
 
     public void setScreen() {
@@ -289,7 +298,13 @@ public class MainActivityFragment extends CustomFragment {
 
         mainCenter.addView(seekBar);
 
-        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+        seekBar.post(new Runnable() {
+            @Override
+            public void run() {
+                seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+            }
+        });
+
     }
 
     private void unzoomProgress() {
@@ -317,7 +332,13 @@ public class MainActivityFragment extends CustomFragment {
         FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
         seekBar.setLayoutParams(paramSeek);
         mainCenter.addView(seekBar);
-        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+
+        seekBar.post(new Runnable() {
+            @Override
+            public void run() {
+                seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+            }
+        });
     }
 
     private void setImage(Book book) {
@@ -672,4 +693,5 @@ public class MainActivityFragment extends CustomFragment {
     public boolean isZoomedProgress() {
         return zoomedProgress;
     }
+
 }

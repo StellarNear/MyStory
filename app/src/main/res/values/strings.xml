@@ -8,9 +8,13 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"68h"</string>
+        <string name="time_spend" >"69h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+valpha.8 :
+-smooth transitions entre les fragments
+-les icones inutiles dissparaissent lors des transitions
+
 valpha.7 :
 -ajout du menu de telechargement
 -ajout d'un bouton pour ajouter aux téléchargement depuis la recherche

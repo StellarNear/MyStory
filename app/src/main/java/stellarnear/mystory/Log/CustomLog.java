@@ -151,10 +151,10 @@ public class CustomLog {
 
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Liste des livres à télécharger " + BuildConfig.APPLICATION_ID.replace("stellarnear.", "") + " " + formater.format(new Date()));
 
-        String message="La liste : \n";
+        String message = "La liste : \n";
 
-        for(Book book: books){
-            message+=book.getName() + " (de "+book.getAutor().getFullName()+")\n";
+        for (Book book : books) {
+            message += book.getName() + " (de " + book.getAutor().getFullName() + ")\n";
         }
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionInflater;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
@@ -56,6 +57,9 @@ public class MainActivityFragmentWishList extends CustomFragment {
     @Override
     public View onCreateViewCustom(LayoutInflater inflater, ViewGroup container,
                                    Bundle savedInstanceState) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(requireContext());
+        setExitTransition(inflaterTrannsi.inflateTransition(R.transition.slide_right));
+        setEnterTransition(inflaterTrannsi.inflateTransition(R.transition.slide_left));
         int themeId = getResources().getIdentifier("AppThemePink", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
         super.onCreate(savedInstanceState);

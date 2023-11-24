@@ -207,7 +207,7 @@ public class MainActivity extends CustomActivity {
             }
         });
 
-        startFragment(R.id.fragment_main, searchFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_search");
+        startFragment(R.id.fragment_main, searchFrag, "frag_search");
     }
 
 
@@ -230,9 +230,11 @@ public class MainActivity extends CustomActivity {
         //make the search button out of bound
         set.clear(fabSearchPanel.getId(), ConstraintSet.END);
         set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
-        //then make the other center
-        set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, 0);
-        set.connect(fabWishList.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, 0);
+
+        //make the wish button out of bound
+        set.clear(fabWishList.getId(), ConstraintSet.END);
+        set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
+
         set.applyTo(mConstraintLayout);
 
         //set the back button
@@ -249,7 +251,7 @@ public class MainActivity extends CustomActivity {
             }
         });
 
-        startFragment(R.id.fragment_main, wishListFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_wishlist");
+        startFragment(R.id.fragment_main, wishListFrag, "frag_wishlist");
     }
 
 
@@ -273,6 +275,10 @@ public class MainActivity extends CustomActivity {
         set.clear(fabSearchPanel.getId(), ConstraintSet.END);
         set.connect(fabSearchPanel.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.END, 0);
 
+        //make the download button out of bound
+        set.clear(fabDownload.getId(), ConstraintSet.TOP);
+        set.connect(fabDownload.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.TOP, 0);
+
 
         set.applyTo(mConstraintLayout);
 
@@ -290,9 +296,8 @@ public class MainActivity extends CustomActivity {
             }
         });
 
-        startFragment(R.id.fragment_main, downloadFrag, R.animator.infrombotfrag, R.animator.outfadefrag, "frag_downloadlist");
+        startFragment(R.id.fragment_main, downloadFrag, "frag_downloadlist");
     }
-
 
 
     private void restartMainFramemnt(int previousFragmentId) {
@@ -310,7 +315,8 @@ public class MainActivity extends CustomActivity {
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
         if (previousFragmentId == R.id.fragment_wish) {
-            startFragment(previousFragmentId, mainFrag, R.animator.infromrightfrag, R.animator.outfadefrag, "frag_main");
+            mainFrag.setNewEnterTransition(R.transition.slide_right, getApplicationContext());
+            startFragment(previousFragmentId, mainFrag, "frag_main");
 
             set.clear(fabWishList.getId(), ConstraintSet.END);
             set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, margin);
@@ -324,10 +330,10 @@ public class MainActivity extends CustomActivity {
             set.applyTo(mConstraintLayout);
         }
         if (previousFragmentId == R.id.fragment_search) {
-
+            mainFrag.setNewEnterTransition(R.transition.slide_left, getApplicationContext());
             fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
 
-            startFragment(previousFragmentId, mainFrag, R.animator.infromleftfrag, R.animator.outfadefrag, "frag_main");
+            startFragment(previousFragmentId, mainFrag, "frag_main");
 
             set.clear(fabSearchPanel.getId(), ConstraintSet.START);
             set.connect(fabSearchPanel.getId(), ConstraintSet.END, mConstraintLayout.getId(), ConstraintSet.END, margin);
@@ -341,7 +347,8 @@ public class MainActivity extends CustomActivity {
             set.applyTo(mConstraintLayout);
         }
         if (previousFragmentId == R.id.fragment_download) {
-            startFragment(previousFragmentId, mainFrag, R.animator.infromtopfrag, R.animator.outfadefrag, "frag_main");
+            mainFrag.setNewEnterTransition(R.transition.slide_top, getApplicationContext());
+            startFragment(previousFragmentId, mainFrag, "frag_main");
 
             set.clear(fabWishList.getId(), ConstraintSet.END);
             set.connect(fabWishList.getId(), ConstraintSet.START, mConstraintLayout.getId(), ConstraintSet.START, margin);
@@ -361,10 +368,10 @@ public class MainActivity extends CustomActivity {
     }
 
 
-    private void startFragment(final int fragId, final Fragment frag, final int animIn, final int animOut, final String tag) {
+    private void startFragment(final int fragId, final Fragment frag, final String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(animIn, animOut);
+        //fragmentTransaction.setCustomAnimations(animIn, animOut);
         fragmentTransaction.replace(fragId, frag, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -654,7 +661,6 @@ public class MainActivity extends CustomActivity {
     }
 
 
-
     public static List<Book> getDownloadList() {
         return library.getDownloadList();
     }
@@ -672,8 +678,6 @@ public class MainActivity extends CustomActivity {
             saveLibrary();
         }
     }
-
-
 
 
     private enum FragShown {

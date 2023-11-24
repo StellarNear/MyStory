@@ -52,7 +52,8 @@ public class Library {
         this.shelfList.add(selectedBook);
     }
 
-    private List<Book> downloadList= new ArrayList<>();
+    private List<Book> downloadList = new ArrayList<>();
+
     public List<Book> getDownloadList() {
         return this.downloadList;
     }
