@@ -694,6 +694,9 @@ public class MainActivity extends CustomActivity {
     }
 
     public static void deleteCurrent() {
+        if(library.getCurrentBook()!=null){
+            deleteBook(library.getCurrentBook());
+        }
         library.deleteCurrent();
         saveCurrent();
     }
