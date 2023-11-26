@@ -357,6 +357,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.saveBook(selectedBook);
                 MainActivity.addBookToShelf(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à l'étagère !", "yellowshort");
                 DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook);
@@ -508,6 +509,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         }
                     }
                 }
+                MainActivity.saveBook(selectedBook);
                 MainActivity.addToWishList(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
                 dialog.dismiss();
@@ -561,6 +563,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.saveBook(selectedBook);
                 MainActivity.addBookToDownload(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté aux téléchargements !", "yellowshort");
                 dialog.dismiss();
@@ -664,6 +667,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 }
                 if (MainActivity.getCurrentBook() == null) {
                     selectedBook.addStartTime();
+                    MainActivity.saveBook(selectedBook);
                     MainActivity.setCurrentBook(selectedBook);
 
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
@@ -724,6 +728,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
                 selectedBook.addStartTime();
+                MainActivity.saveBook(selectedBook);
                 MainActivity.setCurrentBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();

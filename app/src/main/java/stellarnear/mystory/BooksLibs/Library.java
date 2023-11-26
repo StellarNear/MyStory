@@ -15,13 +15,13 @@ public class Library {
         this.currentBook = currentBook;
     }
 
-    private final List<Book> wishList = new ArrayList<>();
+    private List<Book> wishList = new ArrayList<>();
 
     public List<Book> getWishList() {
         return wishList;
     }
 
-    private final List<Book> shelfList = new ArrayList<>();
+    private List<Book> shelfList = new ArrayList<>();
 
     public List<Book> getShelfList() {
         return shelfList;
@@ -64,5 +64,17 @@ public class Library {
 
     public void addToDownloadList(Book selectedBook) {
         this.downloadList.add(selectedBook);
+    }
+
+    public void loadShelf(List<Book> library_shelf) {
+        this.shelfList = library_shelf;
+    }
+
+    public void loadWish(List<Book> library_wish) {
+        this.wishList = library_wish;
+    }
+
+    public void loadDownload(List<Book> library_download) {
+        this.downloadList = library_download;
     }
 }

@@ -128,7 +128,8 @@ public class MainActivityFragment extends CustomFragment {
                             if (seekBar.getProgress() == 100) {
                                 popupEndBookPutOnShelf();
                             }
-                            MainActivity.saveLibrary();
+                            MainActivity.saveBook(book);
+                            MainActivity.saveCurrent();
                         }
                         unzoomProgress();
                     }
@@ -215,7 +216,7 @@ public class MainActivityFragment extends CustomFragment {
                 @Override
                 public void onClick(View view) {
                     book.deleteNote(note);
-                    MainActivity.saveLibrary();
+                    MainActivity.saveBook(book);
                     addNotesToScrollView();
                 }
             });
@@ -264,7 +265,7 @@ public class MainActivityFragment extends CustomFragment {
                 String title = ((TextView) notes.findViewById(R.id.note_creat_title)).getText().toString();
                 String note = ((TextView) notes.findViewById(R.id.note_creat_note)).getText().toString();
                 book.createNote(title, note);
-                MainActivity.saveLibrary();
+                MainActivity.saveBook(book);
                 addNotesToScrollView();
                 dialog.dismiss();
             }
@@ -286,31 +287,22 @@ public class MainActivityFragment extends CustomFragment {
         returnFragView.findViewById(R.id.mainfram_cover).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.mainframe_progress_allcenter_info).setVisibility(View.GONE);
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
-        params.verticalBias = 0.5f;
-        constrainLayoutProgress.setLayoutParams(params);
-
         mainCenter.removeAllViews();
         seekBar = createProgress();
-
-        FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.maximize_progress));
-        seekBar.setLayoutParams(paramSeek);
-
         mainCenter.addView(seekBar);
 
-        seekBar.post(new Runnable() {
-            @Override
-            public void run() {
-                seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
-            }
-        });
-
+        ConstraintSet cs = new ConstraintSet();
+        cs.clone(constrainLayoutMainFrag);
+        cs.setVerticalBias(constrainLayoutProgress.getId(), 0.5f);
+        cs.applyTo(constrainLayoutMainFrag);
+        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
     }
 
     private void unzoomProgress() {
         returnFragView.findViewById(R.id.mainframe_book_notes).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.mainfram_cover).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.mainframe_progress_allcenter_info).setVisibility(View.VISIBLE);
+
         if (movingPercent != null) {
             ((ViewGroup) movingPercent.getParent()).removeView(movingPercent);
         }
@@ -321,24 +313,15 @@ public class MainActivityFragment extends CustomFragment {
             ((ViewGroup) centerPageInfo.getParent()).removeView(centerPageInfo);
         }
 
-
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constrainLayoutProgress.getLayoutParams();
-        params.verticalBias = 0.1f;
-        constrainLayoutProgress.setLayoutParams(params);
-
         mainCenter.removeAllViews();
         seekBar = createProgress();
-
-        FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
-        seekBar.setLayoutParams(paramSeek);
         mainCenter.addView(seekBar);
 
-        seekBar.post(new Runnable() {
-            @Override
-            public void run() {
-                seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
-            }
-        });
+        ConstraintSet cs = new ConstraintSet();
+        cs.clone(constrainLayoutMainFrag);
+        cs.setVerticalBias(constrainLayoutProgress.getId(), 0.1f);
+        cs.applyTo(constrainLayoutMainFrag);
+        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
     }
 
     private void setImage(Book book) {
@@ -349,7 +332,7 @@ public class MainActivityFragment extends CustomFragment {
                 @Override
                 public void onEvent() {
                     setImage(book);
-                    MainActivity.saveLibrary();
+                    MainActivity.saveBook(book);
                     byte[] b2 = book.getImage();
                     Drawable image2 = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b2, 0, b2.length));
                     ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image2);
@@ -377,20 +360,20 @@ public class MainActivityFragment extends CustomFragment {
 
     private CircularSeekBar createProgress() {
         CircularSeekBar seekBar = new CircularSeekBar(getContext());
-
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
-        seekBar.setLayoutParams(param);
-        seekBar.setShowAnimation(true);
-        seekBar.setAnimationInterpolator(CircularSeekBarAnimation.DECELERATE.getInterpolator());
-
-        seekBar.setDashGap(2);
-        seekBar.setDashWidth(1);
         if (zoomedProgress) {
             setZoomedSeek(seekBar);
+            FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.maximize_progress));
+            seekBar.setLayoutParams(paramSeek);
         } else {
             setUnzoomedSeek(seekBar);
+            FrameLayout.LayoutParams paramSeek = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.minimize_progress));
+            seekBar.setLayoutParams(paramSeek);
         }
 
+        seekBar.setShowAnimation(true);
+        seekBar.setAnimationInterpolator(CircularSeekBarAnimation.DECELERATE.getInterpolator());
+        seekBar.setDashGap(2);
+        seekBar.setDashWidth(1);
         seekBar.setBarStrokeCap(BarStrokeCap.BUTT);
         seekBar.setInnerThumbColor(getContext().getColor(R.color.primary_dark_purple));
         seekBar.setOuterThumbColor(getContext().getColor(R.color.primary_middle_purple));
@@ -435,7 +418,6 @@ public class MainActivityFragment extends CustomFragment {
         seekBar.setInnerThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_inner_stroke_zoomed));
         seekBar.setOuterThumbRadius(getContext().getResources().getDimension(R.dimen.progress_outer_radius_zoomed));
         seekBar.setOuterThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_outer_stroke_zoomed));
-
 
         if (book.getMaxPages() != null) {
             centerPageInfo = new TextView(getContext());

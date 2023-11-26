@@ -1,5 +1,7 @@
 package stellarnear.mystory.UITools;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +77,9 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
                 book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                     @Override
                     public void onEvent() {
-                        onBindViewHolder(holder, position);
+                        Bitmap bmp = BitmapFactory.decodeByteArray(book.getImage(), 0, book.getImage().length);
+                        ImageView image = holder.getImage();
+                        image.setImageBitmap(Bitmap.createScaledBitmap(bmp, image.getWidth(), image.getHeight(), false));
                     }
                 });
             } catch (Exception e) {
@@ -114,12 +118,15 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView image;
+        private ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
+        }
 
+        public ImageView getImage() {
+            return image;
         }
     }
 }

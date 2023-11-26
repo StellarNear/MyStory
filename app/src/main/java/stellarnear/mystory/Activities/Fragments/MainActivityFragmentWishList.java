@@ -219,6 +219,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 MainActivity.removeBookFromWishList(selectedBook);
+                MainActivity.deleteBook(selectedBook);
                 loadWishList();
                 tools.customSnack(getContext(), returnFragView, "Livre supprimé !", "pinkshort");
                 dialog.dismiss();

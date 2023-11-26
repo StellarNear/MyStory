@@ -352,7 +352,7 @@ public class ShelfActivity extends CustomActivity {
                 @Override
                 public void onClick(View view) {
                     selectedBook.deleteNote(note);
-                    MainActivity.saveLibrary();
+                    MainActivity.saveBook(selectedBook);
                     addNotesToScrollView();
                 }
             });
@@ -401,7 +401,7 @@ public class ShelfActivity extends CustomActivity {
                 String title = ((TextView) notes.findViewById(R.id.note_creat_title)).getText().toString();
                 String note = ((TextView) notes.findViewById(R.id.note_creat_note)).getText().toString();
                 selectedBook.createNote(title, note);
-                MainActivity.saveLibrary();
+                MainActivity.saveBook(selectedBook);
                 addNotesToScrollView();
                 dialog.dismiss();
             }

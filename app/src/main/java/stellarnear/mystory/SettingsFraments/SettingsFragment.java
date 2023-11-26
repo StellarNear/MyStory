@@ -13,6 +13,7 @@ import java.util.List;
 
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.Activities.ObservatoryActivity;
+import stellarnear.mystory.Activities.SaveSharedPreferencesActivity;
 import stellarnear.mystory.Activities.ShelfActivity;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -131,7 +132,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
             case "infos":
                 prefInfoScreenFragment.showInfo();
                 break;
-                /*
+
             case "export_save":
                 Intent intentSave = new Intent(mC, SaveSharedPreferencesActivity.class);
                 intentSave.putExtra("ACTION_TYPE", "SAVE");
@@ -145,7 +146,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                 mC.startActivity(intentLoad);
                 break;
 
-                 */
+
             case "send_report":
                 log.sendReport(getActivity());
         }

@@ -73,6 +73,7 @@ public class BookNodeCalls {
             super.onPreExecute();
         }
 
+
         protected List<Book> doInBackground(String... params) {
 
             HttpURLConnection connection = null;
@@ -106,10 +107,14 @@ public class BookNodeCalls {
                     JSONObject autorJson = bookJson.getJSONArray("authors").getJSONObject(0);
                     Autor autor = new Autor(autorJson.getLong("idauteur"), autorJson.getString("_prenom"), autorJson.getString("_nom"), autorJson.getString("nom"));
                     Book book = new Book(bookJson.getLong("id"), bookJson.getString("name"), bookJson.getString("cover_double"), autor);
-                    getImage(book);
                     if (bookJson.has("href") && bookJson.getString("href") != null) {
                         book.setHref(bookJson.getString("href"));
                     }
+                    //on pren les images en live pour les 5 premier puis on rend la main pour la suite
+                    if (i < 5) {
+                        getImage(book);
+                    }
+                    //on pren les resumés en live pour les 3 premier puis on rend la main pour la suite
                     if (i < 3) {
                         getSummary(book);
                     }
@@ -197,14 +202,20 @@ public class BookNodeCalls {
             super.onPostExecute(allBooksFound);
 
             try {
+
+                for (int i = 0; i < allBooksFound.size(); i++) {
+                    Book book = allBooksFound.get(i);
+                    //on prend les images en live pour les 5 premier puis delay pour rendre la main sur la suite
+                    if (i >= 5) {
+                        new JsonTaskRefreshImage().execute(book);
+                    }
+                    //on pren les resumés en live pour les 3 premier puis on rend la main pour la suite
+                    if (i >= 3) {
+                        new JsonTaskSummary().execute(book);
+                    }
+                }
                 if (mListener != null) {
                     mListener.onEvent(allBooksFound);
-                }
-                if (allBooksFound.size() > 3) {
-                    //le premier livre a été fait en forcé
-                    for (int i = 3; i < allBooksFound.size(); i++) {
-                        new JsonTaskSummary().execute(allBooksFound.get(i));
-                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -284,7 +295,7 @@ public class BookNodeCalls {
         }
     }
 
-    private class JsonTaskRefreshImage extends AsyncTask<Book, String, byte[]> {
+    private class JsonTaskRefreshImage extends AsyncTask<Book, String, Void> {
         private Book book;
 
         //private Set<Autor> autors;
@@ -294,7 +305,7 @@ public class BookNodeCalls {
             super.onPreExecute();
         }
 
-        protected byte[] doInBackground(Book... books) {
+        protected Void doInBackground(Book... books) {
             this.book = books[0];
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -306,7 +317,12 @@ public class BookNodeCalls {
                     while ((bytesRead = stream.read(chunk)) > 0) {
                         outputStream.write(chunk, 0, bytesRead);
                     }
-                    return outputStream.toByteArray();
+
+                    byte[] byteArray = outputStream.toByteArray();
+
+                    if (byteArray != null && byteArray.length > 1) {
+                        book.setImageByte(byteArray);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -327,14 +343,6 @@ public class BookNodeCalls {
                 e.printStackTrace();
             }
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(byte[] byteArray) {
-            super.onPostExecute(byteArray);
-            if (byteArray != null && byteArray.length > 1) {
-                book.setImageByte(byteArray);
-            }
         }
 
     }

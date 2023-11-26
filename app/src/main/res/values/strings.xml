@@ -8,9 +8,19 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"69h"</string>
+        <string name="time_spend" >"71h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+valpha.11 :
+-amélioration des chagnement et sauvegarde pour l'ensemble de l'application pour pas tout faire d'un coup
+
+valpha.10 :
+-systeme de sauvergarde export/import
+
+valpha.9 :
+-fix des sauvegardes multiple simultanée (fail)
+-amélioration de la recherche pour la rendre plus rapide
+
 valpha.8 :
 -smooth transitions entre les fragments
 -les icones inutiles dissparaissent lors des transitions

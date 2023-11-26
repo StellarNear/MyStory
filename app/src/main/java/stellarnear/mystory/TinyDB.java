@@ -37,7 +37,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import stellarnear.mystory.BooksLibs.Book;
@@ -317,27 +316,6 @@ public class TinyDB {
         return preferences.getBoolean(key, false);
     }
 
-    /*
-     * Get parsed ArrayList of Boolean from SharedPreferences at 'key'
-     *
-     * @param key SharedPreferences key
-     * @return ArrayList of Boolean
-     */
-    public ArrayList<Boolean> getListBoolean(String key) {
-        ArrayList<String> myList = getListString(key);
-        ArrayList<Boolean> newList = new ArrayList<Boolean>();
-
-        for (String item : myList) {
-            if (item.equals("true")) {
-                newList.add(true);
-            } else {
-                newList.add(false);
-            }
-        }
-
-        return newList;
-    }
-
 
     // Put methods
 
@@ -511,16 +489,6 @@ public class TinyDB {
         putString(key, gson.toJson(obj));
     }
 
-    public void putListBooks(String key, List<Book> objArray) {
-        checkForNullKey(key);
-        Gson gson = new Gson();
-        ArrayList<String> objStrings = new ArrayList<String>();
-        for (Book obj : objArray) {
-            objStrings.add(gson.toJson(obj));
-        }
-        putListString(key, objStrings);
-    }
-
     /*
      * Remove SharedPreferences item with 'key'
      *
@@ -600,11 +568,21 @@ public class TinyDB {
         }
     }
 
-    public void saveLibrary(Library obj) {
-        checkForNullKey("my_save_library_key");
+    public void saveBook(Book book) {
+        checkForNullKey(book.getUuid().toString());
         Gson gson = new Gson();
-        putString("my_save_library_key", gson.toJson(obj));
+        putString(book.getUuid().toString(), gson.toJson(book));
     }
+
+    public Book getBook(String uuid) {
+        String json = getString(uuid);
+        Book value = new Gson().fromJson(json, Book.class);
+        if (value == null) {
+            throw new NullPointerException();
+        }
+        return (value);
+    }
+
 
     public Library getLibrary() {
         String json = getString("my_save_library_key");
@@ -615,6 +593,5 @@ public class TinyDB {
 
         return (value);
     }
-
 
 }

@@ -54,6 +54,11 @@
             android:label="Paramètres"
             android:theme="@style/Theme.MyStory.NoActionBar"/>
 
+        <activity
+            android:name=".Activities.SaveSharedPreferencesActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Sauvegarde"
+            android:theme="@style/Theme.MyStory.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

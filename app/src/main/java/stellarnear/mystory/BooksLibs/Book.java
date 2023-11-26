@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import stellarnear.mystory.Constants;
 
 public class Book {
+
+    private UUID uuid;
 
     private byte[] imageByte = null;
     private boolean pageDataRecieved = false;
@@ -102,6 +105,15 @@ public class Book {
         this.name = name;
         this.autor = autor;
         this.cover_url = cover_url;
+        this.uuid = UUID.randomUUID();
+    }
+
+    public UUID getUuid() {
+        if (uuid == null) {
+            //pour la transition compat
+            this.uuid = UUID.randomUUID();
+        }
+        return uuid;
     }
 
     private Integer currentPercent = 0;

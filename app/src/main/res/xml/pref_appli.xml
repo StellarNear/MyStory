@@ -10,18 +10,18 @@
         android:key="pref_appli_para"
         android:summary="Options de application"
         android:title="Paramètres de l'application" />
-   <!--
+
     <PreferenceScreen
-        android:icon="@drawable/ic_file_upload_black_24dp"
+        android:icon="@drawable/ic_file_upload_24dp"
         android:key="import_save"
         android:summary="Charge les informations"
         android:title="Charger" />
     <PreferenceScreen
-        android:icon="@drawable/ic_file_download_black_24dp"
+        android:icon="@drawable/ic_file_download_24dp"
         android:key="export_save"
         android:summary="Sauvegarde les informations"
         android:title="Sauvegarder" />
-         -->
+
     <PreferenceScreen
         android:icon="@drawable/ic_baseline_bug_report_24"
         android:key="send_report"

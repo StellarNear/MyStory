@@ -58,6 +58,6 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         book.saveNewEndInstant(day + "/" + (month + 1) + "/" + year);
         book.saveNewStartInstant(day + "/" + (month + 1) + "/" + year);
-        MainActivity.saveLibrary();
+        MainActivity.saveBook(book);
     }
 }
