@@ -25,15 +25,17 @@ public class Book {
     private String summary;
     private String href;
 
+    public DateTimeFormatter getFormater() {
+        return Constants.DATE_FORMATTER;
+    }
+
     public List<String> getStartTimes() {
         return startTimes;
     }
 
     public void addStartTime() {
         setLastRead();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                .withZone(ZoneId.systemDefault());
-        this.startTimes.add(formatter.format(Instant.now()));
+        this.startTimes.add(getFormater().format(Instant.now()));
     }
 
     private List<String> endTimes = new ArrayList<>();
@@ -44,9 +46,7 @@ public class Book {
 
     public void addEndTime() {
         setLastRead();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                .withZone(ZoneId.systemDefault());
-        this.endTimes.add(formatter.format(Instant.now()));
+        this.endTimes.add(getFormater().format(Instant.now()));
     }
 
     private String lastRead;
@@ -56,9 +56,7 @@ public class Book {
     }
 
     public void setLastRead() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                .withZone(ZoneId.systemDefault());
-        this.lastRead = formatter.format(Instant.now());
+        this.lastRead = getFormater().format(Instant.now());
     }
 
     public long getId() {

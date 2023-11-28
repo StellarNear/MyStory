@@ -21,6 +21,7 @@ public abstract class CustomFragment extends Fragment {
 
             return onCreateViewCustom(inflater, container, savedInstanceState);
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(getActivity(), "Error in fragment : " + this.getClass(), e);
         }
         return null;

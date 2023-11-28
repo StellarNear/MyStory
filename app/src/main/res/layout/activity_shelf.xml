@@ -16,14 +16,88 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.MyStory.PopupOverlay" />
+            app:popupTheme="@style/Theme.MyStory.PopupOverlay" >
+
+
+
+            <LinearLayout
+                android:id="@+id/shelf_toolbar_infos_dates_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/shelf_toolbar_infos_start_date"
+                    android:shadowColor="?attr/colorVariantLight"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="5"
+                    android:textSize="@dimen/text_shelf_info_size"
+                    android:textColor="?attr/colorPrimaryDark"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text=""
+                    />
+
+                <TextView
+                    android:shadowColor="?attr/colorVariantLight"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="5"
+                    android:textSize="@dimen/text_shelf_info_size"
+                    android:textColor="?attr/colorPrimaryDark"
+                    android:layout_margin="@dimen/general_margin"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="au"
+                    />
+
+                <TextView
+                    android:id="@+id/shelf_toolbar_infos_end_date"
+                    android:shadowColor="?attr/colorVariantLight"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="5"
+                    android:textSize="@dimen/text_shelf_info_size"
+                    android:textColor="?attr/colorPrimaryDark"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/shelf_toolbar_infos"
+                android:shadowColor="?attr/colorVariantLight"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:textSize="@dimen/text_shelf_info_size"
+                android:textColor="?attr/colorPrimaryDark"
+                android:layout_gravity="center_vertical|end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/general_margin"
+                android:text=""
+                />
+
+        </androidx.appcompat.widget.Toolbar>
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.66"
+        android:alpha="0.9"
         android:background="@drawable/background_shelf"
         android:foregroundGravity="center"></FrameLayout>
 

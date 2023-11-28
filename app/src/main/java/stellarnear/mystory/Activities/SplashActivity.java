@@ -73,7 +73,6 @@ public class SplashActivity extends CustomActivity {
             public void run() {
                 if (loading && !touched) {
                     try {
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -90,16 +89,15 @@ public class SplashActivity extends CustomActivity {
                                 openning.setZOrderOnTop(true);
                                 openning.start();
 
-
-                                openning.setOnTouchListener(new View.OnTouchListener() {
+                                videoLayout.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public boolean onTouch(View arg0, MotionEvent arg1) {
+                                    public void onClick(View view) {
                                         if (!touched) {
+                                            openning.stopPlayback();
                                             unlockOrient();
                                             touched = true;
                                             startMainActivity();
                                         }
-                                        return true;//always return true to consume event
                                     }
                                 });
                                 loading = false;
@@ -109,7 +107,6 @@ public class SplashActivity extends CustomActivity {
                     } catch (Exception e) {
                         loading = false;
                     }
-
                 }
             }
         }, 10, 333);

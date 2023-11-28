@@ -30,6 +30,7 @@ public abstract class CustomActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             onCreateCustom();
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
@@ -42,6 +43,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onResumeCustom();
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
@@ -53,6 +55,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onBackPressedCustom();
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }
@@ -64,6 +67,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onDestroyCustom();
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
         super.onDestroy();
@@ -80,6 +84,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             result = onOptionsItemSelectedCustom(item);
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
 
@@ -94,6 +99,7 @@ public abstract class CustomActivity extends AppCompatActivity {
         try {
             onConfigurationChangedCustom();
         } catch (Exception e) {
+            e.printStackTrace();
             log.fatal(this, "Error in activity : " + this.getLocalClassName(), e);
         }
     }

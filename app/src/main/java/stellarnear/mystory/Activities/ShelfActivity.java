@@ -26,11 +26,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Note;
+import stellarnear.mystory.Constants;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.DatePickerFragment;
@@ -54,7 +61,9 @@ public class ShelfActivity extends CustomActivity {
     private final Tools tools = new Tools();
 
     private LinearLayout scrollviewNotes;
-    private SharedPreferences settings;
+
+    private ChronoLocalDate minDate = null;
+    private ChronoLocalDate maxDate = null;
 
 
     @Override
@@ -66,11 +75,6 @@ public class ShelfActivity extends CustomActivity {
 
         toolbar = findViewById(R.id.toolbar);
         window = getWindow();
-
-        initShelf();
-    }
-
-    private void initShelf() {
         window.setStatusBarColor(getColor(R.color.primary_middle_brown));
         toolbar.setBackgroundColor(getColor(R.color.primary_dark_brown));
         toolbar.setTitleTextColor(getColor(R.color.primary_light_brown));
@@ -82,34 +86,74 @@ public class ShelfActivity extends CustomActivity {
                 toolbar.setBackground(getDrawable(R.drawable.shelf_bar_back2));
             }
         });
+        initShelf();
+    }
 
-
-        if (MainActivity.getShelf() != null && MainActivity.getShelf().size() > 0) {
-            populatePicker();
+    private void initShelf() {
+        List<Book> listShelf = MainActivity.getShelf();
+        if(minDate!=null){
+            listShelf=filterWithDate("min",listShelf);
+        }
+        if(maxDate!=null){
+            listShelf=filterWithDate("max",listShelf);
+        }
+        if (listShelf != null && listShelf.size() > 0) {
+            populatePicker(listShelf);
         } else {
             findViewById(R.id.shelfPicker).setVisibility(View.GONE);
             findViewById(R.id.shelf_info_sub).setVisibility(View.GONE);
             findViewById(R.id.shelf_book_linear).setVisibility(View.GONE);
             findViewById(R.id.shelf_no_book).setVisibility(View.VISIBLE);
+            findViewById(R.id.shelf_toolbar_infos_dates_line).setVisibility(View.GONE);
         }
 
     }
 
-    private void populatePicker() {
+    private List<Book> filterWithDate(String mode, List<Book> listShelf) {
+        List<Book> result = new ArrayList<>();
+
+        for (Book book : listShelf){
+            //les rare cas non set on les laisses
+            if(book.getLastEndTime()==null){
+                result.add(book);
+                continue;
+            }
+            if(mode.equalsIgnoreCase("min")){
+                LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
+                if (dt.isAfter(minDate) || dt.isEqual(minDate)) {
+                    result.add(book);
+                }
+            } else if(mode.equalsIgnoreCase("max")){
+                LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
+                if (dt.isBefore(maxDate) || dt.isEqual(maxDate)) {
+                    result.add(book);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void populatePicker(List<Book> listShelf) {
         DiscreteScrollView scrollView = findViewById(R.id.shelfPicker);
         scrollView.removeAllViews();
         scrollView.setSlideOnFling(true);
         scrollView.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.8f)
                 .build());
-        bookAdapter = new ListBookAdapter(MainActivity.getShelf(), scrollView, true);
-        scrollView.setAdapter(bookAdapter);
 
-        scrollView.scrollToPosition(MainActivity.getShelf().size() - 1);
+
+        bookAdapter = new ListBookAdapter(listShelf, scrollView, true);
+        scrollView.setAdapter(bookAdapter);
+        scrollView.scrollToPosition(listShelf.size() - 1);
         TextView infoLine1 = findViewById(R.id.shelf_book_info_line1);
         infoLine1.setVisibility(View.VISIBLE);
         TextView infoLine2 = findViewById(R.id.shelf_book_info_line2);
         infoLine2.setVisibility(View.VISIBLE);
+
+        TextView toolBarInfo = findViewById(R.id.shelf_toolbar_infos);
+        toolBarInfo.setText(bookAdapter.getItemCount() + " livres");
+        findStartAndEndDate(findViewById(R.id.shelf_toolbar_infos_start_date), findViewById(R.id.shelf_toolbar_infos_end_date));
+
         scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
             @Override
             public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
@@ -166,6 +210,60 @@ public class ShelfActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 popupDeleteBook();
+            }
+        });
+    }
+
+    private void findStartAndEndDate(View startId, View endId) {
+        TextView start = (TextView) startId;
+        TextView end = (TextView) endId;
+        for (Book book : bookAdapter.getBooks()) {
+            if (book.getLastEndTime() == null) {
+                continue;
+            }
+            try {
+                LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
+                if (minDate == null || dt.isBefore(minDate)) {
+                    minDate = dt;
+                }
+                if (maxDate == null || dt.isAfter(maxDate)) {
+                    maxDate = dt;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        start.setText(Constants.DATE_FORMATTER.format(minDate));
+        end.setText(Constants.DATE_FORMATTER.format(maxDate));
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment(Constants.DATE_FORMATTER.format(minDate));
+                datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+                datePickerFragment.setOnDateSetListener(new DatePickerFragment.OnDateSetListener() {
+                    @Override
+                    public void onEvent(String result) {
+                        minDate=LocalDate.parse(result, Constants.DATE_FORMATTER);
+                        initShelf();
+                    }
+                });
+
+            }
+        });
+        end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment(Constants.DATE_FORMATTER.format(maxDate));
+                datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+                datePickerFragment.setOnDateSetListener(new DatePickerFragment.OnDateSetListener() {
+                    @Override
+                    public void onEvent(String result) {
+                        maxDate=LocalDate.parse(result, Constants.DATE_FORMATTER);
+                        initShelf();
+                    }
+                });
+
             }
         });
     }

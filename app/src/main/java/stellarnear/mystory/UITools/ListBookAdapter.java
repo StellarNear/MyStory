@@ -1,7 +1,5 @@
 package stellarnear.mystory.UITools;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +25,7 @@ import stellarnear.mystory.R;
 public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHolder> {
 
     private final DiscreteScrollView scrollView;
+    private byte[] missingImageBytes = null;
     private List<Book> data;
     private boolean small = false;
 
@@ -36,6 +35,20 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         if (small.length > 0 && small[0]) {
             this.small = true;
         }
+        try {
+            String file = "res/raw/no_image.png";
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
+            int nRead;
+            byte[] dataBytes = new byte[4096];
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
+                buffer.write(dataBytes, 0, nRead);
+            }
+            this.missingImageBytes = buffer.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void setSmallViews() {
@@ -58,39 +71,24 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Book book = data.get(position);
+        Book book = data.get(holder.getAdapterPosition());
         byte[] imageByte = book.getImage();
         if (imageByte == null || imageByte.length < 1) {
             //on a pas réussi à avoir d'image on affiche l'image broken et on lance un retry pour une prochaine utilisation
-            try {
-                String file = "res/raw/no_image.png";
-                InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
-                int nRead;
-                byte[] dataBytes = new byte[16384];
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                    buffer.write(dataBytes, 0, nRead);
+            imageByte = missingImageBytes;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new BookNodeCalls().refreshImage(book);
                 }
-                imageByte = buffer.toByteArray();
+            });
 
-                new BookNodeCalls().refreshImage(book);
-                book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
-                    @Override
-                    public void onEvent() {
-                        Bitmap bmp = BitmapFactory.decodeByteArray(book.getImage(), 0, book.getImage().length);
-                        ImageView image = holder.getImage();
-                        image.setImageBitmap(Bitmap.createScaledBitmap(bmp, image.getWidth(), image.getHeight(), false));
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                scrollView.smoothScrollToPosition(position);
+                scrollView.smoothScrollToPosition(holder.getAdapterPosition());
             }
         });
 
@@ -108,12 +106,12 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         return data.get(adapterPosition);
     }
 
-    public List<Book> getData() {
-        return this.data;
-    }
-
     public void reset() {
         data = new ArrayList<>();
+    }
+
+    public List<Book> getBooks() {
+        return data;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -125,7 +123,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
             image = itemView.findViewById(R.id.image);
         }
 
-        public ImageView getImage() {
+        public ImageView getImageView() {
             return image;
         }
     }

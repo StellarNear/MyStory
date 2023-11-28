@@ -45,6 +45,7 @@ import stellarnear.mystory.TinyDB;
 public class MainActivity extends CustomActivity {
 
     private static Library library = null;
+    private static boolean listsLoaded=false;
 
     private FrameLayout mainFrameFrag;
 
@@ -132,16 +133,12 @@ public class MainActivity extends CustomActivity {
         });
 
         //loading library
-        if (library == null) {
-            try {
-                loadLibraryFromSave();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                prefs.edit().remove("my_save_library_key").apply();
-            } catch (Exception e) {
-                log.err("Could not load the library", e);
-                library = new Library();
-                saveLibrary();
-            }
+        try {
+            loadCurrentFromSave();
+        } catch (Exception e) {
+            log.err("Could not load the library", e);
+            library = new Library();
+            saveLibrary();
         }
 
         initMainFragment();
@@ -304,6 +301,7 @@ public class MainActivity extends CustomActivity {
             }
         });
 
+
         startFragment(R.id.fragment_main, downloadFrag, "frag_downloadlist");
     }
 
@@ -323,7 +321,7 @@ public class MainActivity extends CustomActivity {
         int margin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
         if (previousFragmentId == R.id.fragment_wish) {
-            mainFrag.setNewEnterTransition(R.transition.slide_right, getApplicationContext());
+            mainFrag.setCustomEnterTransition(R.transition.slide_right, getApplicationContext());
             startFragment(previousFragmentId, mainFrag, "frag_main");
 
             set.clear(fabWishList.getId(), ConstraintSet.END);
@@ -338,7 +336,7 @@ public class MainActivity extends CustomActivity {
             set.applyTo(mConstraintLayout);
         }
         if (previousFragmentId == R.id.fragment_search) {
-            mainFrag.setNewEnterTransition(R.transition.slide_left, getApplicationContext());
+            mainFrag.setCustomEnterTransition(R.transition.slide_left, getApplicationContext());
             fabSearchPanel.setImageDrawable(getDrawable(R.drawable.ic_book_add));
 
             startFragment(previousFragmentId, mainFrag, "frag_main");
@@ -355,7 +353,7 @@ public class MainActivity extends CustomActivity {
             set.applyTo(mConstraintLayout);
         }
         if (previousFragmentId == R.id.fragment_download) {
-            mainFrag.setNewEnterTransition(R.transition.slide_top, getApplicationContext());
+            mainFrag.setCustomEnterTransition(R.transition.slide_top, getApplicationContext());
             startFragment(previousFragmentId, mainFrag, "frag_main");
 
             set.clear(fabWishList.getId(), ConstraintSet.END);
@@ -377,13 +375,6 @@ public class MainActivity extends CustomActivity {
 
 
     private void startFragment(final int fragId, final Fragment frag, final String tag) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //fragmentTransaction.setCustomAnimations(animIn, animOut);
-        fragmentTransaction.replace(fragId, frag, tag);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-        getSupportFragmentManager().executePendingTransactions();
         if (frag instanceof MainActivityFragment) {
             fragShown = FragShown.MAIN;
             unlockOrient();
@@ -400,6 +391,12 @@ public class MainActivity extends CustomActivity {
             fragShown = FragShown.DOWNLOAD;
             lockOrient();
         }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(fragId, frag, tag);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
     }
 
     @Override
@@ -599,18 +596,32 @@ public class MainActivity extends CustomActivity {
 
     // part to handle library
 
-    public static void loadLibraryFromSave() {
-        library = new Library();
+    public static void loadCurrentFromSave() {
+        if(library==null){
+            library = new Library();
+        }
         if (tinyDB.getString("library_current").equalsIgnoreCase("")) {
             library.setCurrentBook(null);
         } else {
             library.setCurrentBook(tinyDB.getBook(tinyDB.getString("library_current")));
         }
+    }
 
+
+    public static void loadAllListFromSave() {
+        if(library==null){
+            library = new Library();
+        }
         library.loadShelf(toListBook(tinyDB.getListString("library_shelf")));
         library.loadWish(toListBook(tinyDB.getListString("library_wish")));
         library.loadDownload(toListBook(tinyDB.getListString("library_download")));
+        listsLoaded=true;
     }
+
+    public static boolean listsLoaded() {
+        return listsLoaded;
+    }
+
 
     private static List<Book> toListBook(ArrayList<String> listUuid) {
         List<Book> books = new ArrayList<>();

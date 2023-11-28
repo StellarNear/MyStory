@@ -170,7 +170,7 @@ public class BookNodeCalls {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             InputStream stream = null;
             try {
-                byte[] chunk = new byte[16384];
+                byte[] chunk = new byte[4096];
                 int bytesRead;
                 stream = new URL(book.getCover_url()).openStream();
                 while ((bytesRead = stream.read(chunk)) > 0) {
@@ -250,7 +250,7 @@ public class BookNodeCalls {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         InputStream stream = null;
         try {
-            byte[] chunk = new byte[16384];
+            byte[] chunk = new byte[4096];
             int bytesRead;
             stream = new URL(book.getHref()).openStream();
             while ((bytesRead = stream.read(chunk)) > 0) {
@@ -311,7 +311,7 @@ public class BookNodeCalls {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 InputStream stream = null;
                 try {
-                    byte[] chunk = new byte[16384];
+                    byte[] chunk = new byte[4096];
                     int bytesRead;
                     stream = new URL(book.getCover_url()).openStream();
                     while ((bytesRead = stream.read(chunk)) > 0) {

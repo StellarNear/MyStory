@@ -72,9 +72,6 @@ public class MainActivityFragment extends CustomFragment {
     @Override
     public View onCreateViewCustom(final LayoutInflater inflater, final ViewGroup container,
                                    Bundle savedInstanceState) {
-        TransitionInflater inflaterTrannsi = TransitionInflater.from(requireContext());
-        setExitTransition(inflaterTrannsi.inflateTransition(R.transition.fade_out));
-
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
 
@@ -91,7 +88,13 @@ public class MainActivityFragment extends CustomFragment {
         return returnFragView;
     }
 
-    public void setNewEnterTransition(int anim, Context applicationContext) {
+    public void setCustomExitTransition(int anim, Context applicationContext) {
+        TransitionInflater inflaterTrannsi = TransitionInflater.from(applicationContext);
+        setExitTransition(inflaterTrannsi.inflateTransition(anim));
+    }
+
+
+    public void setCustomEnterTransition(int anim, Context applicationContext) {
         TransitionInflater inflaterTrannsi = TransitionInflater.from(applicationContext);
         setEnterTransition(inflaterTrannsi.inflateTransition(anim));
     }
@@ -150,7 +153,20 @@ public class MainActivityFragment extends CustomFragment {
             returnFragView.findViewById(R.id.mainframe_no_current).setVisibility(View.VISIBLE);
         }
 
+        //after the first progress we load the other lists
 
+        if (!MainActivity.listsLoaded()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MainActivity.loadAllListFromSave();
+                    } catch (Exception e) {
+                        log.err("Could not load the library lists", e);
+                    }
+                }
+            }).start();
+        }
     }
 
     private void popupDiplayNotes() {
@@ -341,7 +357,7 @@ public class MainActivityFragment extends CustomFragment {
             String file = "res/raw/no_image.png";
             try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(file)) {
                 int nRead;
-                byte[] dataBytes = new byte[16384];
+                byte[] dataBytes = new byte[4096];
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
                     buffer.write(dataBytes, 0, nRead);

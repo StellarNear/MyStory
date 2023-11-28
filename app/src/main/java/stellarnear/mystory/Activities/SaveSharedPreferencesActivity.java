@@ -128,7 +128,8 @@ public class SaveSharedPreferencesActivity extends Activity {
                 }
             }
 
-            MainActivity.loadLibraryFromSave();
+            MainActivity.loadCurrentFromSave();
+            MainActivity.loadAllListFromSave();
             tools.customToast(getApplicationContext(), "Sauvegarde chargée");
         } catch (Exception e) {
             e.printStackTrace();

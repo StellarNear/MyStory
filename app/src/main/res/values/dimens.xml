@@ -65,5 +65,7 @@
 
     <dimen name="scroll_download_list_height">300dp</dimen>
 
+    <dimen name="text_shelf_info_size">16sp</dimen>
+
 
 </resources>

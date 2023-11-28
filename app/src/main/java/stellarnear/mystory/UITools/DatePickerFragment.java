@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
+import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.BooksLibs.Book;
 
@@ -16,8 +17,17 @@ public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
 
-    private final Book book;
+    private Book book=null;
     private String previousDate = null;
+    private DatePickerFragment.OnDateSetListener mListner=null;
+
+    public interface OnDateSetListener {
+        void onEvent(String result);
+    }
+
+    public void setOnDateSetListener(DatePickerFragment.OnDateSetListener eventListener) {
+        mListner = eventListener;
+    }
 
     public DatePickerFragment(Book book) {
         this.book = book;
@@ -25,6 +35,10 @@ public class DatePickerFragment extends DialogFragment
 
     public DatePickerFragment(Book book, String previousDate) {
         this.book = book;
+        this.previousDate = previousDate;
+    }
+
+    public DatePickerFragment( String previousDate) {
         this.previousDate = previousDate;
     }
 
@@ -56,8 +70,28 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        book.saveNewEndInstant(day + "/" + (month + 1) + "/" + year);
-        book.saveNewStartInstant(day + "/" + (month + 1) + "/" + year);
-        MainActivity.saveBook(book);
+        String saveDate="";
+        if(day<10){
+            saveDate+="0"+day;
+        } else {
+            saveDate+=day;
+        }
+        if(month<9){
+            saveDate+="/0"+(month+1);
+        } else {
+            saveDate+="/"+(month+1);
+        }
+        saveDate+="/"+year;
+
+        if(book!=null){
+            book.saveNewEndInstant(saveDate);
+            book.saveNewStartInstant(saveDate);
+            MainActivity.saveBook(book);
+        }
+
+        if(mListner!=null){
+            mListner.onEvent(saveDate);
+        }
+
     }
 }
