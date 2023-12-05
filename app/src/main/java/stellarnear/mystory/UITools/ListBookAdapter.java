@@ -1,11 +1,15 @@
 package stellarnear.mystory.UITools;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +32,16 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     private byte[] missingImageBytes = null;
     private List<Book> data;
     private boolean small = false;
+
+    private OnImageRefreshedEventListener mListner;
+
+    public interface OnImageRefreshedEventListener {
+        void onEvent(int pos);
+    }
+
+    public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener listner){
+        this.mListner=listner;
+    }
 
     public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView, boolean... small) {
         this.data = data;
@@ -71,11 +85,10 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Book book = data.get(holder.getAdapterPosition());
-        byte[] imageByte = book.getImage();
-        if (imageByte == null || imageByte.length < 1) {
+        Book book = data.get(position);
+        if (book.getImage() == null || book.getImage().length < 1) {
             //on a pas réussi à avoir d'image on affiche l'image broken et on lance un retry pour une prochaine utilisation
-            imageByte = missingImageBytes;
+            holder.image.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(),R.drawable.no_image));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -83,6 +96,17 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
                 }
             });
 
+            book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
+                @Override
+                public void onEvent() {
+                    if(mListner!=null){
+                        mListner.onEvent(holder.getAdapterPosition());
+                    }
+                }
+            });
+        } else {
+            Drawable image = new BitmapDrawable(holder.itemView.getContext().getResources(), BitmapFactory.decodeByteArray(book.getImage(), 0, book.getImage().length));
+            holder.image.setImageDrawable(image);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -91,10 +115,6 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
                 scrollView.smoothScrollToPosition(holder.getAdapterPosition());
             }
         });
-
-        Glide.with(holder.itemView.getContext())
-                .load(imageByte)
-                .into(holder.image);
     }
 
     @Override

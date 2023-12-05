@@ -124,6 +124,20 @@ public class MainActivityFragmentWishList extends CustomFragment {
                     .build());
             bookAdapter = new ListBookAdapter(wishList, scrollView);
             scrollView.setAdapter(bookAdapter);
+            scrollView.scrollToPosition(wishList.size() - 1);
+
+            returnFragView.findViewById(R.id.wish_forward_arrow).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    scrollView.smoothScrollToPosition(wishList.size() - 1);
+                }
+            });
+            returnFragView.findViewById(R.id.wish_backward_arrow).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    scrollView.smoothScrollToPosition(0);
+                }
+            });
 
             Book bookZero = bookAdapter.getBook(0);
             TextView title = returnFragView.findViewById(R.id.list_book_title);

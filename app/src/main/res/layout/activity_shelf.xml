@@ -182,11 +182,26 @@
         android:id="@+id/shelf_info_sub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:padding="@dimen/general_margin"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/shelf_backward_arrow"
+            android:layout_width="@dimen/list_navigate_button"
+            android:layout_height="@dimen/list_navigate_button"
+            android:background="@drawable/backdrop_light_brown"
+            app:tint="@color/primary_dark_brown"
+            android:src="@drawable/ic_baseline_arrow_backward_24"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
 
@@ -218,7 +233,16 @@
                 android:textAlignment="center"
                 android:textColor="?attr/colorPrimaryDark"
                 android:visibility="gone" />
+        </LinearLayout>
 
+
+        <ImageButton
+            android:id="@+id/shelf_forward_arrow"
+            android:layout_width="@dimen/list_navigate_button"
+            android:layout_height="@dimen/list_navigate_button"
+            android:background="@drawable/backdrop_light_brown"
+            app:tint="@color/primary_dark_brown"
+            android:src="@drawable/ic_baseline_arrow_forward_24"/>
     </LinearLayout>
 
 

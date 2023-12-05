@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MyStory</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Paramètres</string>
     <!-- Strings used for fragments for navigation -->
 
 
@@ -8,9 +8,13 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"77h"</string>
+        <string name="time_spend" >"79h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+valpha.13 :
+-enfin les images de recherche se refresh seule et l'affichage des images indisponible marche
+-ajout de deux petits boutons pour aller au tout debut de la liste et à la fin (pour l'étagère et pour la liste d'envie)
+
 valpha.12 :
 -simplification des images manquantes
 -quick loading (livre du jour avant pour une vitesse d'affchage qui ne laisse pas indifferent)

@@ -255,6 +255,18 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         bookAdapter = new ListBookAdapter(booksList, scrollView);
         scrollView.setAdapter(bookAdapter);
 
+        bookAdapter.setOnImageRefreshedEventListener(new ListBookAdapter.OnImageRefreshedEventListener() {
+            @Override
+            public void onEvent(int pos) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bookAdapter.notifyItemChanged(pos);
+                    }
+                });
+            }
+        });
+
         Book bookZero = bookAdapter.getBook(0);
         TextView title = returnFragView.findViewById(R.id.list_book_title);
         title.setVisibility(View.VISIBLE);

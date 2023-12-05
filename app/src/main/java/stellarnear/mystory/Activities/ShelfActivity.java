@@ -2,7 +2,6 @@ package stellarnear.mystory.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.view.Display;
@@ -28,7 +27,6 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,11 +89,11 @@ public class ShelfActivity extends CustomActivity {
 
     private void initShelf() {
         List<Book> listShelf = MainActivity.getShelf();
-        if(minDate!=null){
-            listShelf=filterWithDate("min",listShelf);
+        if (minDate != null) {
+            listShelf = filterWithDate("min", listShelf);
         }
-        if(maxDate!=null){
-            listShelf=filterWithDate("max",listShelf);
+        if (maxDate != null) {
+            listShelf = filterWithDate("max", listShelf);
         }
         if (listShelf != null && listShelf.size() > 0) {
             populatePicker(listShelf);
@@ -112,22 +110,26 @@ public class ShelfActivity extends CustomActivity {
     private List<Book> filterWithDate(String mode, List<Book> listShelf) {
         List<Book> result = new ArrayList<>();
 
-        for (Book book : listShelf){
+        for (Book book : listShelf) {
             //les rare cas non set on les laisses
-            if(book.getLastEndTime()==null){
+            if (book.getLastEndTime() == null) {
                 result.add(book);
                 continue;
             }
-            if(mode.equalsIgnoreCase("min")){
-                LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
-                if (dt.isAfter(minDate) || dt.isEqual(minDate)) {
-                    result.add(book);
+            try {
+                if (mode.equalsIgnoreCase("min")) {
+                    LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
+                    if (dt.isAfter(minDate) || dt.isEqual(minDate)) {
+                        result.add(book);
+                    }
+                } else if (mode.equalsIgnoreCase("max")) {
+                    LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
+                    if (dt.isBefore(maxDate) || dt.isEqual(maxDate)) {
+                        result.add(book);
+                    }
                 }
-            } else if(mode.equalsIgnoreCase("max")){
-                LocalDate dt = LocalDate.parse(book.getLastEndTime(), Constants.DATE_FORMATTER);
-                if (dt.isBefore(maxDate) || dt.isEqual(maxDate)) {
-                    result.add(book);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return result;
@@ -145,6 +147,20 @@ public class ShelfActivity extends CustomActivity {
         bookAdapter = new ListBookAdapter(listShelf, scrollView, true);
         scrollView.setAdapter(bookAdapter);
         scrollView.scrollToPosition(listShelf.size() - 1);
+
+        findViewById(R.id.shelf_forward_arrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollView.smoothScrollToPosition(listShelf.size() - 1);
+            }
+        });
+        findViewById(R.id.shelf_backward_arrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollView.smoothScrollToPosition(0);
+            }
+        });
+
         TextView infoLine1 = findViewById(R.id.shelf_book_info_line1);
         infoLine1.setVisibility(View.VISIBLE);
         TextView infoLine2 = findViewById(R.id.shelf_book_info_line2);
@@ -244,7 +260,7 @@ public class ShelfActivity extends CustomActivity {
                 datePickerFragment.setOnDateSetListener(new DatePickerFragment.OnDateSetListener() {
                     @Override
                     public void onEvent(String result) {
-                        minDate=LocalDate.parse(result, Constants.DATE_FORMATTER);
+                        minDate = LocalDate.parse(result, Constants.DATE_FORMATTER);
                         initShelf();
                     }
                 });
@@ -259,7 +275,7 @@ public class ShelfActivity extends CustomActivity {
                 datePickerFragment.setOnDateSetListener(new DatePickerFragment.OnDateSetListener() {
                     @Override
                     public void onEvent(String result) {
-                        maxDate=LocalDate.parse(result, Constants.DATE_FORMATTER);
+                        maxDate = LocalDate.parse(result, Constants.DATE_FORMATTER);
                         initShelf();
                     }
                 });
