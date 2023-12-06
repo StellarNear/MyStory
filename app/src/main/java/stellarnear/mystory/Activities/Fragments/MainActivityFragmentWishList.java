@@ -288,7 +288,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 if (MainActivity.getCurrentBook() == null) {
-                    selectedBook.addStartTime();
+                    MainActivity.addStartTime(selectedBook);
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromWishList(selectedBook);
                     loadWishList();
@@ -348,7 +348,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
-                selectedBook.addStartTime();
+                MainActivity.addStartTime(selectedBook);
                 MainActivity.setCurrentBook(selectedBook);
                 MainActivity.removeBookFromWishList(selectedBook);
                 loadWishList();

@@ -327,7 +327,7 @@ public class ShelfActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.getCurrentBook() == null) {
-                    selectedBook.addStartTime();
+                    MainActivity.addStartTime(selectedBook);
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromShelf(selectedBook);
                     tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
@@ -387,7 +387,7 @@ public class ShelfActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
-                selectedBook.addStartTime();
+                MainActivity.addStartTime(selectedBook);
                 MainActivity.setCurrentBook(selectedBook);
                 MainActivity.removeBookFromShelf(selectedBook);
                 tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");

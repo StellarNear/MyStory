@@ -683,8 +683,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                     }
                 }
                 if (MainActivity.getCurrentBook() == null) {
-                    selectedBook.addStartTime();
-                    MainActivity.saveBook(selectedBook);
+                    MainActivity.addStartTime(selectedBook);
                     MainActivity.setCurrentBook(selectedBook);
 
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
@@ -744,8 +743,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
             @Override
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
-                selectedBook.addStartTime();
-                MainActivity.saveBook(selectedBook);
+                MainActivity.addStartTime(selectedBook);
                 MainActivity.setCurrentBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();

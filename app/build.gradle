@@ -9,7 +9,7 @@ android {
         applicationId "stellarnear.mystory"
         minSdk 29
         targetSdk 31
-        versionCode 10
+        versionCode 11
         versionName "0.13"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

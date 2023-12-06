@@ -285,7 +285,7 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 if (MainActivity.getCurrentBook() == null) {
-                    selectedBook.addStartTime();
+                    MainActivity.addStartTime(selectedBook);
                     MainActivity.setCurrentBook(selectedBook);
                     MainActivity.removeBookFromDownloadList(selectedBook);
                     loadDownloadList();
@@ -345,7 +345,7 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 MainActivity.putCurrentToShelf();
-                selectedBook.addStartTime();
+                MainActivity.addStartTime(selectedBook);
                 MainActivity.setCurrentBook(selectedBook);
                 MainActivity.removeBookFromDownloadList(selectedBook);
                 loadDownloadList();

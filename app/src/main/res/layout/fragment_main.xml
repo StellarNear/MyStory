@@ -178,8 +178,27 @@
 
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
+        android:gravity="center"
         android:id="@+id/mainframe_no_current"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clipChildren="false"
+        >
+    <ImageView
+        android:layout_width="@dimen/minimize_progress"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/no_book"/>
+    <TextView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:shadowColor="@color/primary_light_purple"
@@ -189,9 +208,7 @@
         android:text="Aucun livre en cours..."
         android:textColor="@color/primary_middle_purple"
         android:textSize="30sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

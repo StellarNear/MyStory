@@ -683,6 +683,22 @@ public class MainActivity extends CustomActivity {
         return library.getWishList();
     }
 
+
+
+    public static void addStartTime(Book selectedBook) {
+        if (selectedBook != null) {
+            selectedBook.addStartTime();
+            MainActivity.saveBook(selectedBook);
+        }
+    }
+
+    public static void addEndTime(Book selectedBook) {
+        if (selectedBook != null) {
+            selectedBook.addEndTime();
+            MainActivity.saveBook(selectedBook);
+        }
+    }
+
     public static void setCurrentBook(Book selectedBook) {
         if (selectedBook != null) {
             library.setCurrentBook(selectedBook);
@@ -700,8 +716,12 @@ public class MainActivity extends CustomActivity {
     }
 
     public static void endBookAndPutToShelf() {
-        library.getCurrentBook().addEndTime();
-        putCurrentToShelf();
+        Book book = library.getCurrentBook();
+        if(book!=null){
+            MainActivity.addEndTime(book);
+            putCurrentToShelf();
+        }
+
     }
 
     public static void deleteCurrent() {
