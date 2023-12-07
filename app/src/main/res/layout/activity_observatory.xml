@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"  xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/black"
-    >
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.MyStory.AppBarOverlay"
@@ -15,32 +17,134 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.MyStory.PopupOverlay" />
+            app:popupTheme="@style/Theme.MyStory.PopupOverlay">
+
+            <LinearLayout
+                android:id="@+id/observatory_toolbar_select_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="@dimen/general_margin"
+                android:orientation="horizontal">
+
+
+                <Button
+                    android:id="@+id/observ_select_all"
+                    android:layout_width="@dimen/observ_button_width_select"
+                    android:layout_height="@dimen/observ_button_height_select"
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:layout_marginEnd="@dimen/general_margin"
+                    android:alpha="0.9"
+                    android:background="@drawable/button_ok_gradient"
+                    android:text="Tout"
+                    android:textColor="@color/primary_dark_blue"
+                    android:textSize="14sp"
+                    app:backgroundTint="@null" />
+
+
+                <Button
+                    android:id="@+id/observ_select_year"
+                    android:layout_width="@dimen/observ_button_width_select"
+                    android:layout_height="@dimen/observ_button_height_select"
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:layout_marginEnd="@dimen/general_margin"
+                    android:alpha="0.9"
+                    android:background="@drawable/button_basic_gradient"
+                    android:text="année"
+                    android:textColor="@color/primary_dark_blue"
+                    android:textSize="14sp"
+                    app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/observ_select_month"
+                    android:layout_width="@dimen/observ_button_width_select"
+                    android:layout_height="@dimen/observ_button_height_select"
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:layout_marginEnd="@dimen/general_margin"
+                    android:alpha="0.9"
+                    android:background="@drawable/button_basic_gradient"
+                    android:text="mois"
+                    android:textColor="@color/primary_dark_blue"
+                    android:textSize="14sp"
+                    app:backgroundTint="@null" />
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.66"
-        android:foregroundGravity="center"
-        android:background="@drawable/background_observatory">
-    </FrameLayout>
+        android:background="@drawable/background_observatory"
+        android:foregroundGravity="center"></FrameLayout>
 
-    <TextView
-        android:id="@+id/observ_no_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:shadowColor="@color/primary_dark_blue"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="20"
-        android:text="Coming soon TM"
-        android:textColor="@color/primary_light_blue"
-        android:textSize="30sp"
-        android:visibility="visible"
+    <LinearLayout
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/general_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clipChildren="false"
+                android:background="@drawable/background_border_infos"
+               >
+
+                    <LinearLayout
+                        android:id="@+id/obser_data_line_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:clipChildren="false"
+                        android:elevation="@dimen/general_margin"
+                        android:orientation="vertical" />
+
+            </ScrollView>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/general_margin"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clipChildren="false">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/line_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_margin="@dimen/general_margin"
+                android:layout_marginLeft="@dimen/general_margin"
+                android:layout_marginRight="@dimen/general_margin" />
+
+            <ImageView
+                android:id="@+id/obs_no_graph"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/no_graph"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

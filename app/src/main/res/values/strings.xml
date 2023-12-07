@@ -8,9 +8,14 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"80h"</string>
+        <string name="time_spend" >"84h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+v1.0 :
+-sorti de la dernière feature majeure : les stats !
+-possibilité de filtrer
+-affichage de differentes infos et un graphique !
+
 valpha.13 :
 -enfin les images de recherche se refresh seule et l'affichage des images indisponible marche
 -ajout de deux petits boutons pour aller au tout debut de la liste et à la fin (pour l'étagère et pour la liste d'envie)

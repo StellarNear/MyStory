@@ -26,8 +26,9 @@
         <item name="colorVariantLight">@color/primary_light_purple</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
         <item name="android:textColorPrimary">@color/primary_light_purple</item>
+        <item name="android:colorPrimary">@color/primary_dark_purple</item>
+        <item name="android:colorAccent">@color/primary_light_purple</item>
     </style>
 
     <style name="AppThemePink" parent="Theme.MyStory">
@@ -37,6 +38,8 @@
         <item name="colorVariantLight">@color/primary_light_pink</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorPrimary">@color/primary_dark_pink</item>
+        <item name="android:colorAccent">@color/primary_light_pink</item>
     </style>
 
     <style name="AppThemeBlue" parent="Theme.MyStory">
@@ -46,6 +49,8 @@
         <item name="colorVariantLight">@color/primary_light_blue</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorPrimary">@color/primary_dark_blue</item>
+        <item name="android:colorAccent">@color/primary_light_blue</item>
     </style>
 
 
@@ -56,6 +61,8 @@
         <item name="colorVariantLight">@color/primary_light_yellow</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorPrimary">@color/primary_dark_yellow</item>
+        <item name="android:colorAccent">@color/primary_light_yellow</item>
     </style>
 
 
@@ -66,6 +73,8 @@
         <item name="colorVariantLight">@color/primary_light_brown</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorPrimary">@color/primary_dark_brown</item>
+        <item name="android:colorAccent">@color/primary_light_brown</item>
     </style>
 
     <style name="AppThemeGreen" parent="Theme.MyStory">
@@ -75,6 +84,8 @@
         <item name="colorVariantLight">@color/primary_light_green</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorPrimary">@color/primary_dark_green</item>
+        <item name="android:colorAccent">@color/primary_light_green</item>
     </style>
 
 

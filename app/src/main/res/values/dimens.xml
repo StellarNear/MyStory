@@ -67,6 +67,10 @@
 
     <dimen name="text_shelf_info_size">16sp</dimen>
     <dimen name="list_navigate_button">30dp</dimen>
+    <dimen name="observ_button_width_select">100dp</dimen>
+    <dimen name="observ_button_height_select">40dp</dimen>
+
+    <dimen name="obs_info_text_size">12sp</dimen>
 
 
 </resources>
