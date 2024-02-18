@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
 import java.io.ByteArrayOutputStream;

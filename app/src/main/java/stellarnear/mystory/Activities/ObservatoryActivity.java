@@ -132,6 +132,15 @@ public class ObservatoryActivity extends CustomActivity {
     private void addInfos() {
         LinearLayout infos = findViewById(R.id.obser_data_line_info);
         infos.removeAllViews();
+
+        if(currentDataBooksList==null || currentDataBooksList.size()<1){
+            findViewById(R.id.obs_list_infos).setVisibility(View.GONE);
+            findViewById(R.id.obs_no_book).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.obs_list_infos).setVisibility(View.VISIBLE);
+            findViewById(R.id.obs_no_book).setVisibility(View.GONE);
+        }
+
         addInfo("Nombre de livres", String.valueOf(currentDataBooksList.size()));
 
         LocalDate minDate = null;
@@ -195,7 +204,7 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         try {
-            long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS);
+            long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS)+1;
 
             addInfo("Nombre de livres par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
         } catch (Exception e) {
@@ -271,13 +280,16 @@ public class ObservatoryActivity extends CustomActivity {
                     modeSelect = ModeSelect.ALL;
                     addInfos();
                     initBarChart();
+                    ((Button)findViewById(R.id.observ_select_month)).setText("mois");
+                    ((Button)findViewById(R.id.observ_select_year)).setText("année");
                 } else if (button.equals(findViewById(R.id.observ_select_year))) {
+                    ((Button)findViewById(R.id.observ_select_month)).setText("mois");
                     android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(ObservatoryActivity.this);
-                    alert.setTitle("Saisie de l'année'");
+                    alert.setTitle("Saisie de l'année");
                     final EditText input = new EditText(getApplicationContext());
                     input.setInputType(InputType.TYPE_CLASS_NUMBER);
                     input.setRawInputType(Configuration.KEYBOARD_12KEY);
-                    input.setHint("2023");
+                    input.setHint("2024");
                     alert.setView(input);
                     alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -289,6 +301,7 @@ public class ObservatoryActivity extends CustomActivity {
                                 Integer year = Integer.parseInt(value);
                                 currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
                                 filterDataYear(year);
+                                ((Button)findViewById(R.id.observ_select_year)).setText(String.valueOf(year));
                                 modeSelect = ModeSelect.YEAR;
                                 addInfos();
                                 initBarChart();
@@ -306,6 +319,7 @@ public class ObservatoryActivity extends CustomActivity {
                     });
                     alert.show();
                 } else if (button.equals(findViewById(R.id.observ_select_month))) {
+                    ((Button)findViewById(R.id.observ_select_year)).setText("année");
                     RackMonthPicker picker = new RackMonthPicker(this);
                     picker.setLocale(Locale.FRANCE)
                             .setPositiveButton(new DateMonthDialogListener() {
@@ -313,6 +327,7 @@ public class ObservatoryActivity extends CustomActivity {
                                 public void onDateMonth(int month, int startDate, int endDate, int year, String monthLabel) {
                                     currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
                                     filterDataYearMonth(year, month);
+                                    ((Button)findViewById(R.id.observ_select_month)).setText(month+"/"+year);
                                     modeSelect = ModeSelect.MONTH;
                                     addInfos();
                                     initBarChart();

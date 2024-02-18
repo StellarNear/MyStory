@@ -8,9 +8,18 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"84h"</string>
+        <string name="time_spend" >"87h"</string>
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
+v1.1.1 :
+- patch du calcul du nombre de livre par mois
+- année de préselection par défaut > 2024
+
+v1.1 :
+-ajout du clic sur le titre du livre qui affiche le résumé (sur l'étagère et aussi dans la liste d'envie)
+-ajout du clic long sur le titre du livre qui permet de changer le nombre de page maximal (sur l'étagère dans la liste d'envie et sur le livre en cours)
+-ajout de tristus maximus dans l'observatoire si il n'y a pas de livre
+
 v1.0 :
 -sorti de la dernière feature majeure : les stats !
 -possibilité de filtrer

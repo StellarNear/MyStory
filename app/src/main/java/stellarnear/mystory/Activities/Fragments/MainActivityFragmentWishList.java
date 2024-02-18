@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -143,6 +144,21 @@ public class MainActivityFragmentWishList extends CustomFragment {
             TextView title = returnFragView.findViewById(R.id.list_book_title);
             title.setVisibility(View.VISIBLE);
             title.setText(bookZero.getName());
+            title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUpSummary();
+                }
+            });
+            title.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    popupSelectMaxPage();
+                    return false;
+                }
+            });
+
+
             TextView author = returnFragView.findViewById(R.id.list_book_author);
             author.setVisibility(View.VISIBLE);
             author.setText(bookZero.getAutor().getFullName());
@@ -187,6 +203,128 @@ public class MainActivityFragmentWishList extends CustomFragment {
             returnFragView.findViewById(R.id.no_wish_list).setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void popupSelectMaxPage() {
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_infos, null);
+
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+        alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
+        alertInnerInfo.findViewById(R.id.radio_page_group).setVisibility(View.GONE);
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Valider");
+
+        LinearLayout.LayoutParams paramInner = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        paramInner.setMargins(margin, margin, margin, margin);
+        alertInnerInfo.setLayoutParams(paramInner);
+
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                .setTitle("Nombre de pages")
+                .setMessage(alertInnerInfo)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    Integer page = Integer.parseInt(valuePage.getText().toString());
+                    selectedBook.setMaxPages(page);
+                    tools.customSnack(getContext(), returnFragView, "Nombre de pages mis à jour à " + page + " !", "pinkshort");
+                    MainActivity.saveBook(selectedBook);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+                loadWishList();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(param);
+
+
+    }
+
+
+    private void popUpSummary() {
+        if (selectedBook != null) {
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
+            View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+            View summary = inflater.inflate(R.layout.summary_scroll, null);
+
+            TextView sumTxt = summary.findViewById(R.id.summary_text);
+            sumTxt.setText(selectedBook.getSummary());
+
+            LinearLayout.LayoutParams paramInner = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, getContext().getResources().getDimensionPixelSize(R.dimen.scroll_wish_list_height));
+            int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+            paramInner.setMargins(margin, margin, margin, margin);
+            summary.setLayoutParams(paramInner);
+
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            Button cancelButton = new Button(getContext());
+            cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+            cancelButton.setText("Fermer");
+            cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+            MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                    .setTitle("Résumé du livre")
+                    .setMessage(summary)
+                    .setCancelable(false)
+                    .addActionButton(cancelButton)
+                    .setOnShowListener(dialogInterface -> {
+                    })
+                    .setOnDismissListener(dialogInterface -> {
+                    })
+                    .setOnCancelListener(dialogInterface -> {
+                    });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            cancelButton.setLayoutParams(param);
+        }
     }
 
 

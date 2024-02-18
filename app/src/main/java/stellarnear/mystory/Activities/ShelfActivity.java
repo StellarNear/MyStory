@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -163,6 +164,22 @@ public class ShelfActivity extends CustomActivity {
 
         TextView infoLine1 = findViewById(R.id.shelf_book_info_line1);
         infoLine1.setVisibility(View.VISIBLE);
+        infoLine1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpSummary();
+            }
+        });
+
+        infoLine1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                popupSelectMaxPage();
+                return false;
+            }
+        });
+
+
         TextView infoLine2 = findViewById(R.id.shelf_book_info_line2);
         infoLine2.setVisibility(View.VISIBLE);
 
@@ -230,6 +247,131 @@ public class ShelfActivity extends CustomActivity {
         });
     }
 
+
+    private void popupSelectMaxPage() {
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+        View alertInnerInfo = inflater.inflate(R.layout.inner_alert_infos, null);
+
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
+        alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
+        alertInnerInfo.findViewById(R.id.radio_page_group).setVisibility(View.GONE);
+
+        Button okButton = new Button(getApplicationContext());
+        okButton.setBackground(getApplicationContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Valider");
+        LinearLayout.LayoutParams paramInner = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        paramInner.setMargins(margin, margin, margin, margin);
+        alertInnerInfo.setLayoutParams(paramInner);
+
+        okButton.setTextColor(getApplicationContext().getColor(R.color.end_gradient_button_ok));
+
+
+        Button cancelButton = new Button(getApplicationContext());
+        cancelButton.setBackground(getApplicationContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getApplicationContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(ShelfActivity.this, alert)
+                .setTitle("Nombre de pages")
+                .setMessage(alertInnerInfo)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    Integer page = Integer.parseInt(valuePage.getText().toString());
+                    selectedBook.setMaxPages(page);
+                    tools.customSnack(getApplicationContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "brownshort");
+                    MainActivity.saveBook(selectedBook);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+                initShelf();
+            }
+        });
+        dialog.show();
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
+
+
+    }
+
+
+    private void popUpSummary() {
+        if (selectedBook != null) {
+            LayoutInflater inflater = getLayoutInflater();
+            View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+
+            View summary = inflater.inflate(R.layout.summary_scroll, null);
+
+            TextView sumTxt = summary.findViewById(R.id.summary_text);
+            sumTxt.setText(selectedBook.getSummary());
+
+            LinearLayout.LayoutParams paramInner = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, getApplicationContext().getResources().getDimensionPixelSize(R.dimen.scroll_wish_list_height));
+            int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+            paramInner.setMargins(margin, margin, margin, margin);
+            summary.setLayoutParams(paramInner);
+
+            Button cancelButton = new Button(getApplicationContext());
+            cancelButton.setBackground(getApplicationContext().getDrawable(R.drawable.button_cancel_gradient));
+            cancelButton.setText("Fermer");
+            cancelButton.setTextColor(getApplicationContext().getColor(R.color.end_gradient_button_cancel));
+
+            MyLottieDialog dialog = new MyLottieDialog(ShelfActivity.this, alert)
+                    .setTitle("Résumé du livre")
+                    .setMessage(summary)
+                    .setCancelable(false)
+                    .addActionButton(cancelButton)
+                    .setOnShowListener(dialogInterface -> {
+                    })
+                    .setOnDismissListener(dialogInterface -> {
+                    })
+                    .setOnCancelListener(dialogInterface -> {
+                    });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            cancelButton.setLayoutParams(getButtonParam());
+        }
+    }
+
+    private LinearLayout.LayoutParams getButtonParam() {
+        int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(0,margin,0,0);
+        return param;
+    }
+
+
     private void findStartAndEndDate(View startId, View endId) {
         TextView start = (TextView) startId;
         TextView end = (TextView) endId;
@@ -290,8 +432,6 @@ public class ShelfActivity extends CustomActivity {
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Oui");
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.button_width_land), LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
 
         okButton.setTextColor(ShelfActivity.this.getColor(R.color.end_gradient_button_ok));
 
@@ -340,8 +480,8 @@ public class ShelfActivity extends CustomActivity {
             }
         });
         dialog.show();
-        cancelButton.setLayoutParams(param);
-        okButton.setLayoutParams(param);
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
     }
 
     private void popupPutCurrentToShelf() {
@@ -350,8 +490,6 @@ public class ShelfActivity extends CustomActivity {
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Oui");
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.button_width_land), LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
 
         okButton.setTextColor(ShelfActivity.this.getColor(R.color.end_gradient_button_ok));
 
@@ -396,8 +534,8 @@ public class ShelfActivity extends CustomActivity {
             }
         });
         dialog.show();
-        cancelButton.setLayoutParams(param);
-        okButton.setLayoutParams(param);
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
     }
 
 
@@ -444,8 +582,7 @@ public class ShelfActivity extends CustomActivity {
             }
         });
         dialog.show();
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.button_width_land), LinearLayout.LayoutParams.WRAP_CONTENT);
-        cancelButton.setLayoutParams(param);
+        cancelButton.setLayoutParams(getButtonParam());
 
     }
 
@@ -482,8 +619,6 @@ public class ShelfActivity extends CustomActivity {
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Créer");
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.button_width_land), LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
 
         okButton.setTextColor(ShelfActivity.this.getColor(R.color.end_gradient_button_ok));
 
@@ -527,8 +662,8 @@ public class ShelfActivity extends CustomActivity {
             }
         });
         dialog.show();
-        okButton.setLayoutParams(param);
-        cancelButton.setLayoutParams(param);
+        okButton.setLayoutParams(getButtonParam());
+        cancelButton.setLayoutParams(getButtonParam());
     }
 
 
@@ -538,8 +673,6 @@ public class ShelfActivity extends CustomActivity {
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Supprimer");
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.button_width_land), LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(0, getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0);
 
         okButton.setTextColor(ShelfActivity.this.getColor(R.color.end_gradient_button_ok));
 
@@ -581,8 +714,8 @@ public class ShelfActivity extends CustomActivity {
             }
         });
         dialog.show();
-        cancelButton.setLayoutParams(param);
-        okButton.setLayoutParams(param);
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
     }
 
     @Override

@@ -3,6 +3,7 @@
     android:id="@+id/lottie_dialog_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/popup_alert_land"
+    android:minWidth="500dp"
     android:orientation="horizontal"
     android:gravity="center"
     android:padding="@dimen/general_margin">
@@ -51,6 +52,7 @@ android:gravity="center"
 
 
         <LinearLayout
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -63,6 +65,7 @@ android:gravity="center"
                 android:layout_height="match_parent"
                 android:padding="@dimen/alert_simple_message_padding"
                 android:text="Message"
+                android:layout_gravity="center"
                 android:textAlignment="center"
                 android:textColor="?attr/colorVariantLight" />
 

@@ -1,7 +1,6 @@
 package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,6 +119,7 @@ public class Book {
 
     public void setMaxPages(int page) {
         this.maxPages = page;
+        this.currentPage = (int) ((1.0 * currentPercent * maxPages) / 100.0); //refresh page
     }
 
     public Integer getMaxPages() {

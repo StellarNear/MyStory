@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lottie_dialog_layout"
     android:layout_width="@dimen/popup_alert"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:minHeight="500dp"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="@dimen/general_margin">
@@ -29,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_alert"
+        android:gravity="center"
         android:orientation="vertical">
 
             <TextView
@@ -49,6 +51,7 @@
 
 
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -63,6 +66,7 @@
                 android:padding="@dimen/alert_simple_message_padding"
                 android:text="Message"
                 android:textAlignment="center"
+                android:layout_gravity="center"
                 android:textColor="?attr/colorVariantLight" />
 
             <View
