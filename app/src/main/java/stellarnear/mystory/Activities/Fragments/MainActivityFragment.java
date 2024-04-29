@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,10 +51,7 @@ public class MainActivityFragment extends CustomFragment {
     private FrameLayout mainCenter;
     private CircularSeekBar seekBar;
 
-    private boolean lockRefreshOnChange = false;
     private boolean firstSet;
-
-    private Handler handler;
 
     private Book book;
 
@@ -64,8 +60,11 @@ public class MainActivityFragment extends CustomFragment {
 
     private LinearLayout scrollviewNotes;
     private ImageView lockIcon;
+    private ImageView skipStart;
+    private ImageView skipEnd;
     private boolean locked = true;
     private Tools tools=new Tools();
+
 
     public MainActivityFragment() {
     }
@@ -466,6 +465,13 @@ public class MainActivityFragment extends CustomFragment {
         if (lockIcon != null) {
             ((ViewGroup) lockIcon.getParent()).removeView(lockIcon);
         }
+        if (skipStart != null) {
+            ((ViewGroup) skipStart.getParent()).removeView(skipStart);
+        }
+        if (skipEnd != null) {
+            ((ViewGroup) skipEnd.getParent()).removeView(skipEnd);
+        }
+
         if (centerPageInfo != null) {
             ((ViewGroup) centerPageInfo.getParent()).removeView(centerPageInfo);
         }
@@ -633,19 +639,21 @@ public class MainActivityFragment extends CustomFragment {
                 constrainLayoutProgress.addView(lockIcon);
                 locked = true;
 
+                skipStart =  new ImageView(getContext());
+                skipStart.setId(View.generateViewId());
+                skipStart.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_previous_24));
+                constrainLayoutProgress.addView(skipStart);
+
+                skipEnd =  new ImageView(getContext());
+                skipEnd.setId(View.generateViewId());
+                skipEnd.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_next_24));
+                constrainLayoutProgress.addView(skipEnd);
+
                 int width = constrainLayoutProgress.getMeasuredWidth();
                 int height = constrainLayoutProgress.getMeasuredHeight();
                 ConstraintSet set = new ConstraintSet();
                 set.clone(constrainLayoutProgress);
 
-
-                handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        lockRefreshOnChange = false;
-                        handler.postDelayed(this, 1000);
-                    }
-                }, 1000);
 
                 firstSet = true;
                 seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
@@ -675,18 +683,6 @@ public class MainActivityFragment extends CustomFragment {
                         if (locked && v < book.getCurrentPercent()) {
                             seekBar.setProgress(book.getCurrentPercent());
                         }
-
-
-                        if ((int) v <= 1 && v != 0 && !lockRefreshOnChange) {
-                            MainActivityFragment.this.seekBar.setProgress(0);
-                            lockRefreshOnChange = true;
-                            return;
-                        }
-                        if ((int) v >= 99 && v != 100 && !lockRefreshOnChange) {
-                            MainActivityFragment.this.seekBar.setProgress(100);
-                            lockRefreshOnChange = true;
-                            return;
-                        }
                     }
                 });
 
@@ -696,6 +692,13 @@ public class MainActivityFragment extends CustomFragment {
 
                 set.connect(lockIcon.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START, xLock);
                 set.connect(lockIcon.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP, yLock);
+
+                set.connect(skipStart.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START, 20);
+                set.connect(skipStart.getId(), ConstraintSet.BOTTOM, constrainLayoutProgress.getId(), ConstraintSet.BOTTOM, 20);
+
+                set.connect(skipEnd.getId(), ConstraintSet.END, constrainLayoutProgress.getId(), ConstraintSet.END, 20);
+                set.connect(skipEnd.getId(), ConstraintSet.BOTTOM, constrainLayoutProgress.getId(), ConstraintSet.BOTTOM, 20);
+
                 set.applyTo(constrainLayoutProgress);
 
                 lockIcon.setOnClickListener(new View.OnClickListener() {
@@ -708,6 +711,19 @@ public class MainActivityFragment extends CustomFragment {
                             lockIcon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_lock_24));
                             locked = true;
                         }
+                    }
+                });
+
+                skipStart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        seekBar.setProgress(0);
+                    }
+                });
+                skipEnd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        seekBar.setProgress(100);
                     }
                 });
             }
