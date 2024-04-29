@@ -12,7 +12,7 @@
         <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
         <string name="patch_list">"
 v1.2.0 :
-- le changement automatique de < 3% vers 0% et de 97% > 100% a été enlevé
+- le changement automatique de  3% ou- vers 0% ainsi que de 97% ou+ vers 100% a été enlevé
 - à la place il est maintenant possible d'appuyer sur des bouton qui mette directement à 0 ou à 100% l'avancement
 
 v1.1.1 :
