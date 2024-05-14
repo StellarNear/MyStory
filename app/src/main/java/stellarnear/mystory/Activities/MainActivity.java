@@ -118,6 +118,20 @@ public class MainActivity extends CustomActivity {
             }
         });
 
+        fabSearchPanel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(fragShown != null && fragShown == FragShown.SEARCH){
+                    searchFrag.addCustomBook();
+                    return true;
+                } else {
+                    return false;
+                }
+
+
+            }
+        });
+
         fabWishList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

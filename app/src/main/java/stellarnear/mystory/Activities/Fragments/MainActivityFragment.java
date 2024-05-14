@@ -56,14 +56,17 @@ public class MainActivityFragment extends CustomFragment {
     private Book book;
 
     private TextView movingPercent;
-    private TextView centerPageInfo;
+
+    private LinearLayout centerPageInfo;
+    private TextView centerPageInfoPercent;
+    private TextView centerPageInfoPages;
 
     private LinearLayout scrollviewNotes;
     private ImageView lockIcon;
     private ImageView skipStart;
     private ImageView skipEnd;
     private boolean locked = true;
-    private Tools tools=new Tools();
+    private Tools tools = new Tools();
 
 
     public MainActivityFragment() {
@@ -305,7 +308,7 @@ public class MainActivityFragment extends CustomFragment {
     private LinearLayout.LayoutParams getButtonParam() {
         int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(0,margin,0,0);
+        param.setMargins(0, margin, 0, 0);
         return param;
     }
 
@@ -582,15 +585,57 @@ public class MainActivityFragment extends CustomFragment {
         seekBar.setOuterThumbRadius(getContext().getResources().getDimension(R.dimen.progress_outer_radius_zoomed));
         seekBar.setOuterThumbStrokeWidth(getContext().getResources().getDimension(R.dimen.progress_outer_stroke_zoomed));
 
-        if (book.getMaxPages() != null) {
-            centerPageInfo = new TextView(getContext());
-            centerPageInfo.setId(View.generateViewId());
-            centerPageInfo.setTextSize(18);
-            centerPageInfo.setText("-/- pages");
-            centerPageInfo.setTextColor(getContext().getColor(R.color.primary_light_purple));
-            centerPageInfo.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-            centerPageInfo.setOnClickListener(new View.OnClickListener() {
+        centerPageInfo = new LinearLayout(getContext());
+        centerPageInfo.setOrientation(LinearLayout.VERTICAL);
+        centerPageInfo.setId(View.generateViewId());
+        centerPageInfo.setPadding(0, 0, 0, getResources().getDimensionPixelSize(R.dimen.general_margin));
+
+        centerPageInfoPercent = new TextView(getContext());
+
+        centerPageInfoPercent.setTextSize(42);
+        centerPageInfoPercent.setText("- %");
+        centerPageInfoPercent.setTextColor(getContext().getColor(R.color.primary_light_purple));
+        centerPageInfoPercent.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        centerPageInfoPercent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Saisie de la progression");
+                final EditText input = new EditText(getContext());
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                input.setRawInputType(Configuration.KEYBOARD_12KEY);
+                alert.setView(input);
+                alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        int percent = Integer.parseInt(input.getText().toString());
+                        if (percent < 0) {
+                            percent = 0;
+                        }
+                        if (percent > 100) {
+                            percent = 100;
+                        }
+                        seekBar.setProgress(percent);
+                    }
+                });
+                alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+                alert.show();
+            }
+        });
+        centerPageInfo.addView(centerPageInfoPercent);
+        if (book.getMaxPages() != null) {
+            centerPageInfoPages = new TextView(getContext());
+
+            centerPageInfoPages.setTextSize(18);
+            centerPageInfoPages.setText("-/- pages");
+            centerPageInfoPages.setTextColor(getContext().getColor(R.color.primary_light_purple));
+            centerPageInfoPages.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+            centerPageInfoPages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
@@ -614,15 +659,18 @@ public class MainActivityFragment extends CustomFragment {
                 }
             });
 
-            constrainLayoutProgress.addView(centerPageInfo);
-            ConstraintSet setPages = new ConstraintSet();
-            setPages.clone(constrainLayoutProgress);
-            setPages.connect(centerPageInfo.getId(), ConstraintSet.BOTTOM, constrainLayoutProgress.getId(), ConstraintSet.BOTTOM);
-            setPages.connect(centerPageInfo.getId(), ConstraintSet.END, constrainLayoutProgress.getId(), ConstraintSet.END);
-            setPages.connect(centerPageInfo.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START);
-            setPages.connect(centerPageInfo.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP);
-            setPages.applyTo(constrainLayoutProgress);
+            centerPageInfo.addView(centerPageInfoPages);
         }
+
+        constrainLayoutProgress.addView(centerPageInfo);
+        ConstraintSet setPages = new ConstraintSet();
+        setPages.clone(constrainLayoutProgress);
+        setPages.connect(centerPageInfo.getId(), ConstraintSet.BOTTOM, constrainLayoutProgress.getId(), ConstraintSet.BOTTOM);
+        setPages.connect(centerPageInfo.getId(), ConstraintSet.END, constrainLayoutProgress.getId(), ConstraintSet.END);
+        setPages.connect(centerPageInfo.getId(), ConstraintSet.START, constrainLayoutProgress.getId(), ConstraintSet.START);
+        setPages.connect(centerPageInfo.getId(), ConstraintSet.TOP, constrainLayoutProgress.getId(), ConstraintSet.TOP);
+        setPages.applyTo(constrainLayoutProgress);
+
         seekBar.post(new Runnable() {
             @Override
             public void run() {
@@ -631,6 +679,7 @@ public class MainActivityFragment extends CustomFragment {
                 movingPercent.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 movingPercent.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 movingPercent.setId(View.generateViewId());
+
                 constrainLayoutProgress.addView(movingPercent);
 
                 lockIcon = new ImageView(getContext());
@@ -639,12 +688,12 @@ public class MainActivityFragment extends CustomFragment {
                 constrainLayoutProgress.addView(lockIcon);
                 locked = true;
 
-                skipStart =  new ImageView(getContext());
+                skipStart = new ImageView(getContext());
                 skipStart.setId(View.generateViewId());
                 skipStart.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_previous_24));
                 constrainLayoutProgress.addView(skipStart);
 
-                skipEnd =  new ImageView(getContext());
+                skipEnd = new ImageView(getContext());
                 skipEnd.setId(View.generateViewId());
                 skipEnd.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_next_24));
                 constrainLayoutProgress.addView(skipEnd);
@@ -659,10 +708,12 @@ public class MainActivityFragment extends CustomFragment {
                 seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
                     @Override
                     public void onProgressChanged(float v) {
-
-                        if (centerPageInfo != null) {
+                        if (centerPageInfoPercent != null) {
+                            centerPageInfoPercent.setText((int) v + " %");
+                        }
+                        if (centerPageInfoPages != null) {
                             int page = (int) ((1.0 * (int) v * book.getMaxPages()) / 100.0);
-                            centerPageInfo.setText(page + "/" + book.getMaxPages() + " pages");
+                            centerPageInfoPages.setText(page + "/" + book.getMaxPages() + " pages");
                         }
                         movingPercent.setText((int) v + " %");
 

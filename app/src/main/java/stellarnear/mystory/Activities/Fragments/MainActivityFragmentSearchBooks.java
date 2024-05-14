@@ -32,11 +32,14 @@ import androidx.transition.TransitionInflater;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
+import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -747,6 +750,80 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         dialog.show();
         cancelButton.setLayoutParams(param);
         okButton.setLayoutParams(param);
+    }
+
+    public void addCustomBook() {
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+        View notes = inflater.inflate(R.layout.create_book, null);
+
+        Button okButton = new Button(getContext());
+        okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Créer");
+
+        okButton.setTextColor(getContext().getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(getContext());
+        cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+        cancelButton.setText("Fermer");
+        cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                .setAnimation(R.raw.reading_blank_bakground)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Creation d'un livre personnalisé")
+                .setMessage(notes)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText valueTitle = (EditText) notes.findViewById(R.id.book_create_title);
+                EditText valueAutor = (EditText) notes.findViewById(R.id.book_create_autor);
+                Autor customAutor = new Autor(-1, "", "", valueAutor.getText().toString());
+                Book customBook = new Book(-1, valueTitle.getText().toString(), null, customAutor);
+
+                try {
+                    String file = "res/raw/custom_book.png";
+                    InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
+                    int nRead;
+                    byte[] dataBytes = new byte[4096];
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
+                        buffer.write(dataBytes, 0, nRead);
+                    }
+                    customBook.setImageByte(buffer.toByteArray());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+
+                selectedBook = customBook;
+                popupAddToCurrent();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(getResources().getDimensionPixelSize(R.dimen.general_margin), 0, 0, 0);
+
+        okButton.setLayoutParams(param);
+        cancelButton.setLayoutParams(param);
     }
 
 
