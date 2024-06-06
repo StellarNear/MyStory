@@ -17,6 +17,7 @@ local.properties
 .gradle/
 build/
 app/release/*
+/app/release/output-metadata.json
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -47,4 +48,5 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
 
