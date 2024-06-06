@@ -1,5 +1,8 @@
 package stellarnear.mystory.BooksLibs;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,12 +20,14 @@ public class Book {
     private UUID uuid;
 
     private byte[] imageByte = null;
+    private String imagePath = null;
     private boolean pageDataRecieved = false;
 
 
     private List<String> startTimes = new ArrayList<>();
     private String summary;
     private String href;
+
 
     public DateTimeFormatter getFormater() {
         return Constants.DATE_FORMATTER;
@@ -187,12 +192,46 @@ public class Book {
         this.href = href;
     }
 
+    public void setImagePath(String absolutePath) {
+        this.imagePath = absolutePath;
+    }
+
+    public void discardBytes() {
+        this.imageByte = null;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
     public interface OnImageRefreshedEventListener {
         void onEvent();
     }
 
     public byte[] getImage() {
-        return this.imageByte;
+        if (this.imageByte != null) {
+            return this.imageByte;
+        }
+        if (this.imagePath != null) {
+            try {
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    byte[] imageData = new byte[(int) imageFile.length()];
+
+                    try (FileInputStream fis = new FileInputStream(imageFile)) {
+                        // Read the file into the byte array
+                        fis.read(imageData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null; // Handle the exception as needed
+                    }
+                    return imageData;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public void setImageByte(byte[] byteChunk) {
@@ -202,7 +241,6 @@ public class Book {
                 mListenerImageRefreshed.onEvent();
             }
         }
-
     }
 
     //later call pages data
@@ -216,6 +254,7 @@ public class Book {
 
     public interface OnPageDataRecievedEventListener {
         void onEvent();
+
     }
 
 

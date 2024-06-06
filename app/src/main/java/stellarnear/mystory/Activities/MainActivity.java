@@ -30,22 +30,19 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentDownloadList;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
-import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Library;
 import stellarnear.mystory.R;
 import stellarnear.mystory.TinyDB;
+import stellarnear.mystory.Tools;
 
 public class MainActivity extends CustomActivity {
 
     private static Library library = null;
-    private static boolean listsLoaded=false;
+    private static boolean listsLoaded = false;
 
     private FrameLayout mainFrameFrag;
 
@@ -67,6 +64,8 @@ public class MainActivity extends CustomActivity {
     private GestureDetector gestureDetector;
 
     private FragShown fragShown = null;
+
+    private Tools tools = Tools.getTools();
 
     private static SharedPreferences prefs;
 
@@ -121,7 +120,7 @@ public class MainActivity extends CustomActivity {
         fabSearchPanel.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if(fragShown != null && fragShown == FragShown.SEARCH){
+                if (fragShown != null && fragShown == FragShown.SEARCH) {
                     searchFrag.addCustomBook();
                     return true;
                 } else {
@@ -145,15 +144,6 @@ public class MainActivity extends CustomActivity {
                 startDownloadFragment();
             }
         });
-
-        //loading library
-        try {
-            loadCurrentFromSave();
-        } catch (Exception e) {
-            log.err("Could not load the library", e);
-            library = new Library();
-            saveLibrary();
-        }
 
         initMainFragment();
     }
@@ -459,7 +449,6 @@ public class MainActivity extends CustomActivity {
         });
     }
 
-
     @Override
     protected void onConfigurationChangedCustom() {
         setActivityFromOrientation();
@@ -606,197 +595,6 @@ public class MainActivity extends CustomActivity {
                     return false;
                 }
             };
-
-
-    // part to handle library
-
-    public static void loadCurrentFromSave() {
-        if(library==null){
-            library = new Library();
-        }
-        if (tinyDB.getString("library_current").equalsIgnoreCase("")) {
-            library.setCurrentBook(null);
-        } else {
-            library.setCurrentBook(tinyDB.getBook(tinyDB.getString("library_current")));
-        }
-    }
-
-
-    public static void loadAllListFromSave() {
-        if(library==null){
-            library = new Library();
-        }
-        library.loadShelf(toListBook(tinyDB.getListString("library_shelf")));
-        library.loadWish(toListBook(tinyDB.getListString("library_wish")));
-        library.loadDownload(toListBook(tinyDB.getListString("library_download")));
-        listsLoaded=true;
-    }
-
-    public static boolean listsLoaded() {
-        return listsLoaded;
-    }
-
-
-    private static List<Book> toListBook(ArrayList<String> listUuid) {
-        List<Book> books = new ArrayList<>();
-        for (String uuid : listUuid) {
-            books.add(tinyDB.getBook(uuid));
-        }
-        return books;
-    }
-
-    private static void saveLibrary() {
-        tinyDB.putListString("library_shelf", toUUID(library.getShelfList()));
-        tinyDB.putListString("library_wish", toUUID(library.getWishList()));
-        tinyDB.putListString("library_download", toUUID(library.getDownloadList()));
-        saveCurrent();
-    }
-
-    public static void saveShelf() {
-        tinyDB.putListString("library_shelf", toUUID(library.getShelfList()));
-    }
-
-    public static void saveWish() {
-        tinyDB.putListString("library_wish", toUUID(library.getWishList()));
-    }
-
-    public static void saveDownload() {
-        tinyDB.putListString("library_download", toUUID(library.getDownloadList()));
-    }
-
-    public static void saveCurrent() {
-        if (library.getCurrentBook() != null) {
-            tinyDB.putString("library_current", library.getCurrentBook().getUuid().toString());
-        } else {
-            tinyDB.putString("library_current", "");
-        }
-    }
-
-    private static ArrayList<String> toUUID(List<Book> list) {
-        ArrayList<String> result = new ArrayList<>();
-        for (Book book : list) {
-            result.add(book.getUuid().toString());
-        }
-        return result;
-    }
-
-    public static void saveBook(Book book) {
-        tinyDB.saveBook(book);
-    }
-
-    public static void deleteBook(Book selectedBook) {
-        prefs.edit().remove(selectedBook.getUuid().toString()).apply();
-    }
-
-
-    public static Book getCurrentBook() {
-        return library.getCurrentBook();
-    }
-
-    public static List<Book> getWishList() {
-        return library.getWishList();
-    }
-
-
-
-    public static void addStartTime(Book selectedBook) {
-        if (selectedBook != null) {
-            selectedBook.addStartTime();
-            MainActivity.saveBook(selectedBook);
-        }
-    }
-
-    public static void addEndTime(Book selectedBook) {
-        if (selectedBook != null) {
-            selectedBook.addEndTime();
-            MainActivity.saveBook(selectedBook);
-        }
-    }
-
-    public static void setCurrentBook(Book selectedBook) {
-        if (selectedBook != null) {
-            library.setCurrentBook(selectedBook);
-            saveCurrent();
-        }
-    }
-
-
-    public static void putCurrentToShelf() {
-        if (getCurrentBook() != null) {
-            library.putCurrentToShelf();
-            saveShelf();
-            saveCurrent();
-        }
-    }
-
-    public static void endBookAndPutToShelf() {
-        Book book = library.getCurrentBook();
-        if(book!=null){
-            MainActivity.addEndTime(book);
-            putCurrentToShelf();
-        }
-
-    }
-
-    public static void deleteCurrent() {
-        if(library.getCurrentBook()!=null){
-            deleteBook(library.getCurrentBook());
-        }
-        library.deleteCurrent();
-        saveCurrent();
-    }
-
-    public static void removeBookFromWishList(Book selectedBook) {
-        if (selectedBook != null) {
-            library.removeFromWishList(selectedBook);
-            saveWish();
-        }
-    }
-
-    public static void addBookToShelf(Book selectedBook) {
-        if (selectedBook != null) {
-            library.addToShelf(selectedBook);
-            saveShelf();
-        }
-    }
-
-    public static void removeBookFromShelf(Book selectedBook) {
-        if (selectedBook != null) {
-            library.removeFromShelf(selectedBook);
-            saveShelf();
-        }
-    }
-
-
-    public static void addToWishList(Book selectedBook) {
-        if (selectedBook != null) {
-            library.addToWishList(selectedBook);
-            saveWish();
-        }
-    }
-
-    public static List<Book> getShelf() {
-        return library.getShelfList();
-    }
-
-
-    public static List<Book> getDownloadList() {
-        return library.getDownloadList();
-    }
-
-    public static void removeBookFromDownloadList(Book selectedBook) {
-        if (selectedBook != null) {
-            library.removeBookFromDownloadList(selectedBook);
-            saveDownload();
-        }
-    }
-
-    public static void addBookToDownload(Book selectedBook) {
-        if (selectedBook != null) {
-            library.addToDownloadList(selectedBook);
-            saveDownload();
-        }
-    }
 
 
     private enum FragShown {

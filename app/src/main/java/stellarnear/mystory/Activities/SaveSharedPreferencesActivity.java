@@ -37,6 +37,8 @@ public class SaveSharedPreferencesActivity extends Activity {
         String action = getIntent().getExtras().getString("ACTION_TYPE");
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         tools.customToast(getApplicationContext(), "Selection du dossier cible");
+
+
         if (action.equalsIgnoreCase("save")) {
             startActivityForResult(intent, 42);
         } else if (action.equalsIgnoreCase("load")) {
@@ -73,10 +75,12 @@ public class SaveSharedPreferencesActivity extends Activity {
             } else {
                 loadFile(previousSave);
             }
-            finish();
+            finish(); // Finish current activity
         } else {
             finish();
         }
+
+
     }
 
     private void writeFile(DocumentFile pickedDir) {
@@ -128,8 +132,8 @@ public class SaveSharedPreferencesActivity extends Activity {
                 }
             }
 
-            MainActivity.loadCurrentFromSave();
-            MainActivity.loadAllListFromSave();
+            LibraryLoader.loadCurrentFromSave();
+            LibraryLoader.loadAllListFromSave();
             tools.customToast(getApplicationContext(), "Sauvegarde chargée");
         } catch (Exception e) {
             e.printStackTrace();

@@ -583,15 +583,15 @@ public class TinyDB {
         return (value);
     }
 
-
-    public Library getLibrary() {
-        String json = getString("my_save_library_key");
-        Library value = new Gson().fromJson(json, Library.class);
-        if (value == null) {
-            throw new NullPointerException();
-        }
-
-        return (value);
+    public void saveAccessStats(String key, Library.AccessStats libraryAccessStats) {
+        checkForNullKey(key);
+        Gson gson = new Gson();
+        putString(key, gson.toJson(libraryAccessStats));
     }
 
+    public Library.AccessStats getAccessStats(String libraryAccessStatsKey) {
+        String json = getString(libraryAccessStatsKey);
+        Library.AccessStats value = new Gson().fromJson(json, Library.AccessStats.class);
+        return (value);
+    }
 }

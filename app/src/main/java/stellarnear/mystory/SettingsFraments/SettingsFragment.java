@@ -1,20 +1,25 @@
 package stellarnear.mystory.SettingsFraments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.preference.Preference;
 import android.view.Surface;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.Activities.ObservatoryActivity;
 import stellarnear.mystory.Activities.SaveSharedPreferencesActivity;
 import stellarnear.mystory.Activities.ShelfActivity;
+import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 
@@ -139,6 +144,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                 intentSave.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 mC.startActivity(intentSave);
                 break;
+
             case "import_save":
                 Intent intentLoad = new Intent(mC, SaveSharedPreferencesActivity.class);
                 intentLoad.putExtra("ACTION_TYPE", "LOAD");
@@ -146,10 +152,75 @@ public class SettingsFragment extends CustomPreferenceFragment {
                 mC.startActivity(intentLoad);
                 break;
 
-
             case "send_report":
                 log.sendReport(getActivity());
+                break;
+
+            case "optimize_all_images":
+                new AlertDialog.Builder(mC)
+                        .setIcon(R.drawable.ic_warning_24dp)
+                        .setTitle("Réparer et optimiser les images")
+                        .setMessage("Veux tu réparer les images manquantes et optimiser toutes les images ?")
+                        .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Tools.fixMissingImage(LibraryLoader.getCurrentBook());
+                                Tools.convertByteToStoredFile(LibraryLoader.getCurrentBook());
+                                for (Book book : LibraryLoader.getDownloadList()) {
+                                    Tools.fixMissingImage(book);
+                                    Tools.convertByteToStoredFile(book);
+                                }
+                                for (Book book : LibraryLoader.getShelf()) {
+                                    Tools.fixMissingImage(book);
+                                    Tools.convertByteToStoredFile(book);
+                                }
+                                for (Book book : LibraryLoader.getWishList()) {
+                                    Tools.fixMissingImage(book);
+                                    Tools.convertByteToStoredFile(book);
+                                }
+                                tools.customToast(mC, "Réparation finie");
+                                Intent intent = new Intent(mC, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                mC.startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .show();
+
+                break;
+
+            case "delete_files":
+                new AlertDialog.Builder(mC)
+                        .setIcon(R.drawable.ic_warning_24dp)
+                        .setTitle("Suppression des fichiers locaux")
+                        .setMessage("Es-tu sûre de vouloir supprimer tout les fichiers locaux de l'application ?")
+                        .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (File file : LibraryLoader.getInternalStorageDir().listFiles()) {
+                                    file.delete();
+                                }
+                                tools.customToast(mC, "Suppression finie");
+                                Intent intent = new Intent(mC, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                mC.startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .show();
+
+                break;
         }
 
     }
+
+
 }

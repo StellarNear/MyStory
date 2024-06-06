@@ -9,16 +9,16 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
-import stellarnear.mystory.Activities.MainActivity;
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BooksLibs.Book;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
 
-    private Book book=null;
+    private Book book = null;
     private String previousDate = null;
-    private DatePickerFragment.OnDateSetListener mListner=null;
+    private DatePickerFragment.OnDateSetListener mListner = null;
 
     public interface OnDateSetListener {
         void onEvent(String result);
@@ -37,7 +37,7 @@ public class DatePickerFragment extends DialogFragment
         this.previousDate = previousDate;
     }
 
-    public DatePickerFragment( String previousDate) {
+    public DatePickerFragment(String previousDate) {
         this.previousDate = previousDate;
     }
 
@@ -69,26 +69,26 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String saveDate="";
-        if(day<10){
-            saveDate+="0"+day;
+        String saveDate = "";
+        if (day < 10) {
+            saveDate += "0" + day;
         } else {
-            saveDate+=day;
+            saveDate += day;
         }
-        if(month<9){
-            saveDate+="/0"+(month+1);
+        if (month < 9) {
+            saveDate += "/0" + (month + 1);
         } else {
-            saveDate+="/"+(month+1);
+            saveDate += "/" + (month + 1);
         }
-        saveDate+="/"+year;
+        saveDate += "/" + year;
 
-        if(book!=null){
+        if (book != null) {
             book.saveNewEndInstant(saveDate);
             book.saveNewStartInstant(saveDate);
-            MainActivity.saveBook(book);
+            LibraryLoader.saveBook(book);
         }
 
-        if(mListner!=null){
+        if (mListner != null) {
             mListner.onEvent(saveDate);
         }
 

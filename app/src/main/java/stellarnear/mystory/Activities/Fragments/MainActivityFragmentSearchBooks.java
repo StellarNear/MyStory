@@ -33,11 +33,14 @@ import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import stellarnear.mystory.Activities.MainActivity;
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
@@ -372,8 +375,9 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.saveBook(selectedBook);
-                MainActivity.addBookToShelf(selectedBook);
+                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                LibraryLoader.saveBook(selectedBook);
+                LibraryLoader.addBookToShelf(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à l'étagère !", "yellowshort");
                 DatePickerFragment datePickerFragment = new DatePickerFragment(selectedBook);
                 datePickerFragment.show(getParentFragmentManager(), "datePicker");
@@ -524,8 +528,9 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         }
                     }
                 }
-                MainActivity.saveBook(selectedBook);
-                MainActivity.addToWishList(selectedBook);
+                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                LibraryLoader.saveBook(selectedBook);
+                LibraryLoader.addToWishList(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
                 dialog.dismiss();
             }
@@ -578,8 +583,9 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.saveBook(selectedBook);
-                MainActivity.addBookToDownload(selectedBook);
+                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                LibraryLoader.saveBook(selectedBook);
+                LibraryLoader.addBookToDownload(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté aux téléchargements !", "yellowshort");
                 dialog.dismiss();
             }
@@ -680,9 +686,10 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         }
                     }
                 }
-                if (MainActivity.getCurrentBook() == null) {
-                    MainActivity.addStartTime(selectedBook);
-                    MainActivity.setCurrentBook(selectedBook);
+                if (LibraryLoader.getCurrentBook() == null) {
+                    Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                    LibraryLoader.addStartTime(selectedBook);
+                    LibraryLoader.setCurrentBook(selectedBook);
 
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 } else {
@@ -699,7 +706,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
     }
 
     private void popupSwapBooks() {
-        String text = "Tu lis actuellement " + MainActivity.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
+        String text = "Tu lis actuellement " + LibraryLoader.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -740,9 +747,10 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.putCurrentToShelf();
-                MainActivity.addStartTime(selectedBook);
-                MainActivity.setCurrentBook(selectedBook);
+                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                LibraryLoader.putCurrentToShelf();
+                LibraryLoader.addStartTime(selectedBook);
+                LibraryLoader.setCurrentBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();
             }
@@ -802,7 +810,17 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                     while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
                         buffer.write(dataBytes, 0, nRead);
                     }
-                    customBook.setImageByte(buffer.toByteArray());
+
+                    File imageFile = new File(LibraryLoader.getInternalStorageDir(), customBook.getUuid().toString() + ".jpg");
+                    try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                        // Assuming 'imageBytes' is your byte array that you want to save
+                        fos.write(buffer.toByteArray());
+                        fos.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    customBook.setImagePath(imageFile.getAbsolutePath());
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

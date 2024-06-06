@@ -8,9 +8,17 @@
     <string name="ok">oui</string>
 
 
-        <string name="time_spend" >"91h"</string>
-        <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
-        <string name="patch_list">"
+    <string name="time_spend">"101h"</string>
+    <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
+    <string name="patch_list">"
+v1.4.0 :
+- changement total des manipulation d'images dans l'application pour gagner de l'espace de stockage (et des sauvegarde plus légères)
+- ajout d'un menu pour optimiser et transferer toutes les images depuis la mémoire en fichier locaux (répare aussi les images manquantes)
+- ajout d'un menu pour vider tous les fichiers locaux
+- ajout d'un systeme de comptage de connexion
+- ajout d'un systeme de chaine de connexion
+- affichage de statistique de connexion
+
 v1.3.0 :
 - possibilité de crée un livre personnalisé il faut faire un maintient du clic sur la loupe lors de la recherche d'un livre
 - ajout de la possibilité de saisir le pourcentage directement lors du changement de l'avancement
@@ -96,7 +104,6 @@ valpha.1 :
 -fixé pas mal de bug que j'ai croisé
 -mis le systeme de swipe avec le doigt (smooth)
 -mis le clic sur les pages lors du changement de progres qui permet d'aller direct à une page (attention ca prend le % le plus proche genre si ton livre a 660 page et que tu met 333 ca fera 50% mais du coup ca correspond à 330 pages)"</string>
-
 
 
 </resources>

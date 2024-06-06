@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_baseline_compress_24"
+        android:key="optimize_all_images"
+        android:summary="Comprime toutes les images et les sauvegarde"
+        android:title="Optimise les images" />
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_file_upload_24dp"
+        android:key="import_save"
+        android:summary="Charge les informations"
+        android:title="Charger" />
+    <PreferenceScreen
+        android:icon="@drawable/ic_file_download_24dp"
+        android:key="export_save"
+        android:summary="Sauvegarde les informations"
+        android:title="Sauvegarder" />
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_baseline_folder_delete_24"
+        android:key="delete_files"
+        android:summary="Supprime tout les fichiers locaux"
+        android:title="Supprimer les données locales" />
+
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_undo_24dp"
+        android:key="pref_maintenance_reset"
+        android:summary="Réinitialise tout les paramètres et sauvegarde"
+        android:title="Reset de l'application" />
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_baseline_bug_report_24"
+        android:key="send_report"
+        android:summary="Envoi un mail avec le rapport d'erreur"
+        android:title="Rapport d'erreur" />
+
+
+
+</PreferenceScreen>

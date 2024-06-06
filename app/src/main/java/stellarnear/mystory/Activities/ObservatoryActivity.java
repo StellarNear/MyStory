@@ -109,7 +109,7 @@ public class ObservatoryActivity extends CustomActivity {
             }
         });
 
-        currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
+        currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
 
         listSelectButtons = new ArrayList<>();
         listSelectButtons.add((Button) findViewById(R.id.observ_select_all));
@@ -133,7 +133,7 @@ public class ObservatoryActivity extends CustomActivity {
         LinearLayout infos = findViewById(R.id.obser_data_line_info);
         infos.removeAllViews();
 
-        if(currentDataBooksList==null || currentDataBooksList.size()<1){
+        if (currentDataBooksList == null || currentDataBooksList.size() < 1) {
             findViewById(R.id.obs_list_infos).setVisibility(View.GONE);
             findViewById(R.id.obs_no_book).setVisibility(View.VISIBLE);
         } else {
@@ -150,7 +150,7 @@ public class ObservatoryActivity extends CustomActivity {
         Integer minPage = null;
         Integer maxPage = null;
         Integer totalPages = 0;
-        Integer nUnfinishedBooks=0;
+        Integer nUnfinishedBooks = 0;
 
 
         for (Book book : currentDataBooksList) {
@@ -204,8 +204,7 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         try {
-            long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS)+1;
-
+            long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
             addInfo("Nombre de livres par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
         } catch (Exception e) {
             //nah
@@ -228,9 +227,51 @@ public class ObservatoryActivity extends CustomActivity {
             //nah
         }
 
+        try {
+            addInfo("Nombre de connexions total", String.valueOf(LibraryLoader.getAccessStats().getnTotal()));
+            addInfo("Plus grande chaine de connexion", String.valueOf(LibraryLoader.getAccessStats().getBestStreak()));
+            View firstCo = addInfo("Première connexion", LibraryLoader.getAccessStats().getFirstLog());
+
+
+            addInfo("Dernière connexion", LibraryLoader.getAccessStats().getLastLog());
+            addInfo("Chaine de connexion actuelle", String.valueOf(LibraryLoader.getAccessStats().getnStreak()));
+
+            float nConnexionDay = (float) LibraryLoader.getAccessStats().getnTotal() / LibraryLoader.getAccessStats().getNdaysBetweenFirstAndCurrent();
+
+            //TODO REMOVE APRES FAKE BACK
+            firstCo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    new android.app.AlertDialog.Builder(ObservatoryActivity.this)
+                            .setIcon(R.drawable.ic_warning_24dp)
+                            .setTitle("On rattrape le décalage?")
+                            .setMessage("Ca va remettre la date à la premiere fois que tu as utilsié l'app à partir du noimbre de co moyenen actuelle")
+                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LibraryLoader.getAccessStats().forceFirstCo("17/11/2023", nConnexionDay);
+                                    tools.customToast(getApplicationContext(), "c'est fait");
+                                }
+                            })
+                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .show();
+                    return true;
+                }
+            });
+            addInfo("Nombre de connexion par jour", String.format("%.1f", nConnexionDay));
+            addInfo("Nombre de connexion par semaine", String.format("%.1f", nConnexionDay * 7));
+        } catch (Exception e) {
+            //nah
+        }
+
     }
 
-    private void addInfo(String s, String s2) {
+    private View addInfo(String s, String s2) {
         LinearLayout infos = findViewById(R.id.obser_data_line_info);
 
         LinearLayout line = new LinearLayout(getApplicationContext());
@@ -254,12 +295,13 @@ public class ObservatoryActivity extends CustomActivity {
 
         TextView i2 = getEditTextInfo(s2);
         i2.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
-        i2.setPadding(0,0, getResources().getDimensionPixelSize(R.dimen.general_margin),0);
+        i2.setPadding(0, 0, getResources().getDimensionPixelSize(R.dimen.general_margin), 0);
         i2.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         i2.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
         line.addView(i2);
 
         infos.addView(line);
+        return line;
     }
 
     private TextView getEditTextInfo(String s) {
@@ -276,14 +318,14 @@ public class ObservatoryActivity extends CustomActivity {
             if (buttonSelected.equals(button)) {
                 button.setBackground(getDrawable(R.drawable.button_ok_gradient));
                 if (button.equals(findViewById(R.id.observ_select_all))) {
-                    currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
+                    currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
                     modeSelect = ModeSelect.ALL;
                     addInfos();
                     initBarChart();
-                    ((Button)findViewById(R.id.observ_select_month)).setText("mois");
-                    ((Button)findViewById(R.id.observ_select_year)).setText("année");
+                    ((Button) findViewById(R.id.observ_select_month)).setText("mois");
+                    ((Button) findViewById(R.id.observ_select_year)).setText("année");
                 } else if (button.equals(findViewById(R.id.observ_select_year))) {
-                    ((Button)findViewById(R.id.observ_select_month)).setText("mois");
+                    ((Button) findViewById(R.id.observ_select_month)).setText("mois");
                     android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(ObservatoryActivity.this);
                     alert.setTitle("Saisie de l'année");
                     final EditText input = new EditText(getApplicationContext());
@@ -295,17 +337,17 @@ public class ObservatoryActivity extends CustomActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             try {
                                 String value = input.getText().toString();
-                                if(value.equalsIgnoreCase("")){
-                                    value=input.getHint().toString();
+                                if (value.equalsIgnoreCase("")) {
+                                    value = input.getHint().toString();
                                 }
                                 Integer year = Integer.parseInt(value);
-                                currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
+                                currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
                                 filterDataYear(year);
-                                ((Button)findViewById(R.id.observ_select_year)).setText(String.valueOf(year));
+                                ((Button) findViewById(R.id.observ_select_year)).setText(String.valueOf(year));
                                 modeSelect = ModeSelect.YEAR;
                                 addInfos();
                                 initBarChart();
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -319,15 +361,15 @@ public class ObservatoryActivity extends CustomActivity {
                     });
                     alert.show();
                 } else if (button.equals(findViewById(R.id.observ_select_month))) {
-                    ((Button)findViewById(R.id.observ_select_year)).setText("année");
+                    ((Button) findViewById(R.id.observ_select_year)).setText("année");
                     RackMonthPicker picker = new RackMonthPicker(this);
                     picker.setLocale(Locale.FRANCE)
                             .setPositiveButton(new DateMonthDialogListener() {
                                 @Override
                                 public void onDateMonth(int month, int startDate, int endDate, int year, String monthLabel) {
-                                    currentDataBooksList = new ArrayList<>(MainActivity.getShelf());
+                                    currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
                                     filterDataYearMonth(year, month);
-                                    ((Button)findViewById(R.id.observ_select_month)).setText(month+"/"+year);
+                                    ((Button) findViewById(R.id.observ_select_month)).setText(month + "/" + year);
                                     modeSelect = ModeSelect.MONTH;
                                     addInfos();
                                     initBarChart();

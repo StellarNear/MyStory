@@ -13,6 +13,8 @@ import android.widget.VideoView;
 
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +35,11 @@ public class SplashActivity extends CustomActivity {
 
     @Override
     protected void onCreateCustom() {
+        //start loading of lib
+
+        LibraryLoader.loadLibrary(getApplicationContext());
+
+
 // checking for rights
 
         //new PostConnectionVersion(getApplicationContext()); //sending connexion data to apk versionning usage page
@@ -78,6 +85,11 @@ public class SplashActivity extends CustomActivity {
                                 LayoutInflater inflater = SplashActivity.this.getLayoutInflater();
                                 View videoLayout = inflater.inflate(R.layout.splash_screen_video_player, null);
                                 setContentView(videoLayout);
+                                int streak = LibraryLoader.checkStreak();
+                                Snackbar snack = null;
+                                if (streak > 0) {
+                                    snack = tools.customSnack(SplashActivity.this, videoLayout, "Chaîne de connexion : " + streak + " jours", "purple");
+                                }
 
                                 VideoView openning = videoLayout.findViewById(R.id.fullscreen_video);
                                 // openning.setBackground(getColor(R.color.black));
@@ -88,6 +100,7 @@ public class SplashActivity extends CustomActivity {
                                 openning.setZOrderOnTop(true);
                                 openning.start();
 
+                                Snackbar finalSnack = snack;
                                 videoLayout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -95,6 +108,9 @@ public class SplashActivity extends CustomActivity {
                                             openning.stopPlayback();
                                             unlockOrient();
                                             touched = true;
+                                            if (finalSnack != null) {
+                                                finalSnack.dismiss();
+                                            }
                                             startMainActivity();
                                         }
                                     }
@@ -110,6 +126,7 @@ public class SplashActivity extends CustomActivity {
             }
         }, 10, 333);
     }
+
 
     @Override
     protected void onResumeCustom() {

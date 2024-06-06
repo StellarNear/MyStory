@@ -22,7 +22,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.util.List;
 
-import stellarnear.mystory.Activities.MainActivity;
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.Log.CustomLog;
 import stellarnear.mystory.R;
@@ -100,9 +100,9 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.getDownloadList() != null && MainActivity.getDownloadList().size() > 0) {
+                if (LibraryLoader.getDownloadList() != null && LibraryLoader.getDownloadList().size() > 0) {
                     try {
-                        CustomLog.sendDownloadEmail(getActivity(), MainActivity.getDownloadList());
+                        CustomLog.sendDownloadEmail(getActivity(), LibraryLoader.getDownloadList());
                     } catch (Exception e) {
                         tools.customToast(getContext(), "L'email n'a pas pu être envoyé : " + e.getMessage());
                     }
@@ -132,7 +132,7 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
     }
 
     private void loadDownloadList() {
-        List<Book> downloadList = MainActivity.getDownloadList();
+        List<Book> downloadList = LibraryLoader.getDownloadList();
         if (downloadList.size() > 0) {
 
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.VISIBLE);
@@ -230,7 +230,7 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.removeBookFromDownloadList(selectedBook);
+                LibraryLoader.removeBookFromDownloadList(selectedBook);
                 loadDownloadList();
                 tools.customSnack(getContext(), returnFragView, "Livre supprimé !", "greenshort");
                 dialog.dismiss();
@@ -284,10 +284,10 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.getCurrentBook() == null) {
-                    MainActivity.addStartTime(selectedBook);
-                    MainActivity.setCurrentBook(selectedBook);
-                    MainActivity.removeBookFromDownloadList(selectedBook);
+                if (LibraryLoader.getCurrentBook() == null) {
+                    LibraryLoader.addStartTime(selectedBook);
+                    LibraryLoader.setCurrentBook(selectedBook);
+                    LibraryLoader.removeBookFromDownloadList(selectedBook);
                     loadDownloadList();
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "greenshort");
                     dialog.dismiss();
@@ -303,7 +303,7 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
     }
 
     private void popupPutCurrentToShelf() {
-        String text = "Tu lis actuellement " + MainActivity.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
+        String text = "Tu lis actuellement " + LibraryLoader.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -344,10 +344,10 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.putCurrentToShelf();
-                MainActivity.addStartTime(selectedBook);
-                MainActivity.setCurrentBook(selectedBook);
-                MainActivity.removeBookFromDownloadList(selectedBook);
+                LibraryLoader.putCurrentToShelf();
+                LibraryLoader.addStartTime(selectedBook);
+                LibraryLoader.setCurrentBook(selectedBook);
+                LibraryLoader.removeBookFromDownloadList(selectedBook);
                 loadDownloadList();
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "greenshort");
                 dialog.dismiss();

@@ -8,6 +8,11 @@
             android:summary="Paramètres et informations de l'application"
             android:title="Gestion de l'application" />
 
+        <PreferenceScreen
+            android:icon="@drawable/ic_build_24dp"
+            android:key="pref_maintenance"
+            android:summary="Options de maintenance de l'application"
+            android:title="Maintenance de l'application" />
 
 
 </PreferenceScreen>

@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +26,6 @@ import stellarnear.mystory.R;
 public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHolder> {
 
     private final DiscreteScrollView scrollView;
-    private byte[] missingImageBytes = null;
     private List<Book> data;
     private boolean small = false;
 
@@ -38,8 +35,8 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         void onEvent(int pos);
     }
 
-    public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener listner){
-        this.mListner=listner;
+    public void setOnImageRefreshedEventListener(OnImageRefreshedEventListener listner) {
+        this.mListner = listner;
     }
 
     public ListBookAdapter(List<Book> data, DiscreteScrollView scrollView, boolean... small) {
@@ -48,20 +45,6 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         if (small.length > 0 && small[0]) {
             this.small = true;
         }
-        try {
-            String file = "res/raw/no_image.png";
-            InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
-            int nRead;
-            byte[] dataBytes = new byte[4096];
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                buffer.write(dataBytes, 0, nRead);
-            }
-            this.missingImageBytes = buffer.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     public void setSmallViews() {
@@ -87,7 +70,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         Book book = data.get(position);
         if (book.getImage() == null || book.getImage().length < 1) {
             //on a pas réussi à avoir d'image on affiche l'image broken et on lance un retry pour une prochaine utilisation
-            holder.image.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(),R.drawable.no_image));
+            holder.image.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.no_image));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -98,7 +81,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
-                    if(mListner!=null){
+                    if (mListner != null) {
                         mListner.onEvent(holder.getAdapterPosition());
                     }
                 }

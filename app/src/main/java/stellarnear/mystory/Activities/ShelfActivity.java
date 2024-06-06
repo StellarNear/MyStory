@@ -89,7 +89,7 @@ public class ShelfActivity extends CustomActivity {
     }
 
     private void initShelf() {
-        List<Book> listShelf = MainActivity.getShelf();
+        List<Book> listShelf = LibraryLoader.getShelf();
         if (minDate != null) {
             listShelf = filterWithDate("min", listShelf);
         }
@@ -305,7 +305,7 @@ public class ShelfActivity extends CustomActivity {
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
                     tools.customSnack(getApplicationContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "brownshort");
-                    MainActivity.saveBook(selectedBook);
+                    LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -367,7 +367,7 @@ public class ShelfActivity extends CustomActivity {
     private LinearLayout.LayoutParams getButtonParam() {
         int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(0,margin,0,0);
+        param.setMargins(0, margin, 0, 0);
         return param;
     }
 
@@ -466,10 +466,10 @@ public class ShelfActivity extends CustomActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.getCurrentBook() == null) {
-                    MainActivity.addStartTime(selectedBook);
-                    MainActivity.setCurrentBook(selectedBook);
-                    MainActivity.removeBookFromShelf(selectedBook);
+                if (LibraryLoader.getCurrentBook() == null) {
+                    LibraryLoader.addStartTime(selectedBook);
+                    LibraryLoader.setCurrentBook(selectedBook);
+                    LibraryLoader.removeBookFromShelf(selectedBook);
                     tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
                     initShelf();
                     dialog.dismiss();
@@ -485,7 +485,7 @@ public class ShelfActivity extends CustomActivity {
     }
 
     private void popupPutCurrentToShelf() {
-        String text = "Tu lis actuellement " + MainActivity.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux recommencer " + selectedBook.getName();
+        String text = "Tu lis actuellement " + LibraryLoader.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux recommencer " + selectedBook.getName();
 
         Button okButton = new Button(ShelfActivity.this);
         okButton.setBackground(ShelfActivity.this.getDrawable(R.drawable.button_ok_gradient));
@@ -524,10 +524,10 @@ public class ShelfActivity extends CustomActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.putCurrentToShelf();
-                MainActivity.addStartTime(selectedBook);
-                MainActivity.setCurrentBook(selectedBook);
-                MainActivity.removeBookFromShelf(selectedBook);
+                LibraryLoader.putCurrentToShelf();
+                LibraryLoader.addStartTime(selectedBook);
+                LibraryLoader.setCurrentBook(selectedBook);
+                LibraryLoader.removeBookFromShelf(selectedBook);
                 tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
                 initShelf();
                 dialog.dismiss();
@@ -603,7 +603,7 @@ public class ShelfActivity extends CustomActivity {
                 @Override
                 public void onClick(View view) {
                     selectedBook.deleteNote(note);
-                    MainActivity.saveBook(selectedBook);
+                    LibraryLoader.saveBook(selectedBook);
                     addNotesToScrollView();
                 }
             });
@@ -650,7 +650,7 @@ public class ShelfActivity extends CustomActivity {
                 String title = ((TextView) notes.findViewById(R.id.note_creat_title)).getText().toString();
                 String note = ((TextView) notes.findViewById(R.id.note_creat_note)).getText().toString();
                 selectedBook.createNote(title, note);
-                MainActivity.saveBook(selectedBook);
+                LibraryLoader.saveBook(selectedBook);
                 addNotesToScrollView();
                 dialog.dismiss();
             }
@@ -707,7 +707,7 @@ public class ShelfActivity extends CustomActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.removeBookFromShelf(selectedBook);
+                LibraryLoader.removeBookFromShelf(selectedBook);
                 initShelf();
                 tools.customSnack(ShelfActivity.this, okButton, "Livre supprimé !", "pinkshort");
                 dialog.dismiss();

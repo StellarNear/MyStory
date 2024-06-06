@@ -23,7 +23,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.util.List;
 
-import stellarnear.mystory.Activities.MainActivity;
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -110,7 +110,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
     }
 
     private void loadWishList() {
-        List<Book> wishList = MainActivity.getWishList();
+        List<Book> wishList = LibraryLoader.getWishList();
         if (wishList.size() > 0) {
 
             returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.VISIBLE);
@@ -267,7 +267,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
                     tools.customSnack(getContext(), returnFragView, "Nombre de pages mis à jour à " + page + " !", "pinkshort");
-                    MainActivity.saveBook(selectedBook);
+                    LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -370,8 +370,8 @@ public class MainActivityFragmentWishList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.removeBookFromWishList(selectedBook);
-                MainActivity.deleteBook(selectedBook);
+                LibraryLoader.removeBookFromWishList(selectedBook);
+                LibraryLoader.deleteBook(selectedBook);
                 loadWishList();
                 tools.customSnack(getContext(), returnFragView, "Livre supprimé !", "pinkshort");
                 dialog.dismiss();
@@ -425,10 +425,10 @@ public class MainActivityFragmentWishList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.getCurrentBook() == null) {
-                    MainActivity.addStartTime(selectedBook);
-                    MainActivity.setCurrentBook(selectedBook);
-                    MainActivity.removeBookFromWishList(selectedBook);
+                if (LibraryLoader.getCurrentBook() == null) {
+                    LibraryLoader.addStartTime(selectedBook);
+                    LibraryLoader.setCurrentBook(selectedBook);
+                    LibraryLoader.removeBookFromWishList(selectedBook);
                     loadWishList();
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
                     dialog.dismiss();
@@ -444,7 +444,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
     }
 
     private void popupPutCurrentToShelf() {
-        String text = "Tu lis actuellement " + MainActivity.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
+        String text = "Tu lis actuellement " + LibraryLoader.getCurrentBook().getName() + " il sera mis sur l'étagère si tu veux commencer " + selectedBook.getName();
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -485,10 +485,10 @@ public class MainActivityFragmentWishList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.putCurrentToShelf();
-                MainActivity.addStartTime(selectedBook);
-                MainActivity.setCurrentBook(selectedBook);
-                MainActivity.removeBookFromWishList(selectedBook);
+                LibraryLoader.putCurrentToShelf();
+                LibraryLoader.addStartTime(selectedBook);
+                LibraryLoader.setCurrentBook(selectedBook);
+                LibraryLoader.removeBookFromWishList(selectedBook);
                 loadWishList();
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "pinkshort");
                 dialog.dismiss();

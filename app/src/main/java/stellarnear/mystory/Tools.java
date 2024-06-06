@@ -1,6 +1,8 @@
 package stellarnear.mystory;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
@@ -14,10 +16,17 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import stellarnear.mystory.Activities.LibraryLoader;
+import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
+import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.Log.SelfCustomLog;
 
 /**
@@ -119,40 +128,94 @@ public class Tools extends SelfCustomLog {
         mToastToShow.show();
     }
 
-    public void customSnack(Context mC, View v, String txt, String... option) {
-        // Set the toast and duration
-        int dura = Snackbar.LENGTH_LONG;
-        if (option.length > 0) {
-            if (option[0].contains("short")) {
-                dura = Snackbar.LENGTH_SHORT;
+    public Snackbar customSnack(Context mC, View v, String txt, String... option) {
+        try {
+            // Set the toast and duration
+            int dura = Snackbar.LENGTH_LONG;
+            if (option.length > 0) {
+                if (option[0].contains("short")) {
+                    dura = Snackbar.LENGTH_SHORT;
+                }
             }
+            Snackbar snack = Snackbar.make(mC, v, txt, dura);
+            View view = snack.getView();
+            TextView tv = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
+            tv.setText(txt);
+            tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            if (option.length > 0) {
+                if (option[0].contains("yellow")) {
+                    snack.setTextColor(mC.getColor(R.color.primary_light_yellow));
+                    view.setBackgroundColor(mC.getColor(R.color.primary_middle_yellow));
+                } else if (option[0].contains("purple")) {
+                    snack.setTextColor(mC.getColor(R.color.primary_light_purple));
+                    view.setBackgroundColor(mC.getColor(R.color.primary_middle_purple));
+                } else if (option[0].contains("pink")) {
+                    snack.setTextColor(mC.getColor(R.color.primary_light_pink));
+                    view.setBackgroundColor(mC.getColor(R.color.primary_middle_pink));
+                } else if (option[0].contains("brown")) {
+                    snack.setTextColor(mC.getColor(R.color.primary_light_brown));
+                    view.setBackgroundColor(mC.getColor(R.color.primary_middle_brown));
+                } else if (option[0].contains("green")) {
+                    snack.setTextColor(mC.getColor(R.color.primary_light_green));
+                    view.setBackgroundColor(mC.getColor(R.color.primary_middle_green));
+                }
+            }
+
+            snack.show();
+
+            return snack;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Snackbar snack = Snackbar.make(mC, v, txt, dura);
-        View view = snack.getView();
-        TextView tv = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        if (option.length > 0) {
-            if (option[0].contains("yellow")) {
-                snack.setTextColor(mC.getColor(R.color.primary_light_yellow));
-                view.setBackgroundColor(mC.getColor(R.color.primary_middle_yellow));
-            } else if (option[0].contains("purple")) {
-                snack.setTextColor(mC.getColor(R.color.primary_light_purple));
-                view.setBackgroundColor(mC.getColor(R.color.primary_middle_purple));
-            } else if (option[0].contains("pink")) {
-                snack.setTextColor(mC.getColor(R.color.primary_light_pink));
-                view.setBackgroundColor(mC.getColor(R.color.primary_middle_pink));
-            } else if (option[0].contains("brown")) {
-                snack.setTextColor(mC.getColor(R.color.primary_light_brown));
-                view.setBackgroundColor(mC.getColor(R.color.primary_middle_brown));
-            } else if (option[0].contains("green")) {
-                snack.setTextColor(mC.getColor(R.color.primary_light_green));
-                view.setBackgroundColor(mC.getColor(R.color.primary_middle_green));
-            }
+        return null;
+    }
+
+    public static void convertByteToStoredFile(Book book) {
+        if (book == null || book.getImagePath() != null) { //blank or already done
+            return;
         }
 
-        snack.show();
+        try {
+            // Read the original image from bytes
 
+            Bitmap originalBitmap = BitmapFactory.decodeByteArray(book.getImage(), 0, book.getImage().length);
+
+            // Create a new scaled bitmap
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 400, 600, true);
+
+            // Convert the scaled bitmap back to a byte array
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+
+            File imageFile = new File(LibraryLoader.getInternalStorageDir(), book.getUuid().toString() + ".jpg");
+
+            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                // Assuming 'imageBytes' is your byte array that you want to save
+                fos.write(outputStream.toByteArray());
+                fos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            book.setImagePath(imageFile.getAbsolutePath());
+            book.discardBytes();
+            LibraryLoader.saveBook(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void fixMissingImage(Book book) {
+        if (book.getImagePath() != null && !new File(book.getImagePath()).exists()) {
+            new BookNodeCalls().refreshImage(book);
+            book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
+                @Override
+                public void onEvent() {
+                    book.setImagePath(null);
+                    Tools.convertByteToStoredFile(book);
+                }
+            });
+        }
     }
 
     /*

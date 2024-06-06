@@ -24,6 +24,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.transition.TransitionInflater;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.seosh817.circularseekbar.BarStrokeCap;
 import com.seosh817.circularseekbar.CircularSeekBar;
 import com.seosh817.circularseekbar.CircularSeekBarAnimation;
@@ -31,8 +33,10 @@ import com.seosh817.circularseekbar.callbacks.OnProgressChangedListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import stellarnear.mystory.Activities.MainActivity;
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Note;
@@ -88,8 +92,17 @@ public class MainActivityFragment extends CustomFragment {
 
         setScreen();
 
+
+        returnFragView.post(new Runnable() {
+            @Override
+            public void run() {
+                checkPrize(returnFragView);
+            }
+        });
+
         return returnFragView;
     }
+
 
     public void setCustomExitTransition(int anim, Context applicationContext) {
         TransitionInflater inflaterTrannsi = TransitionInflater.from(applicationContext);
@@ -103,9 +116,10 @@ public class MainActivityFragment extends CustomFragment {
     }
 
     public void setScreen() {
-        book = MainActivity.getCurrentBook();
+        book = LibraryLoader.getCurrentBook();
+        mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
         if (book != null) {
-            mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
+
             constrainLayoutProgress = (ConstraintLayout) returnFragView.findViewById(R.id.mainfrag_center);
             constrainLayoutMainFrag = (ConstraintLayout) returnFragView.findViewById(R.id.fragment_main);
             mainCenter.removeAllViews();
@@ -150,8 +164,8 @@ public class MainActivityFragment extends CustomFragment {
                             if (seekBar.getProgress() == 100) {
                                 popupEndBookPutOnShelf();
                             }
-                            MainActivity.saveBook(book);
-                            MainActivity.saveCurrent();
+                            LibraryLoader.saveBook(book);
+                            LibraryLoader.saveCurrent();
                         }
                         unzoomProgress();
                     }
@@ -170,21 +184,6 @@ public class MainActivityFragment extends CustomFragment {
             returnFragView.findViewById(R.id.mainfrag_info_linear).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainfrag_center).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainframe_no_current).setVisibility(View.VISIBLE);
-        }
-
-        //after the first progress we load the other lists
-
-        if (!MainActivity.listsLoaded()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        MainActivity.loadAllListFromSave();
-                    } catch (Exception e) {
-                        log.err("Could not load the library lists", e);
-                    }
-                }
-            }).start();
         }
     }
 
@@ -246,7 +245,7 @@ public class MainActivityFragment extends CustomFragment {
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     book.setMaxPages(page);
                     tools.customSnack(getContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "purpleshort");
-                    MainActivity.saveBook(book);
+                    LibraryLoader.saveBook(book);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -375,7 +374,7 @@ public class MainActivityFragment extends CustomFragment {
                 @Override
                 public void onClick(View view) {
                     book.deleteNote(note);
-                    MainActivity.saveBook(book);
+                    LibraryLoader.saveBook(book);
                     addNotesToScrollView();
                 }
             });
@@ -424,7 +423,7 @@ public class MainActivityFragment extends CustomFragment {
                 String title = ((TextView) notes.findViewById(R.id.note_creat_title)).getText().toString();
                 String note = ((TextView) notes.findViewById(R.id.note_creat_note)).getText().toString();
                 book.createNote(title, note);
-                MainActivity.saveBook(book);
+                LibraryLoader.saveBook(book);
                 addNotesToScrollView();
                 dialog.dismiss();
             }
@@ -454,7 +453,7 @@ public class MainActivityFragment extends CustomFragment {
         cs.clone(constrainLayoutMainFrag);
         cs.setVerticalBias(constrainLayoutProgress.getId(), 0.5f);
         cs.applyTo(constrainLayoutMainFrag);
-        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+        seekBar.setProgress(LibraryLoader.getCurrentBook().getCurrentPercent());
     }
 
     private void unzoomProgress() {
@@ -487,7 +486,7 @@ public class MainActivityFragment extends CustomFragment {
         cs.clone(constrainLayoutMainFrag);
         cs.setVerticalBias(constrainLayoutProgress.getId(), 0.1f);
         cs.applyTo(constrainLayoutMainFrag);
-        seekBar.setProgress(MainActivity.getCurrentBook().getCurrentPercent());
+        seekBar.setProgress(LibraryLoader.getCurrentBook().getCurrentPercent());
     }
 
     private void setImage(Book book) {
@@ -497,8 +496,9 @@ public class MainActivityFragment extends CustomFragment {
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
+                    Tools.fixMissingImage(book);
+                    LibraryLoader.saveBook(book);
                     setImage(book);
-                    MainActivity.saveBook(book);
                     byte[] b2 = book.getImage();
                     Drawable image2 = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b2, 0, b2.length));
                     ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image2);
@@ -824,7 +824,7 @@ public class MainActivityFragment extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.endBookAndPutToShelf();
+                LibraryLoader.endBookAndPutToShelf();
                 setScreen();
                 dialog.dismiss();
             }
@@ -876,7 +876,7 @@ public class MainActivityFragment extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.deleteCurrent();
+                LibraryLoader.deleteCurrent();
                 setScreen();
                 dialog.dismiss();
             }
@@ -886,6 +886,44 @@ public class MainActivityFragment extends CustomFragment {
         okButton.setLayoutParams(param);
     }
 
+    private void checkPrize(View view) {
+        int streak = LibraryLoader.getAccessStats().getnStreak();
+
+        Map<Integer, String> daysPrize = new LinkedHashMap<>();
+        daysPrize.put(7, "un bisou\n(utilisable n'importe quand)");
+        daysPrize.put(15, "un massage du dos");
+        daysPrize.put(30, "un massage intégrale\n(oui avec pieds aussi !)");
+        daysPrize.put(60, "un repas au restaurant en amoureux");
+        daysPrize.put(90, "un curry japonais du doudou");
+        daysPrize.put(120, "le cours d'oenologie (enfin...)");
+        daysPrize.put(200, "une nouvelle smartwatch !");
+
+        if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastClaimedStreakReward()==streak)) {
+            Snackbar snack = tools.customSnack(getContext(), view, "Tu as gagné " + daysPrize.get(streak), "purple");
+
+            LibraryLoader.getAccessStats().setLastClaimedStreakReward(streak);
+            LibraryLoader.saveAccessStats();
+
+            snack.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    int nextReward = Integer.MAX_VALUE;
+                    for (Integer day : daysPrize.keySet()) {
+                        if (day > streak && day < nextReward) {
+                            nextReward = day;
+                        }
+                    }
+                    if (nextReward != Integer.MAX_VALUE) {
+                        tools.customSnack(getContext(), view, "Prochaine récompense à " + nextReward + " jours", "purpleshort");
+                    } else {
+                        tools.customSnack(getContext(), view, "Aucune autre récompense pour le moment ...", "purpleshort");
+                    }
+                }
+            });
+
+        }
+    }
 
     private void unlockOrient() {
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
