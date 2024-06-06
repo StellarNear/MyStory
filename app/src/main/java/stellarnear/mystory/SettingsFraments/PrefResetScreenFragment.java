@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.Activities.MainActivity;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -78,7 +79,8 @@ public class PrefResetScreenFragment extends Preference {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.clear();
                 editor.apply();
-
+                LibraryLoader.resetLibrary();
+                LibraryLoader.loadLibrary(mC);
                 tools.customToast(mC, "Remise à zero de tout les paramètres de l'application");
                 Intent intent = new Intent(mC, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

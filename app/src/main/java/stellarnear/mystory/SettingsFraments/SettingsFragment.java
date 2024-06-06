@@ -179,9 +179,6 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                     Tools.convertByteToStoredFile(book);
                                 }
                                 tools.customToast(mC, "Réparation finie");
-                                Intent intent = new Intent(mC, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                mC.startActivity(intent);
                             }
                         })
                         .setNegativeButton("Non", new DialogInterface.OnClickListener() {
@@ -205,9 +202,6 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                     file.delete();
                                 }
                                 tools.customToast(mC, "Suppression finie");
-                                Intent intent = new Intent(mC, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                mC.startActivity(intent);
                             }
                         })
                         .setNegativeButton("Non", new DialogInterface.OnClickListener() {

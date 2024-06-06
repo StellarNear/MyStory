@@ -55,8 +55,6 @@ public class LibraryLoader {
                     }
                 }
             }).start();
-
-
         }
     }
 
@@ -283,4 +281,7 @@ public class LibraryLoader {
         return library.getAccessStats();
     }
 
+    public static void resetLibrary() {
+        library=new Library();
+    }
 }
