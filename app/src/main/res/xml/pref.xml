@@ -1,18 +1,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+    <PreferenceScreen
+        android:icon="@drawable/ic_smartphone"
+        android:key="pref_appli"
+        android:summary="Paramètres et informations de l'application"
+        android:title="Gestion de l'application" />
 
-        <PreferenceScreen
-            android:icon="@drawable/ic_smartphone"
-            android:key="pref_appli"
-            android:summary="Paramètres et informations de l'application"
-            android:title="Gestion de l'application" />
+    <PreferenceScreen
+        android:icon="@drawable/ic_build_24dp"
+        android:key="pref_maintenance"
+        android:summary="Options de maintenance de l'application"
+        android:title="Maintenance de l'application" />
 
-        <PreferenceScreen
-            android:icon="@drawable/ic_build_24dp"
-            android:key="pref_maintenance"
-            android:summary="Options de maintenance de l'application"
-            android:title="Maintenance de l'application" />
-
+    <PreferenceScreen
+        android:icon="@drawable/ic_baseline_card_giftcard_24"
+        android:key="pref_gift"
+        android:summary="Ensemble des cadeaux de connection"
+        android:title="Cadeaux" />
 
 </PreferenceScreen>

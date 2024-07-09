@@ -7,8 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -36,23 +35,25 @@
             android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyStory.NoActionBar"/>
+            android:theme="@style/Theme.MyStory.NoActionBar" />
 
-        <activity android:label="L'étagère"
+        <activity
+            android:label="L'étagère"
             android:name=".Activities.ShelfActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.MyStory.NoActionBar"/>
+            android:theme="@style/Theme.MyStory.NoActionBar" />
 
-        <activity android:label="L'observatoire"
+        <activity
+            android:label="L'observatoire"
             android:name=".Activities.ObservatoryActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.MyStory.NoActionBar"/>
+            android:theme="@style/Theme.MyStory.NoActionBar" />
 
         <activity
             android:name=".Activities.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Paramètres"
-            android:theme="@style/Theme.MyStory.NoActionBar"/>
+            android:theme="@style/Theme.MyStory.NoActionBar" />
 
         <activity
             android:name=".Activities.SaveSharedPreferencesActivity"

@@ -3,14 +3,21 @@
     <string name="action_settings">Paramètres</string>
     <!-- Strings used for fragments for navigation -->
 
-
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
 
-    <string name="time_spend">"101h"</string>
+    <string name="time_spend">"108h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.5.1 :
+- réparation des images des custom book
+- ajout d'une barre de chargemetn et animation lors de la réparation des images
+
+v1.5.0 :
+- creation d'une pop up pour presenter les cadeaux
+- ajout d'un menu de gestion des cadeaux
+
 v1.4.0 :
 - changement total des manipulation d'images dans l'application pour gagner de l'espace de stockage (et des sauvegarde plus légères)
 - ajout d'un menu pour optimiser et transferer toutes les images depuis la mémoire en fichier locaux (répare aussi les images manquantes)

@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_baseline_compress_24"
         android:key="optimize_all_images"
         android:summary="Comprime toutes les images et les sauvegarde"
-        android:title="Optimise les images" />
+        android:title="Répare les images" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_file_upload_24dp"
@@ -37,7 +37,6 @@
         android:key="send_report"
         android:summary="Envoi un mail avec le rapport d'erreur"
         android:title="Rapport d'erreur" />
-
 
 
 </PreferenceScreen>

@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lottie_dialog_layout"
     android:layout_width="@dimen/popup_alert"
     android:layout_height="match_parent"
@@ -33,29 +32,28 @@
         android:gravity="center"
         android:orientation="vertical">
 
-            <TextView
-                android:shadowColor="#000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
-                android:padding="@dimen/margin_title_alert"
-                android:layout_gravity="center"
-                android:id="@+id/lottie_dialog_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Super long titre qui demande une confirmation random ? "
-                android:textAlignment="center"
-                android:textColor="?attr/colorVariantLight"
-                android:textSize="@dimen/size_popup_alert_title"
-                android:background="@drawable/title_alert_background"/>
+        <TextView
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:padding="@dimen/margin_title_alert"
+            android:layout_gravity="center"
+            android:id="@+id/lottie_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Super long titre qui demande une confirmation random ? "
+            android:textAlignment="center"
+            android:textColor="?attr/colorVariantLight"
+            android:textSize="@dimen/size_popup_alert_title"
+            android:background="@drawable/title_alert_background" />
 
 
         <LinearLayout
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-           >
+            android:orientation="vertical">
 
             <TextView
                 android:gravity="center"
@@ -85,8 +83,7 @@
         android:layout_margin="@dimen/general_margin"
         android:layout_gravity="end"
         android:gravity="end"
-        android:orientation="horizontal"
-        />
+        android:orientation="horizontal" />
 
 
 </LinearLayout>

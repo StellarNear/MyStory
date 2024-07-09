@@ -322,10 +322,23 @@ public class BookNodeCalls {
 
                     if (byteArray != null && byteArray.length > 1) {
                         book.setImageByte(byteArray);
+                    } else {
+                        String file = "res/raw/no_image.png";
+                        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(file)) {
+                            int nRead;
+                            byte[] dataBytes = new byte[4096];
+                            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                            while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
+                                buffer.write(dataBytes, 0, nRead);
+                            }
+                            byte[] bNoimg = buffer.toByteArray();
+                            book.setImageByte(bNoimg);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-
                 } finally {
                     try {
                         if (stream != null) {
@@ -337,7 +350,6 @@ public class BookNodeCalls {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();

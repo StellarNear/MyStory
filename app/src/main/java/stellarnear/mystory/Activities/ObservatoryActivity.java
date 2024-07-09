@@ -238,31 +238,6 @@ public class ObservatoryActivity extends CustomActivity {
 
             float nConnexionDay = (float) LibraryLoader.getAccessStats().getnTotal() / LibraryLoader.getAccessStats().getNdaysBetweenFirstAndCurrent();
 
-            //TODO REMOVE APRES FAKE BACK
-            firstCo.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-
-                    new android.app.AlertDialog.Builder(ObservatoryActivity.this)
-                            .setIcon(R.drawable.ic_warning_24dp)
-                            .setTitle("On rattrape le décalage?")
-                            .setMessage("Ca va remettre la date à la premiere fois que tu as utilsié l'app à partir du noimbre de co moyenen actuelle")
-                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    LibraryLoader.getAccessStats().forceFirstCo("17/11/2023", nConnexionDay);
-                                    tools.customToast(getApplicationContext(), "c'est fait");
-                                }
-                            })
-                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .show();
-                    return true;
-                }
-            });
             addInfo("Nombre de connexion par jour", String.format("%.1f", nConnexionDay));
             addInfo("Nombre de connexion par semaine", String.format("%.1f", nConnexionDay * 7));
         } catch (Exception e) {

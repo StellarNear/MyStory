@@ -31,7 +31,6 @@
     <color name="search_fragment_background_color">#5162E073</color>
 
 
-
     <color name="start_gradient_button_basic">#80555555</color>
     <color name="end_gradient_button_basic">#80FFFFFF</color>
 
@@ -43,7 +42,7 @@
     <color name="start_gradient_button_ok">#2AB839</color>
     <color name="end_gradient_button_ok">#04500F</color>
 
-    
+
     <color name="transparent">#00000000</color>
     <color name="black_50_fade">#80000000</color>
     <color name="black_75_fade">#BF000000</color>

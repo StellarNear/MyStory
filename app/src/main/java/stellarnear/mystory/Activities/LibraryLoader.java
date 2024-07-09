@@ -24,14 +24,12 @@ public class LibraryLoader {
     private static Library library = null;
     private static TinyDB tinyDB = null;
     private static SharedPreferences prefs;
-    private static Context mCa;
     private static File internalStorageDir = null;
 
 
     private static CustomLog log = new CustomLog(LibraryLoader.class);
 
     public static void loadLibrary(Context mC) {
-        mCa = mC; //todo remove after migra
         if (tinyDB == null) {
             tinyDB = new TinyDB(mC);
             prefs = PreferenceManager.getDefaultSharedPreferences(mC);
@@ -282,6 +280,6 @@ public class LibraryLoader {
     }
 
     public static void resetLibrary() {
-        library=new Library();
+        library = new Library();
     }
 }

@@ -1,18 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:padding="@dimen/general_margin"
-    >
+    android:padding="@dimen/general_margin">
 
-     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-        >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <TextView
             android:padding="@dimen/general_margin"
             android:textColor="?attr/colorVariantLight"
@@ -20,7 +17,8 @@
             android:layout_height="wrap_content"
             android:text="Titre :"
             android:gravity="center_vertical"
-            android:textAlignment="textEnd"/>
+            android:textAlignment="textEnd" />
+
         <TextView
             android:id="@+id/alert_title_info"
             android:padding="@dimen/general_margin"
@@ -29,7 +27,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="le super long titre du livre qui est du coup en train de déborder tellement"
-            android:textAlignment="textStart"/>
+            android:textAlignment="textStart" />
     </LinearLayout>
 
     <LinearLayout
@@ -38,6 +36,7 @@
         android:orientation="horizontal"
 
         >
+
         <TextView
             android:padding="@dimen/general_margin"
             android:textColor="?attr/colorVariantLight"
@@ -45,7 +44,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="Auteur :"
-            android:textAlignment="textEnd"/>
+            android:textAlignment="textEnd" />
 
         <TextView
             android:id="@+id/alert_author_info"
@@ -55,14 +54,15 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="l'auteur"
-            android:textAlignment="textStart"/>
+            android:textAlignment="textStart" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?attr/colorVariantLight"
-        android:text="Nombre de page :"/>
+        android:text="Nombre de page :" />
+
     <RadioGroup
         android:id="@+id/radio_page_group"
         android:gravity="center"
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorVariantLight"
-            android:text="Autre"/>
+            android:text="Autre" />
 
     </RadioGroup>
 
@@ -91,7 +91,7 @@
         android:layout_width="wrap_content"
         android:textColor="?attr/colorVariantLight"
         android:layout_height="wrap_content"
-        android:hint="nombre de pages"/>
+        android:hint="nombre de pages" />
 
 
 </LinearLayout>

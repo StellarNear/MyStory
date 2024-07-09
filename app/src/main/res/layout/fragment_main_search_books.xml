@@ -104,13 +104,12 @@
                 android:id="@+id/add_to_shelf"
                 android:visibility="gone">
 
-            <ImageView
+                <ImageView
 
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:src="@drawable/ic_book_shelf"
-                app:tint="@color/primary_light_yellow"
-                />
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:src="@drawable/ic_book_shelf"
+                    app:tint="@color/primary_light_yellow" />
             </LinearLayout>
 
             <LinearLayout
@@ -124,8 +123,7 @@
                     android:layout_width="@dimen/add_book_from_search"
                     android:layout_height="@dimen/add_book_from_search"
                     android:src="@drawable/ic_book_download"
-                    app:tint="@color/primary_light_yellow"
-                    />
+                    app:tint="@color/primary_light_yellow" />
             </LinearLayout>
 
             <LinearLayout
@@ -135,12 +133,12 @@
                 android:gravity="center"
                 android:layout_weight="1">
 
-            <ImageView
+                <ImageView
 
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:src="@drawable/ic_book_heart"
-                app:tint="@color/primary_light_yellow" />
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:src="@drawable/ic_book_heart"
+                    app:tint="@color/primary_light_yellow" />
             </LinearLayout>
 
             <LinearLayout
@@ -150,11 +148,11 @@
                 android:gravity="center"
                 android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:src="@drawable/ic_book_open_page"
-                app:tint="@color/primary_light_yellow" />
+                <ImageView
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:src="@drawable/ic_book_open_page"
+                    app:tint="@color/primary_light_yellow" />
             </LinearLayout>
 
         </LinearLayout>

@@ -6,9 +6,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.Constants;
 
 public class Library {
@@ -99,12 +99,13 @@ public class Library {
         private int nTotal = 0;
         private int nStreak = 0;
         private int bestStreak = 0;
-        private int lastClaimedStreakReward=0;
+        private int lastGrantedStreakReward = 0;
 
         private String firstLog = "";
         private String lastLog = "";
         private String currentLog = "";
 
+        private List<String> giftsUnclaimed = new ArrayList<>();
 
         public void storeLogin() {
             if (firstLog == null) {
@@ -151,7 +152,7 @@ public class Library {
                     } else if (daysBetween > 1) {
                         // If the difference is more than 1, reset the streak
                         nStreak = 0;
-                        lastClaimedStreakReward=0;
+                        lastGrantedStreakReward = 0;
                     }
                     // If the days between is 0, it means the user logged in more than once on the same day,
                     // which should not affect the streak
@@ -193,26 +194,45 @@ public class Library {
             return daysBetween;
         }
 
-
-        //TODO REMOVE APRES FAKE BACK
-        public void forceFirstCo(String startFake, float nConnexionDay) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                    .withZone(ZoneId.systemDefault());
-            LocalDate firstLogDate = LocalDate.parse(firstLog, formatter);
-            LocalDate fakeLogDate = LocalDate.parse(startFake, formatter);
-            long daysToCatchBack = ChronoUnit.DAYS.between(fakeLogDate, firstLogDate);
-
-            nTotal += nConnexionDay * daysToCatchBack;
-
-            firstLog = startFake;
-            LibraryLoader.saveAccessStats();
+        public void setLastGrantedStreakReward(int streak) {
+            this.lastGrantedStreakReward = streak;
         }
 
-        public void setLastClaimedStreakReward(int streak) {
-            this.lastClaimedStreakReward=streak;
+        public int getLastGrantedStreakReward() {
+            return this.lastGrantedStreakReward;
         }
-        public int getLastClaimedStreakReward() {
-            return this.lastClaimedStreakReward;
+
+        public void addGiftToclaim(String gift) {
+            if (giftsUnclaimed == null) {
+                this.giftsUnclaimed = new ArrayList<>();
+            }
+            this.giftsUnclaimed.add(gift);
+        }
+
+        public List<String> getGiftsUnclaimed() {
+            if (giftsUnclaimed == null) {
+                this.giftsUnclaimed = new ArrayList<>();
+            }
+            return giftsUnclaimed;
+        }
+
+        public void claimGift(String gift) {
+            // Get the iterator for the list
+            if (giftsUnclaimed == null) {
+                this.giftsUnclaimed = new ArrayList<>();
+                return;
+            }
+            Iterator<String> iterator = giftsUnclaimed.iterator();
+            // Iterate through the list
+            while (iterator.hasNext()) {
+                // Check if the current element matches the target string
+                if (iterator.next().equalsIgnoreCase(gift)) {
+                    // Remove the element using iterator's remove method
+                    iterator.remove();
+                    // Exit the method
+                    return;
+                }
+            }
         }
     }
 }

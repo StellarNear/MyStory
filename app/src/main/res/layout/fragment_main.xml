@@ -12,7 +12,6 @@
     tools:context=".Activities.Fragments.MainActivityFragment">
 
 
-
     <LinearLayout
         android:id="@+id/mainfrag_top_icons"
         android:layout_width="match_parent"
@@ -189,26 +188,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:clipChildren="false"
-        >
-    <ImageView
-        android:layout_width="@dimen/minimize_progress"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:src="@drawable/no_book"/>
-    <TextView
+        android:clipChildren="false">
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:shadowColor="@color/primary_light_purple"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="20"
-        android:text="Aucun livre en cours..."
-        android:textColor="@color/primary_middle_purple"
-        android:textSize="30sp"
-        />
+        <ImageView
+            android:layout_width="@dimen/minimize_progress"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/no_book" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/primary_light_purple"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="20"
+            android:text="Aucun livre en cours..."
+            android:textColor="@color/primary_middle_purple"
+            android:textSize="30sp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

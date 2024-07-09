@@ -88,7 +88,7 @@ public class SplashActivity extends CustomActivity {
                                 int streak = LibraryLoader.checkStreak();
                                 Snackbar snack = null;
                                 if (streak > 0) {
-                                    snack = tools.customSnack(SplashActivity.this, videoLayout, "Chaîne de connexion : " + streak + " jours", "purple");
+                                    snack = tools.customSnack(SplashActivity.this, videoLayout, "Chaîne de connexion : " + streak + " jour" + (streak > 1 ? "s" : ""), "purple");
                                 }
 
                                 VideoView openning = videoLayout.findViewById(R.id.fullscreen_video);

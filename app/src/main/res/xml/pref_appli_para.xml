@@ -11,6 +11,6 @@
         android:key="switch_direct_add_to_shelf"
         android:title="Ajout direct à l'étagère"
         android:icon="@drawable/ic_book_shelf"
-        android:summary="Permet d'ajouter directement les livres depuis la recherche à l'étagère"/>
+        android:summary="Permet d'ajouter directement les livres depuis la recherche à l'étagère" />
 
 </PreferenceScreen>

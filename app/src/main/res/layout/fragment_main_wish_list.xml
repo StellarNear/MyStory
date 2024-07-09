@@ -23,7 +23,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <LinearLayout
         android:id="@+id/middle_info_holder"
         android:layout_width="match_parent"
@@ -60,7 +59,6 @@
         />
 
 
-
     <LinearLayout
 
         android:layout_width="match_parent"
@@ -68,43 +66,44 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/wishScroller"
         android:gravity="center">
-       <LinearLayout
-           android:id="@+id/icon_book_linear"
-           android:visibility="visible"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:gravity="center"
-           android:padding="@dimen/general_margin">
 
-           <LinearLayout
-               android:layout_width="0dp"
-               android:layout_height="wrap_content"
-               android:gravity="center"
-               android:layout_weight="1">
-           <ImageView
-               android:id="@+id/delete_book"
-               android:layout_width="@dimen/add_book_from_search"
-               android:layout_height="@dimen/add_book_from_search"
-               app:tint="@color/primary_light_pink"
-               android:src="@drawable/ic_book_off"/>
-           </LinearLayout>
-           <LinearLayout
-               android:layout_width="0dp"
-               android:layout_height="wrap_content"
-               android:gravity="center"
-               android:layout_weight="1">
-           <ImageView
-               android:id="@+id/start_reading"
-               android:layout_width="@dimen/add_book_from_search"
-               android:layout_height="@dimen/add_book_from_search"
-               app:tint="@color/primary_light_pink"
-               android:src="@drawable/ic_book_open_page"/>
-           </LinearLayout>
-       </LinearLayout>
+        <LinearLayout
+            android:id="@+id/icon_book_linear"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/general_margin">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/delete_book"
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    app:tint="@color/primary_light_pink"
+                    android:src="@drawable/ic_book_off" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/start_reading"
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    app:tint="@color/primary_light_pink"
+                    android:src="@drawable/ic_book_open_page" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
-
-
 
 
     <LinearLayout
@@ -149,32 +148,31 @@
             android:textSize="@dimen/list_book_page_size" />
 
 
-
     </LinearLayout>
 
 
-        <ImageButton
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/wish_backward_arrow"
-            android:layout_width="@dimen/list_navigate_button"
-            android:layout_height="@dimen/list_navigate_button"
-            app:tint="@color/primary_light_pink"
-            android:layout_gravity="start"
-            android:background="@color/transparent"
-            android:layout_margin="@dimen/general_margin"
-            android:src="@drawable/ic_baseline_arrow_backward_24"/>
+    <ImageButton
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/wish_backward_arrow"
+        android:layout_width="@dimen/list_navigate_button"
+        android:layout_height="@dimen/list_navigate_button"
+        app:tint="@color/primary_light_pink"
+        android:layout_gravity="start"
+        android:background="@color/transparent"
+        android:layout_margin="@dimen/general_margin"
+        android:src="@drawable/ic_baseline_arrow_backward_24" />
 
-        <ImageButton
-            android:layout_margin="@dimen/general_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/wish_forward_arrow"
-            android:layout_width="@dimen/list_navigate_button"
-            android:layout_height="@dimen/list_navigate_button"
-            android:layout_gravity="end"
-            app:tint="@color/primary_light_pink"
-            android:background="@color/transparent"
-            android:src="@drawable/ic_baseline_arrow_forward_24"/>
+    <ImageButton
+        android:layout_margin="@dimen/general_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/wish_forward_arrow"
+        android:layout_width="@dimen/list_navigate_button"
+        android:layout_height="@dimen/list_navigate_button"
+        android:layout_gravity="end"
+        app:tint="@color/primary_light_pink"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_baseline_arrow_forward_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

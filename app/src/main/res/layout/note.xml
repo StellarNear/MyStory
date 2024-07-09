@@ -5,8 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_note"
     android:gravity="center"
-    android:padding="@dimen/general_margin"
-    >
+    android:padding="@dimen/general_margin">
 
     <TextView
         android:id="@+id/note_creation_date"
@@ -14,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textColor="?attr/colorVariantLight"
         android:textAlignment="center"
-        android:layout_weight="5"/>
+        android:layout_weight="5" />
 
 
     <TextView
@@ -23,7 +22,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="?attr/colorVariantLight"
-        android:layout_weight="5"/>
+        android:layout_weight="5" />
 
 
     <ImageView
@@ -33,6 +32,6 @@
         android:color="?attr/colorVariantLight"
         android:src="@drawable/ic_baseline_delete_forever_24"
         app:tint="?attr/colorVariantLight"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
 </LinearLayout>

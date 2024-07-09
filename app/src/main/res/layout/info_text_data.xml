@@ -7,7 +7,6 @@
     android:textColor="@color/primary_light_blue"
     android:textSize="@dimen/obs_info_text_size"
     android:textAlignment="textStart"
-    android:padding="@dimen/general_margin"
-    >
+    android:padding="@dimen/general_margin">
 
 </TextView>

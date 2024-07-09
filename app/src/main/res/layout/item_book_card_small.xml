@@ -15,8 +15,7 @@
         android:layout_height="match_parent"
         tools:ignore="ContentDescription"
         android:scaleType="fitXY"
-        android:adjustViewBounds="true"
-        />
+        android:adjustViewBounds="true" />
 
 
 </LinearLayout>

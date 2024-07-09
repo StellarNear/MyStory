@@ -584,4 +584,17 @@ public class MyLottieDialog {
         this.lottieDialog.setOnDismissListener(listener);
         return this;
     }
+
+
+    public MyLottieDialog setCancelOnTouchItself(boolean b) {
+        if (b) {
+            this.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+        }
+        return this;
+    }
 }

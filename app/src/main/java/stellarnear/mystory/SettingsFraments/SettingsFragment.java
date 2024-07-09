@@ -6,13 +6,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.view.Surface;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.Activities.MainActivity;
@@ -22,6 +30,7 @@ import stellarnear.mystory.Activities.ShelfActivity;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
+import stellarnear.mystory.UITools.MyLottieDialog;
 
 public class SettingsFragment extends CustomPreferenceFragment {
     private Activity mA;
@@ -110,6 +119,52 @@ public class SettingsFragment extends CustomPreferenceFragment {
             displayMainPage();
         } else if (currentPageKey.contains("pref_")) {
             loadPage();
+            if (currentPageKey.equalsIgnoreCase("pref_gift")) {
+                PreferenceCategory otherList = (PreferenceCategory) findPreference("pref_gift_list_cat");
+                int nthgift = 0;
+                if (LibraryLoader.getAccessStats().getGiftsUnclaimed().size() > 0) {
+
+
+                    for (String gift : LibraryLoader.getAccessStats().getGiftsUnclaimed()) {
+                        Preference pref = new Preference(mC);
+                        pref.setKey("gift_" + nthgift);
+                        pref.setTitle(gift);
+                        //pref.setSummary(txt);
+                        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                new AlertDialog.Builder(mC)
+                                        .setIcon(R.drawable.ic_warning_24dp)
+                                        .setTitle("Réclamer ce cadeau ?")
+                                        .setMessage("Confirmes tu obtenir le cadeau :\n\n" + gift)
+                                        .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                LibraryLoader.getAccessStats().claimGift(gift);
+                                                LibraryLoader.saveAccessStats();
+                                                navigate();
+                                            }
+                                        })
+                                        .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                        .show();
+                                return false;
+                            }
+                        });
+                        otherList.addPreference(pref);
+
+                    }
+                } else {
+                    Preference pref = new Preference(mC);
+                    pref.setKey("nogift");
+                    pref.setTitle("Pas de cadeaux à réclamer");
+                    otherList.addPreference(pref);
+
+                }
+            }
         }
     }
 
@@ -157,6 +212,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                 break;
 
             case "optimize_all_images":
+
                 new AlertDialog.Builder(mC)
                         .setIcon(R.drawable.ic_warning_24dp)
                         .setTitle("Réparer et optimiser les images")
@@ -164,21 +220,74 @@ public class SettingsFragment extends CustomPreferenceFragment {
                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Tools.fixMissingImage(LibraryLoader.getCurrentBook());
-                                Tools.convertByteToStoredFile(LibraryLoader.getCurrentBook());
+
+                                Button cancelButton = new Button(getContext());
+                                cancelButton.setBackground(getContext().getDrawable(R.drawable.button_cancel_gradient));
+
+                                cancelButton.setText("Fermer");
+                                cancelButton.setTextColor(getContext().getColor(R.color.end_gradient_button_cancel));
+
+                                MyLottieDialog fixingAlert = new MyLottieDialog(getActivity())
+                                        .setTitle("Réparation en cours")
+                                        .setAnimation(R.raw.fixing)
+                                        .setMessage("-/-")
+                                        .setAnimationRepeatCount(-1)
+                                        .addActionButton(cancelButton)
+                                        .setAutoPlayAnimation(true)
+                                        .setCancelable(false)
+                                        .setOnShowListener(dialogInterface -> {
+                                        })
+                                        .setOnDismissListener(dialogInterface -> {
+                                        })
+                                        .setOnCancelListener(dialogInterface -> {
+                                        });
+
+                                cancelButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        fixingAlert.dismiss();
+                                    }
+                                });
+                                fixingAlert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialogInterface) {
+                                        tools.customToast(mC,"Réparation finie");
+                                    }
+                                });
+                                fixingAlert.show();
+                                final AtomicInteger nFix = new AtomicInteger();
+                                final AtomicInteger totalFix = new AtomicInteger();
+                                totalFix.addAndGet(LibraryLoader.getDownloadList().size());
+                                totalFix.addAndGet(LibraryLoader.getShelf().size());
+                                totalFix.addAndGet(LibraryLoader.getWishList().size());
+                                if (LibraryLoader.getCurrentBook() != null) {
+                                    totalFix.getAndIncrement();
+                                }
+
+
+                                Tools.OnFixedImageEventListener fixListener = new Tools.OnFixedImageEventListener() {
+                                    @Override
+                                    public void onEvent(Book book) {
+                                        nFix.incrementAndGet();
+                                        fixingAlert.setMessage(nFix.get() + " / " + totalFix.get()+ " images de livres réparées");
+                                        if (nFix.get() == totalFix.get()) {
+                                            fixingAlert.dismiss();
+                                        }
+                                    }
+                                };
+
+                                if (LibraryLoader.getCurrentBook() != null) {
+                                    fixBookImage(LibraryLoader.getCurrentBook(), fixListener);
+                                }
                                 for (Book book : LibraryLoader.getDownloadList()) {
-                                    Tools.fixMissingImage(book);
-                                    Tools.convertByteToStoredFile(book);
+                                    fixBookImage(book, fixListener);
                                 }
                                 for (Book book : LibraryLoader.getShelf()) {
-                                    Tools.fixMissingImage(book);
-                                    Tools.convertByteToStoredFile(book);
+                                    fixBookImage(book, fixListener);
                                 }
                                 for (Book book : LibraryLoader.getWishList()) {
-                                    Tools.fixMissingImage(book);
-                                    Tools.convertByteToStoredFile(book);
+                                    fixBookImage(book, fixListener);
                                 }
-                                tools.customToast(mC, "Réparation finie");
                             }
                         })
                         .setNegativeButton("Non", new DialogInterface.OnClickListener() {
@@ -213,8 +322,40 @@ public class SettingsFragment extends CustomPreferenceFragment {
 
                 break;
         }
-
     }
 
+    private void fixBookImage(Book book, Tools.OnFixedImageEventListener fixListener) {
+        if (book != null && book.getCover_url() == null) {
+            try {
+                String file = "res/raw/custom_book.png";
+                InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
+                int nRead;
+                byte[] dataBytes = new byte[4096];
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
+                    buffer.write(dataBytes, 0, nRead);
+                }
 
+                File imageFile = new File(LibraryLoader.getInternalStorageDir(), book.getUuid().toString() + ".jpg");
+                try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                    // Assuming 'imageBytes' is your byte array that you want to save
+                    fos.write(buffer.toByteArray());
+                    fos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                book.setImagePath(imageFile.getAbsolutePath());
+                if (fixListener != null) {
+                    fixListener.onEvent(book);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (fixListener != null) {
+                    fixListener.onEvent(book);
+                }
+            }
+        } else {
+            Tools.fixMissingImage(book, fixListener);
+        }
+    }
 }

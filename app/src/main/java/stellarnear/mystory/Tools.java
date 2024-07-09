@@ -205,17 +205,28 @@ public class Tools extends SelfCustomLog {
         }
     }
 
-    public static void fixMissingImage(Book book) {
-        if (book.getImagePath() != null && !new File(book.getImagePath()).exists()) {
-            new BookNodeCalls().refreshImage(book);
+    public static void fixMissingImage(Book book, OnFixedImageEventListener fixListner) {
+        if (book != null && book.getImagePath() != null && !new File(book.getImagePath()).exists()) {
+            book.setImagePath(null);
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
-                    book.setImagePath(null);
                     Tools.convertByteToStoredFile(book);
+                    if (fixListner != null) {
+                        fixListner.onEvent(book);
+                    }
                 }
             });
+            new BookNodeCalls().refreshImage(book);
+        } else { //we have to count it into done
+            if (fixListner != null) {
+                fixListner.onEvent(book);
+            }
         }
+    }
+
+    public interface OnFixedImageEventListener {
+        void onEvent(Book book);
     }
 
     /*

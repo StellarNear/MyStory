@@ -1,5 +1,4 @@
 <!-- res/transition/fade.xml -->
 <fade xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="@integer/translationFragDuration"
-    android:fadingMode="fade_in"
-    />
+    android:fadingMode="fade_in" />

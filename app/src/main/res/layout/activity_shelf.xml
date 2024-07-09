@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.MyStory.PopupOverlay" >
-
+            app:popupTheme="@style/Theme.MyStory.PopupOverlay">
 
 
             <LinearLayout
@@ -26,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center">
+
                 <TextView
                     android:id="@+id/shelf_toolbar_infos_start_date"
                     android:shadowColor="?attr/colorVariantLight"
@@ -38,8 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:text=""
-                    />
+                    android:text="" />
 
                 <TextView
                     android:shadowColor="?attr/colorVariantLight"
@@ -52,8 +51,7 @@
                     android:layout_gravity="center_vertical|end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="au"
-                    />
+                    android:text="au" />
 
                 <TextView
                     android:id="@+id/shelf_toolbar_infos_end_date"
@@ -66,8 +64,7 @@
                     android:layout_gravity="center_vertical|end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    />
+                    android:text="" />
 
 
             </LinearLayout>
@@ -85,11 +82,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/general_margin"
-                android:text=""
-                />
+                android:text="" />
 
         </androidx.appcompat.widget.Toolbar>
-
 
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -123,14 +118,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_weight="1">
-            <ImageView
-                android:id="@+id/shelf_delete_book"
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:layout_margin="@dimen/general_margin"
-                android:background="@drawable/backdrop_light_brown"
-                android:src="@drawable/ic_book_off"
-                app:tint="@color/primary_dark_brown" />
+
+                <ImageView
+                    android:id="@+id/shelf_delete_book"
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:layout_margin="@dimen/general_margin"
+                    android:background="@drawable/backdrop_light_brown"
+                    android:src="@drawable/ic_book_off"
+                    app:tint="@color/primary_dark_brown" />
             </LinearLayout>
 
             <LinearLayout
@@ -138,15 +134,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_weight="1">
-            <ImageView
-                android:id="@+id/shelf_book_note"
 
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:layout_margin="@dimen/general_margin"
-                android:background="@drawable/backdrop_light_brown"
-                android:src="@drawable/ic_baseline_edit_note_24"
-                app:tint="@color/primary_dark_brown" />
+                <ImageView
+                    android:id="@+id/shelf_book_note"
+
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:layout_margin="@dimen/general_margin"
+                    android:background="@drawable/backdrop_light_brown"
+                    android:src="@drawable/ic_baseline_edit_note_24"
+                    app:tint="@color/primary_dark_brown" />
             </LinearLayout>
 
             <LinearLayout
@@ -154,14 +151,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_weight="1">
-            <ImageView
-                android:id="@+id/shelf_add_to_current"
-                android:layout_width="@dimen/add_book_from_search"
-                android:layout_height="@dimen/add_book_from_search"
-                android:layout_margin="@dimen/general_margin"
-                android:background="@drawable/backdrop_light_brown"
-                android:src="@drawable/ic_book_open_page"
-                app:tint="@color/primary_dark_brown" />
+
+                <ImageView
+                    android:id="@+id/shelf_add_to_current"
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:layout_margin="@dimen/general_margin"
+                    android:background="@drawable/backdrop_light_brown"
+                    android:src="@drawable/ic_book_open_page"
+                    app:tint="@color/primary_dark_brown" />
 
             </LinearLayout>
 
@@ -194,7 +192,7 @@
             android:layout_height="@dimen/list_navigate_button"
             android:background="@drawable/backdrop_light_brown"
             app:tint="@color/primary_dark_brown"
-            android:src="@drawable/ic_baseline_arrow_backward_24"/>
+            android:src="@drawable/ic_baseline_arrow_backward_24" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -202,7 +200,6 @@
 
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
 
 
             <TextView
@@ -242,7 +239,7 @@
             android:layout_height="@dimen/list_navigate_button"
             android:background="@drawable/backdrop_light_brown"
             app:tint="@color/primary_dark_brown"
-            android:src="@drawable/ic_baseline_arrow_forward_24"/>
+            android:src="@drawable/ic_baseline_arrow_forward_24" />
     </LinearLayout>
 
 

@@ -24,8 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.transition.TransitionInflater;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.seosh817.circularseekbar.BarStrokeCap;
 import com.seosh817.circularseekbar.CircularSeekBar;
 import com.seosh817.circularseekbar.CircularSeekBarAnimation;
@@ -96,7 +94,7 @@ public class MainActivityFragment extends CustomFragment {
         returnFragView.post(new Runnable() {
             @Override
             public void run() {
-                checkPrize(returnFragView);
+                checkPrize();
             }
         });
 
@@ -496,7 +494,7 @@ public class MainActivityFragment extends CustomFragment {
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
-                    Tools.fixMissingImage(book);
+                    Tools.fixMissingImage(book, null);
                     LibraryLoader.saveBook(book);
                     setImage(book);
                     byte[] b2 = book.getImage();
@@ -886,43 +884,61 @@ public class MainActivityFragment extends CustomFragment {
         okButton.setLayoutParams(param);
     }
 
-    private void checkPrize(View view) {
+    private void checkPrize() {
         int streak = LibraryLoader.getAccessStats().getnStreak();
 
         Map<Integer, String> daysPrize = new LinkedHashMap<>();
-        daysPrize.put(7, "un bisou\n(utilisable n'importe quand)");
+        daysPrize.put(7, "un bisou (utilisable n'importe quand)");
         daysPrize.put(15, "un massage du dos");
-        daysPrize.put(30, "un massage intégrale\n(oui avec pieds aussi !)");
+        daysPrize.put(30, "un massage intégrale (oui avec pieds aussi !)");
         daysPrize.put(60, "un repas au restaurant en amoureux");
         daysPrize.put(90, "un curry japonais du doudou");
         daysPrize.put(120, "le cours d'oenologie (enfin...)");
         daysPrize.put(200, "une nouvelle smartwatch !");
 
-        if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastClaimedStreakReward()==streak)) {
-            Snackbar snack = tools.customSnack(getContext(), view, "Tu as gagné " + daysPrize.get(streak), "purple");
 
-            LibraryLoader.getAccessStats().setLastClaimedStreakReward(streak);
-            LibraryLoader.saveAccessStats();
-
-            snack.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                @Override
-                public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-                    int nextReward = Integer.MAX_VALUE;
-                    for (Integer day : daysPrize.keySet()) {
-                        if (day > streak && day < nextReward) {
-                            nextReward = day;
-                        }
-                    }
-                    if (nextReward != Integer.MAX_VALUE) {
-                        tools.customSnack(getContext(), view, "Prochaine récompense à " + nextReward + " jours", "purpleshort");
-                    } else {
-                        tools.customSnack(getContext(), view, "Aucune autre récompense pour le moment ...", "purpleshort");
-                    }
+        if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastGrantedStreakReward() == streak)) {
+            // if (true) {
+            int nextReward = Integer.MAX_VALUE;
+            for (Integer day : daysPrize.keySet()) {
+                if (day > streak && day < nextReward) {
+                    nextReward = day;
                 }
-            });
+            }
+            popupGift(streak, daysPrize.get(streak), "Prochaine récompense à " + nextReward + " jours");
 
+            LibraryLoader.getAccessStats().addGiftToclaim(daysPrize.get(streak));
+            LibraryLoader.getAccessStats().setLastGrantedStreakReward(streak);
+            LibraryLoader.saveAccessStats();
         }
+    }
+
+    private void popupGift(int nDay, String cadeau, String next) {
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        View alert = inflater.inflate(R.layout.my_lottie_alert, null);
+        View alertInnerInfo = inflater.inflate(R.layout.inner_gift, null);
+
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_first_line)).setText(cadeau);
+        ((TextView) alertInnerInfo.findViewById(R.id.alert_second_line)).setText(next);
+
+        MyLottieDialog dialog = new MyLottieDialog(getContext(), alert)
+                .setAnimation(R.raw.gift)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Tu as recu un cadeau ! (" + nDay + " j)")
+                .setMessage(alertInnerInfo)
+                .setCanceledOnTouchOutside(true)
+                .setCancelOnTouchItself(true)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        dialog.show();
+
     }
 
     private void unlockOrient() {

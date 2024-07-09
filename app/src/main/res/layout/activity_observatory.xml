@@ -106,17 +106,16 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:clipChildren="false"
-                android:background="@drawable/background_border_infos"
-               >
+                android:background="@drawable/background_border_infos">
 
-                    <LinearLayout
-                        android:id="@+id/obser_data_line_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:clipChildren="false"
-                        android:elevation="@dimen/general_margin"
-                        android:orientation="vertical" />
+                <LinearLayout
+                    android:id="@+id/obser_data_line_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clipChildren="false"
+                    android:elevation="@dimen/general_margin"
+                    android:orientation="vertical" />
 
             </ScrollView>
 
@@ -125,8 +124,7 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/no_book"
-                />
+                android:src="@drawable/no_book" />
         </LinearLayout>
 
 
@@ -151,8 +149,7 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/no_graph"
-                />
+                android:src="@drawable/no_graph" />
         </LinearLayout>
 
     </LinearLayout>

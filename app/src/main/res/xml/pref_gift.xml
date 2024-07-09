@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory
+        android:key="pref_gift_list_cat"
+        android:title="Liste des cadeaux à réclamer">
+        <Preference
+            android:layout="@layout/divider_pref"
+            android:selectable="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
