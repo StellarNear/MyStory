@@ -182,11 +182,11 @@ public class Tools extends SelfCustomLog {
             Bitmap originalBitmap = BitmapFactory.decodeByteArray(book.getImage(), 0, book.getImage().length);
 
             // Create a new scaled bitmap
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 400, 600, true);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 500, 750, true);
 
             // Convert the scaled bitmap back to a byte array
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            scaledBitmap.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+            scaledBitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
 
             File imageFile = new File(LibraryLoader.getInternalStorageDir(), book.getUuid().toString() + ".jpg");
 
@@ -206,27 +206,33 @@ public class Tools extends SelfCustomLog {
     }
 
     public static void fixMissingImage(Book book, OnFixedImageEventListener fixListner) {
-        if (book != null && book.getImagePath() != null && !new File(book.getImagePath()).exists()) {
-            book.setImagePath(null);
+        if (book == null) {
+            if (fixListner != null) {
+                fixListner.onEvent();
+            }
+            return;
+        }
+        try {
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
                     Tools.convertByteToStoredFile(book);
                     if (fixListner != null) {
-                        fixListner.onEvent(book);
+                        fixListner.onEvent();
                     }
                 }
             });
             new BookNodeCalls().refreshImage(book);
-        } else { //we have to count it into done
+        } catch (Exception e) {
+            e.printStackTrace();//we have to count it into done
             if (fixListner != null) {
-                fixListner.onEvent(book);
+                fixListner.onEvent();
             }
         }
     }
 
     public interface OnFixedImageEventListener {
-        void onEvent(Book book);
+        void onEvent();
     }
 
     /*

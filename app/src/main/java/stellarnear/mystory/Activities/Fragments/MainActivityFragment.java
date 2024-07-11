@@ -35,7 +35,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stellarnear.mystory.Activities.LibraryLoader;
-import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Note;
 import stellarnear.mystory.R;
@@ -490,18 +489,6 @@ public class MainActivityFragment extends CustomFragment {
     private void setImage(Book book) {
         byte[] b = book.getImage();
         if (b == null || b.length < 7) {
-            new BookNodeCalls().refreshImage(book);
-            book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
-                @Override
-                public void onEvent() {
-                    Tools.fixMissingImage(book, null);
-                    LibraryLoader.saveBook(book);
-                    setImage(book);
-                    byte[] b2 = book.getImage();
-                    Drawable image2 = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b2, 0, b2.length));
-                    ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image2);
-                }
-            });
             String file = "res/raw/no_image.png";
             try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(file)) {
                 int nRead;

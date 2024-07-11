@@ -267,7 +267,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
 
                                 Tools.OnFixedImageEventListener fixListener = new Tools.OnFixedImageEventListener() {
                                     @Override
-                                    public void onEvent(Book book) {
+                                    public void onEvent() {
                                         nFix.incrementAndGet();
                                         fixingAlert.setMessage(nFix.get() + " / " + totalFix.get()+ " images de livres réparées");
                                         if (nFix.get() == totalFix.get()) {
@@ -325,7 +325,16 @@ public class SettingsFragment extends CustomPreferenceFragment {
     }
 
     private void fixBookImage(Book book, Tools.OnFixedImageEventListener fixListener) {
-        if (book != null && book.getCover_url() == null) {
+        if (book==null){
+            return;
+        }
+        if(book.getImagePath()!=null && new File(book.getImagePath()).exists()){
+            new File(book.getImagePath()).delete();
+        }
+        book.setImagePath(null);
+        book.discardBytes();
+
+        if (book.getCover_url() == null) { //custom book
             try {
                 String file = "res/raw/custom_book.png";
                 InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
@@ -345,13 +354,14 @@ public class SettingsFragment extends CustomPreferenceFragment {
                     e.printStackTrace();
                 }
                 book.setImagePath(imageFile.getAbsolutePath());
+                Tools.convertByteToStoredFile(book);
                 if (fixListener != null) {
-                    fixListener.onEvent(book);
+                    fixListener.onEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 if (fixListener != null) {
-                    fixListener.onEvent(book);
+                    fixListener.onEvent();
                 }
             }
         } else {

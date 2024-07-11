@@ -30,7 +30,7 @@ public class LibraryLoader {
     private static CustomLog log = new CustomLog(LibraryLoader.class);
 
     public static void loadLibrary(Context mC) {
-        if (tinyDB == null) {
+        if (tinyDB == null || library == null) {
             tinyDB = new TinyDB(mC);
             prefs = PreferenceManager.getDefaultSharedPreferences(mC);
             internalStorageDir = mC.getFilesDir();
@@ -277,6 +277,10 @@ public class LibraryLoader {
 
     public static Library.AccessStats getAccessStats() {
         return library.getAccessStats();
+    }
+
+    public static Library getLibrary() {
+        return library;
     }
 
     public static void resetLibrary() {

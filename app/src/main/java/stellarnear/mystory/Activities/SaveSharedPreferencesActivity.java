@@ -36,17 +36,18 @@ public class SaveSharedPreferencesActivity extends Activity {
 
         String action = getIntent().getExtras().getString("ACTION_TYPE");
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        tools.customToast(getApplicationContext(), "Selection du dossier cible");
+
 
 
         if (action.equalsIgnoreCase("save")) {
+            tools.customToast(getApplicationContext(), "Selection du dossier cible pour la sauvegarde");
             startActivityForResult(intent, 42);
         } else if (action.equalsIgnoreCase("load")) {
+            tools.customToast(getApplicationContext(), "Selection du dossier cible pour charger : "+ saveNamePath + ".json");
             startActivityForResult(intent, 666);
         } else {
             finish();
         }
-
     }
 
     @Override
@@ -59,14 +60,18 @@ public class SaveSharedPreferencesActivity extends Activity {
 
             DocumentFile previousSave = pickedDir.findFile(saveNamePath + ".json");
             if (previousSave == null) {
-                writeFile(pickedDir);
+                writeFile(pickedDir,saveNamePath + ".json");
             } else {
-                tools.customToast(getApplicationContext(), "Sauvegarde déjà présente !");
+                int nSave=0;
+                while (previousSave != null){
+                    nSave++;
+                    previousSave = pickedDir.findFile(saveNamePath +"_"+nSave+ ".json");
+                }
+                writeFile(pickedDir, saveNamePath +"_"+nSave+ ".json");
             }
             finish();
         } else if (requestCode == 666 && resultCode == Activity.RESULT_OK) {
             Uri treeUri = resultData.getData();
-
             DocumentFile pickedDir = DocumentFile.fromTreeUri(this, treeUri);
 
             DocumentFile previousSave = pickedDir.findFile(saveNamePath + ".json");
@@ -83,9 +88,9 @@ public class SaveSharedPreferencesActivity extends Activity {
 
     }
 
-    private void writeFile(DocumentFile pickedDir) {
+    private void writeFile(DocumentFile pickedDir, String nameFile) {
         try {
-            DocumentFile newFile = pickedDir.createFile("application/json", saveNamePath);
+            DocumentFile newFile = pickedDir.createFile("application/json", nameFile);
             OutputStream out = this.getContentResolver().openOutputStream(newFile.getUri());
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -97,7 +102,7 @@ public class SaveSharedPreferencesActivity extends Activity {
             printStream.print(jsonString);
             printStream.close();
 
-            tools.customToast(getApplicationContext(), "Sauvegarde crée");
+            tools.customToast(getApplicationContext(), "Sauvegarde crée : "+nameFile);
         } catch (Exception e) {
             e.printStackTrace();
             tools.customToast(getApplicationContext(), "Erreur:" + e.getStackTrace()[0]);

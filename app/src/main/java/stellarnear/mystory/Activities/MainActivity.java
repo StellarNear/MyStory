@@ -34,15 +34,10 @@ import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentDownloadList;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
-import stellarnear.mystory.BooksLibs.Library;
 import stellarnear.mystory.R;
-import stellarnear.mystory.TinyDB;
 import stellarnear.mystory.Tools;
 
 public class MainActivity extends CustomActivity {
-
-    private static Library library = null;
-    private static boolean listsLoaded = false;
 
     private FrameLayout mainFrameFrag;
 
@@ -50,7 +45,7 @@ public class MainActivity extends CustomActivity {
     private Window window;
     private Toolbar toolbar;
 
-    private static TinyDB tinyDB;
+
 
     private MainActivityFragment mainFrag;
     private MainActivityFragmentSearchBooks searchFrag;
@@ -73,7 +68,7 @@ public class MainActivity extends CustomActivity {
     protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
         setTheme(themeId);
-        tinyDB = new TinyDB(getApplicationContext());
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         gestureDetector = new GestureDetector(this, listener);
         setContentView(R.layout.activity_main);
@@ -152,6 +147,9 @@ public class MainActivity extends CustomActivity {
     @Override
     protected void onResumeCustom() throws Exception {
         checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if(LibraryLoader.getLibrary() == null){
+            LibraryLoader.loadLibrary(getApplicationContext());
+        }
     }
 
     private void checkOrientStart(int screenOrientation) {

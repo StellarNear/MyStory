@@ -7,9 +7,13 @@
     <string name="ok">oui</string>
 
 
-    <string name="time_spend">"108h"</string>
+    <string name="time_spend">"110h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.5.2 :
+- reprise du chargement de la librairie quand l'application ne passe pas par le splash screen
+- réparation des images des custom book à partir d'un reset de l'image fichier (et detection si l'image vient pas d'internet on la reprend depuis le fichier)
+
 v1.5.1 :
 - réparation des images des custom book
 - ajout d'une barre de chargemetn et animation lors de la réparation des images
