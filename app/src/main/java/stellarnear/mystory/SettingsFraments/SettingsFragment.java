@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.view.Surface;
@@ -17,9 +19,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import stellarnear.mystory.Activities.LibraryLoader;
@@ -276,17 +280,31 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                     }
                                 };
 
+                                List<Callable<Void>> allSync = new ArrayList<>();
+
                                 if (LibraryLoader.getCurrentBook() != null) {
-                                    fixBookImage(LibraryLoader.getCurrentBook(), fixListener);
+                                    addCallable(allSync,LibraryLoader.getCurrentBook(),fixListener);
                                 }
                                 for (Book book : LibraryLoader.getDownloadList()) {
-                                    fixBookImage(book, fixListener);
+                                    addCallable(allSync,book,fixListener);
                                 }
                                 for (Book book : LibraryLoader.getShelf()) {
-                                    fixBookImage(book, fixListener);
+                                    addCallable(allSync,book,fixListener);
                                 }
                                 for (Book book : LibraryLoader.getWishList()) {
-                                    fixBookImage(book, fixListener);
+                                    addCallable(allSync,book,fixListener);
+                                }
+                                if (allSync.size() > 0) {
+                                    int availableProcessors = Runtime.getRuntime().availableProcessors();
+                                    ExecutorService executor = Executors.newFixedThreadPool(availableProcessors * 10);
+                                    log.info(
+                                            allSync.size() + " image fixing in " + availableProcessors * 4
+                                                    + " parralel thread  !");
+                                    try {
+                                        executor.invokeAll(allSync);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         })
@@ -324,8 +342,28 @@ public class SettingsFragment extends CustomPreferenceFragment {
         }
     }
 
+    private void addCallable(List<Callable<Void>> allSync, Book book, Tools.OnFixedImageEventListener fixListener) {
+        allSync.add(new Callable<Void>() {
+            @Override
+            public Void call() {
+                try {
+                    fixBookImage(book, fixListener);
+                } catch (Exception e) {
+                    log.warn("Could fix image for book : " + book.getName(), e);
+                    if(fixListener!=null){
+                        fixListener.onEvent();
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
     private void fixBookImage(Book book, Tools.OnFixedImageEventListener fixListener) {
         if (book==null){
+            if (fixListener != null) {
+                fixListener.onEvent();
+            }
             return;
         }
         if(book.getImagePath()!=null && new File(book.getImagePath()).exists()){
@@ -336,25 +374,28 @@ public class SettingsFragment extends CustomPreferenceFragment {
 
         if (book.getCover_url() == null) { //custom book
             try {
-                String file = "res/raw/custom_book.png";
-                InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
-                int nRead;
-                byte[] dataBytes = new byte[4096];
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                    buffer.write(dataBytes, 0, nRead);
-                }
+                // Load the drawable resource as a Bitmap
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.custom_book);
 
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 95, buffer);
+                byte[] imageBytes = buffer.toByteArray();
+
+                // Create the file to save the image
                 File imageFile = new File(LibraryLoader.getInternalStorageDir(), book.getUuid().toString() + ".jpg");
                 try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-                    // Assuming 'imageBytes' is your byte array that you want to save
-                    fos.write(buffer.toByteArray());
+                    // Write the byte array to the file
+                    fos.write(imageBytes);
                     fos.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                // Set the image path and perform additional operations
                 book.setImagePath(imageFile.getAbsolutePath());
                 Tools.convertByteToStoredFile(book);
+                LibraryLoader.saveBook(book);
                 if (fixListener != null) {
                     fixListener.onEvent();
                 }

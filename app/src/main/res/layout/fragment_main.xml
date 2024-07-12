@@ -143,7 +143,7 @@
         android:id="@+id/mainfrag_info_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/general_margin"
         app:layout_constraintEnd_toEndOf="parent"
@@ -170,10 +170,11 @@
             android:textStyle="italic" />
 
         <ImageView
+            android:layout_gravity="center"
             android:id="@+id/mainfram_cover"
             android:layout_width="@dimen/mainframe_cover_book_width"
             android:layout_height="@dimen/mainframe_cover_book_height"
-            android:padding="@dimen/general_margin" />
+            android:layout_margin="@dimen/general_margin" />
 
     </LinearLayout>
 

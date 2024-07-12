@@ -7,9 +7,16 @@
     <string name="ok">oui</string>
 
 
-    <string name="time_spend">"110h"</string>
+    <string name="time_spend">"112h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.5.4 :
+- plus de donnée d'images brut tout est en drawable
+
+v1.5.3 :
+- changement du centrage de l'image de la page de garde
+- fixing des images en parralèle pour un temps plus court
+
 v1.5.2 :
 - reprise du chargement de la librairie quand l'application ne passe pas par le splash screen
 - réparation des images des custom book à partir d'un reset de l'image fichier (et detection si l'image vient pas d'internet on la reprend depuis le fichier)

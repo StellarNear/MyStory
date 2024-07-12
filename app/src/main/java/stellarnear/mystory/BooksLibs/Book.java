@@ -237,9 +237,9 @@ public class Book {
     public void setImageByte(byte[] byteChunk) {
         if (byteChunk != null && byteChunk.length > 1) {
             this.imageByte = byteChunk;
-            if (mListenerImageRefreshed != null) {
-                mListenerImageRefreshed.onEvent();
-            }
+        }
+        if (mListenerImageRefreshed != null) {
+            mListenerImageRefreshed.onEvent();
         }
     }
 

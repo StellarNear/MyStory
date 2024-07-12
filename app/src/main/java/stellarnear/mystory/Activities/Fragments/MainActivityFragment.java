@@ -29,8 +29,6 @@ import com.seosh817.circularseekbar.CircularSeekBar;
 import com.seosh817.circularseekbar.CircularSeekBarAnimation;
 import com.seosh817.circularseekbar.callbacks.OnProgressChangedListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -489,20 +487,7 @@ public class MainActivityFragment extends CustomFragment {
     private void setImage(Book book) {
         byte[] b = book.getImage();
         if (b == null || b.length < 7) {
-            String file = "res/raw/no_image.png";
-            try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(file)) {
-                int nRead;
-                byte[] dataBytes = new byte[4096];
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                    buffer.write(dataBytes, 0, nRead);
-                }
-                byte[] bNoimg = buffer.toByteArray();
-                Drawable noImage = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(bNoimg, 0, bNoimg.length));
-                ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(noImage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(getResources().getDrawable(R.drawable.no_image));
         } else {
             Drawable image = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b, 0, b.length));
             ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image);

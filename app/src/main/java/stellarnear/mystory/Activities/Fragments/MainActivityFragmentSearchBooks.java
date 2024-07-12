@@ -3,6 +3,8 @@ package stellarnear.mystory.Activities.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputType;
@@ -36,7 +38,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -690,7 +691,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                     Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                     LibraryLoader.addStartTime(selectedBook);
                     LibraryLoader.setCurrentBook(selectedBook);
-
+                    LibraryLoader.saveBook(selectedBook);
                     tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 } else {
                     popupSwapBooks();
@@ -751,6 +752,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 LibraryLoader.putCurrentToShelf();
                 LibraryLoader.addStartTime(selectedBook);
                 LibraryLoader.setCurrentBook(selectedBook);
+                LibraryLoader.saveBook(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Bonne lecture !", "yellowshort");
                 dialog.dismiss();
             }
@@ -802,25 +804,24 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                 Book customBook = new Book(-1, valueTitle.getText().toString(), null, customAutor);
 
                 try {
-                    String file = "res/raw/custom_book.png";
-                    InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
-                    int nRead;
-                    byte[] dataBytes = new byte[4096];
+                    // Load the drawable resource as a Bitmap
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.custom_book);
+                    // Convert the Bitmap to a byte array
                     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                    while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                        buffer.write(dataBytes, 0, nRead);
-                    }
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 95, buffer);
+                    byte[] imageBytes = buffer.toByteArray();
 
+                    // Create the file to save the image
                     File imageFile = new File(LibraryLoader.getInternalStorageDir(), customBook.getUuid().toString() + ".jpg");
                     try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-                        // Assuming 'imageBytes' is your byte array that you want to save
-                        fos.write(buffer.toByteArray());
+                        // Write the byte array to the file
+                        fos.write(imageBytes);
                         fos.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    // Set the image path and perform additional operations
                     customBook.setImagePath(imageFile.getAbsolutePath());
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

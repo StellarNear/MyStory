@@ -307,7 +307,7 @@ public class BookNodeCalls {
 
         protected Void doInBackground(Book... books) {
             this.book = books[0];
-            boolean imageSet=false;
+            boolean imageSet = false;
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 InputStream stream = null;
@@ -321,7 +321,7 @@ public class BookNodeCalls {
                     byte[] byteArray = outputStream.toByteArray();
                     if (byteArray != null && byteArray.length > 1) {
                         book.setImageByte(byteArray);
-                        imageSet=true;
+                        imageSet = true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -335,31 +335,26 @@ public class BookNodeCalls {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        if(!imageSet){
+                            putBlankImage(book);
+                        }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                if(!imageSet){
+                    putBlankImage(book);
+                }
             }
-            if(!imageSet){
+            if (!imageSet) {
                 putBlankImage(book);
             }
             return null;
         }
 
+        //we do that to trigger the refresh (for example for the count on the repair setting)
         private void putBlankImage(Book book) {
-            String file = "res/raw/no_image.png";
-            try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(file)) {
-                int nRead;
-                byte[] dataBytes = new byte[4096];
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                while ((nRead = in.read(dataBytes, 0, dataBytes.length)) != -1) {
-                    buffer.write(dataBytes, 0, nRead);
-                }
-                byte[] bNoimg = buffer.toByteArray();
-                book.setImageByte(bNoimg);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                book.setImageByte(null);
         }
 
 

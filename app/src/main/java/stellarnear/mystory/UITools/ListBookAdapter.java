@@ -68,7 +68,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Book book = data.get(position);
-        if (book.getImage() == null || book.getImage().length < 1) {
+        if (book.getImage() == null || book.getImage().length < 7) {
             //on a pas réussi à avoir d'image on affiche l'image broken et on lance un retry pour une prochaine utilisation
             holder.image.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.no_image));
             new Thread(new Runnable() {
