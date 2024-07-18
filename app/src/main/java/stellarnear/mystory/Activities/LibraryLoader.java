@@ -69,6 +69,7 @@ public class LibraryLoader {
 
         } catch (Exception e) {
             e.printStackTrace();
+            log.err("Error while loading access stats", e);
         }
     }
 

@@ -14,9 +14,11 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import stellarnear.mystory.Constants;
+import stellarnear.mystory.Log.CustomLog;
 
 public class Book {
 
+    private transient CustomLog log = new CustomLog(Book.class);
     private UUID uuid;
 
     private byte[] imageByte = null;
@@ -223,12 +225,14 @@ public class Book {
                         fis.read(imageData);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        log.err("Error during read of imagePath of a book", e);
                         return null; // Handle the exception as needed
                     }
                     return imageData;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error during read of imagePath of a book", e);
             }
         }
         return null;

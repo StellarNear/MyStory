@@ -46,7 +46,6 @@ public class MainActivity extends CustomActivity {
     private Toolbar toolbar;
 
 
-
     private MainActivityFragment mainFrag;
     private MainActivityFragmentSearchBooks searchFrag;
     private MainActivityFragmentWishList wishListFrag;
@@ -68,6 +67,10 @@ public class MainActivity extends CustomActivity {
     protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
         setTheme(themeId);
+
+        if (LibraryLoader.getLibrary() == null) {
+            LibraryLoader.loadLibrary(getApplicationContext());
+        }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         gestureDetector = new GestureDetector(this, listener);
@@ -147,9 +150,6 @@ public class MainActivity extends CustomActivity {
     @Override
     protected void onResumeCustom() throws Exception {
         checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        if(LibraryLoader.getLibrary() == null){
-            LibraryLoader.loadLibrary(getApplicationContext());
-        }
     }
 
     private void checkOrientStart(int screenOrientation) {

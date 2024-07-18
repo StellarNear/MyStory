@@ -167,11 +167,12 @@ public class Tools extends SelfCustomLog {
             return snack;
         } catch (Exception e) {
             e.printStackTrace();
+            log.err("Error in customSnack in tools", e);
         }
         return null;
     }
 
-    public static void convertByteToStoredFile(Book book) {
+    public void convertByteToStoredFile(Book book) {
         if (book == null || book.getImagePath() != null) { //blank or already done
             return;
         }
@@ -196,16 +197,18 @@ public class Tools extends SelfCustomLog {
                 fos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+                log.err("Error in convertByteToStoredFile in tools", e);
             }
             book.setImagePath(imageFile.getAbsolutePath());
             book.discardBytes();
             LibraryLoader.saveBook(book);
         } catch (Exception e) {
             e.printStackTrace();
+            log.err("Error in convertByteToStoredFile in tools", e);
         }
     }
 
-    public static void fixMissingImage(Book book, OnFixedImageEventListener fixListner) {
+    public void fixMissingImage(Book book, OnFixedImageEventListener fixListner) {
         if (book == null) {
             if (fixListner != null) {
                 fixListner.onEvent();
@@ -216,7 +219,7 @@ public class Tools extends SelfCustomLog {
             book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
                 @Override
                 public void onEvent() {
-                    Tools.convertByteToStoredFile(book);
+                    convertByteToStoredFile(book);
                     if (fixListner != null) {
                         fixListner.onEvent();
                     }
@@ -225,6 +228,7 @@ public class Tools extends SelfCustomLog {
             new BookNodeCalls().refreshImage(book);
         } catch (Exception e) {
             e.printStackTrace();//we have to count it into done
+            log.err("Error in fixMissingImage in tools", e);
             if (fixListner != null) {
                 fixListner.onEvent();
             }

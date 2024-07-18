@@ -131,6 +131,7 @@ public class ShelfActivity extends CustomActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error while getting dates for a book (" + book.getName() + ") in shelf selection", e);
             }
         }
         return result;
@@ -308,6 +309,7 @@ public class ShelfActivity extends CustomActivity {
                     LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error while getting setting max page", e);
                 }
                 dialog.dismiss();
                 initShelf();
@@ -389,6 +391,7 @@ public class ShelfActivity extends CustomActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error while getting dates for a book (" + book.getName() + ") in shelf selection", e);
             }
         }
         start.setText(Constants.DATE_FORMATTER.format(minDate));

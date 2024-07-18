@@ -21,12 +21,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import stellarnear.mystory.BuildConfig;
+import stellarnear.mystory.Log.CustomLog;
 import stellarnear.mystory.Tools;
 
 
 public class SaveSharedPreferencesActivity extends Activity {
 
-    private Tools tools = Tools.getTools();
+    private transient CustomLog log = new CustomLog(SaveSharedPreferencesActivity.class);
+
+    private final Tools tools = Tools.getTools();
     private String saveNamePath;
 
     @Override
@@ -38,12 +41,11 @@ public class SaveSharedPreferencesActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 
 
-
         if (action.equalsIgnoreCase("save")) {
             tools.customToast(getApplicationContext(), "Selection du dossier cible pour la sauvegarde");
             startActivityForResult(intent, 42);
         } else if (action.equalsIgnoreCase("load")) {
-            tools.customToast(getApplicationContext(), "Selection du dossier cible pour charger : "+ saveNamePath + ".json");
+            tools.customToast(getApplicationContext(), "Selection du dossier cible pour charger : " + saveNamePath + ".json");
             startActivityForResult(intent, 666);
         } else {
             finish();
@@ -60,14 +62,14 @@ public class SaveSharedPreferencesActivity extends Activity {
 
             DocumentFile previousSave = pickedDir.findFile(saveNamePath + ".json");
             if (previousSave == null) {
-                writeFile(pickedDir,saveNamePath + ".json");
+                writeFile(pickedDir, saveNamePath + ".json");
             } else {
-                int nSave=0;
-                while (previousSave != null){
+                int nSave = 0;
+                while (previousSave != null) {
                     nSave++;
-                    previousSave = pickedDir.findFile(saveNamePath +"_"+nSave+ ".json");
+                    previousSave = pickedDir.findFile(saveNamePath + "_" + nSave + ".json");
                 }
-                writeFile(pickedDir, saveNamePath +"_"+nSave+ ".json");
+                writeFile(pickedDir, saveNamePath + "_" + nSave + ".json");
             }
             finish();
         } else if (requestCode == 666 && resultCode == Activity.RESULT_OK) {
@@ -102,9 +104,11 @@ public class SaveSharedPreferencesActivity extends Activity {
             printStream.print(jsonString);
             printStream.close();
 
-            tools.customToast(getApplicationContext(), "Sauvegarde crée : "+nameFile);
+            tools.customToast(getApplicationContext(), "Sauvegarde crée : " + nameFile);
         } catch (Exception e) {
             e.printStackTrace();
+
+            log.err("Error while writting json save", e);
             tools.customToast(getApplicationContext(), "Erreur:" + e.getStackTrace()[0]);
             DocumentFile previousSave = pickedDir.findFile(saveNamePath + ".json");
             if (previousSave != null) {
@@ -142,6 +146,7 @@ public class SaveSharedPreferencesActivity extends Activity {
             tools.customToast(getApplicationContext(), "Sauvegarde chargée");
         } catch (Exception e) {
             e.printStackTrace();
+            log.err("Error while laoding save json", e);
             tools.customToast(getApplicationContext(), "Erreur:" + e.getStackTrace()[0]);
         }
     }

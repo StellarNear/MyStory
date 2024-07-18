@@ -17,10 +17,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.Log.CustomLog;
 
 public class OpenLibraryCalls {
 
     //LOOK AT https://openlibrary.org/developers/api
+
+    private transient CustomLog log = new CustomLog(OpenLibraryCalls.class);
 
     private static final String baseUrl = "https://openlibrary.org";
     private Book book;
@@ -107,8 +110,10 @@ public class OpenLibraryCalls {
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                log.err("Error in jsonTaskGetMetaData background", e);
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error in jsonTaskGetMetaData background", e);
             } finally {
                 if (connection != null) {
                     connection.disconnect();
@@ -125,6 +130,7 @@ public class OpenLibraryCalls {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    log.err("Error in jsonTaskGetMetaData background", e);
                 }
             }
 
@@ -142,6 +148,7 @@ public class OpenLibraryCalls {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error in jsonTaskGetMetaData on post", e);
             }
         }
 

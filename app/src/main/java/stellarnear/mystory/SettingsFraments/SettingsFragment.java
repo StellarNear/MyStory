@@ -186,6 +186,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
             addPreferencesFromResource(xmlID);
         } catch (Exception e) {
             e.printStackTrace();
+            log.err("Error during loadPage in settings", e);
             displayMainPage();
         }
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(currentPageTitle);
@@ -255,7 +256,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                 fixingAlert.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                     @Override
                                     public void onDismiss(DialogInterface dialogInterface) {
-                                        tools.customToast(mC,"Réparation finie");
+                                        tools.customToast(mC, "Réparation finie");
                                     }
                                 });
                                 fixingAlert.show();
@@ -273,7 +274,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                     @Override
                                     public void onEvent() {
                                         nFix.incrementAndGet();
-                                        fixingAlert.setMessage(nFix.get() + " / " + totalFix.get()+ " images de livres réparées");
+                                        fixingAlert.setMessage(nFix.get() + " / " + totalFix.get() + " images de livres réparées");
                                         if (nFix.get() == totalFix.get()) {
                                             fixingAlert.dismiss();
                                         }
@@ -283,16 +284,16 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                 List<Callable<Void>> allSync = new ArrayList<>();
 
                                 if (LibraryLoader.getCurrentBook() != null) {
-                                    addCallable(allSync,LibraryLoader.getCurrentBook(),fixListener);
+                                    addCallable(allSync, LibraryLoader.getCurrentBook(), fixListener);
                                 }
                                 for (Book book : LibraryLoader.getDownloadList()) {
-                                    addCallable(allSync,book,fixListener);
+                                    addCallable(allSync, book, fixListener);
                                 }
                                 for (Book book : LibraryLoader.getShelf()) {
-                                    addCallable(allSync,book,fixListener);
+                                    addCallable(allSync, book, fixListener);
                                 }
                                 for (Book book : LibraryLoader.getWishList()) {
-                                    addCallable(allSync,book,fixListener);
+                                    addCallable(allSync, book, fixListener);
                                 }
                                 if (allSync.size() > 0) {
                                     int availableProcessors = Runtime.getRuntime().availableProcessors();
@@ -304,6 +305,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                         executor.invokeAll(allSync);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
+                                        log.err("Error during parallel refresh of images in settings", e);
                                     }
                                 }
                             }
@@ -350,7 +352,7 @@ public class SettingsFragment extends CustomPreferenceFragment {
                     fixBookImage(book, fixListener);
                 } catch (Exception e) {
                     log.warn("Could fix image for book : " + book.getName(), e);
-                    if(fixListener!=null){
+                    if (fixListener != null) {
                         fixListener.onEvent();
                     }
                 }
@@ -360,13 +362,13 @@ public class SettingsFragment extends CustomPreferenceFragment {
     }
 
     private void fixBookImage(Book book, Tools.OnFixedImageEventListener fixListener) {
-        if (book==null){
+        if (book == null) {
             if (fixListener != null) {
                 fixListener.onEvent();
             }
             return;
         }
-        if(book.getImagePath()!=null && new File(book.getImagePath()).exists()){
+        if (book.getImagePath() != null && new File(book.getImagePath()).exists()) {
             new File(book.getImagePath()).delete();
         }
         book.setImagePath(null);
@@ -390,23 +392,25 @@ public class SettingsFragment extends CustomPreferenceFragment {
                     fos.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    log.err("Error during fixImage in settings", e);
                 }
 
                 // Set the image path and perform additional operations
                 book.setImagePath(imageFile.getAbsolutePath());
-                Tools.convertByteToStoredFile(book);
+                tools.convertByteToStoredFile(book);
                 LibraryLoader.saveBook(book);
                 if (fixListener != null) {
                     fixListener.onEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error during fixImage in settings", e);
                 if (fixListener != null) {
                     fixListener.onEvent();
                 }
             }
         } else {
-            Tools.fixMissingImage(book, fixListener);
+            tools.fixMissingImage(book, fixListener);
         }
     }
 }

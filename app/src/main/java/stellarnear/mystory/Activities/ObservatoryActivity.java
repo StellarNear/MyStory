@@ -180,6 +180,7 @@ public class ObservatoryActivity extends CustomActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error while parsing dates for observatory", e);
                 }
 
             } else {
@@ -324,6 +325,7 @@ public class ObservatoryActivity extends CustomActivity {
                                 initBarChart();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                log.err("Error setting a new year for observatory", e);
                             }
 
                         }

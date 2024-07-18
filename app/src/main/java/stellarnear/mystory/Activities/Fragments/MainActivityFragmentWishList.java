@@ -270,6 +270,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
                     LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error while setting number of page", e);
                 }
                 dialog.dismiss();
                 loadWishList();

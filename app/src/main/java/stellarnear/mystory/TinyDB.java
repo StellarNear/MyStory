@@ -23,8 +23,6 @@ package stellarnear.mystory;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -33,8 +31,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -47,7 +43,6 @@ public class TinyDB {
 
     private final SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
-    private String lastImagePath = "";
 
     public TinyDB(Context appContext) {
         preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -74,39 +69,6 @@ public class TinyDB {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
-    /*
-     * Saves 'theBitmap' into folder 'theFolder' with the name 'theImageName'
-     *
-     * @param theFolder    the folder path dir you want to save it to e.g "DropBox/WorkImages"
-     * @param theImageName the name you want to assign to the image file e.g "MeAtLunch.png"
-     * @param theBitmap    the image you want to save as a Bitmap
-     * @return returns the full path(file system address) of the saved image
-     */
-    public String putImage(String theFolder, String theImageName, Bitmap theBitmap) {
-        if (theFolder == null || theImageName == null || theBitmap == null)
-            return null;
-
-        this.DEFAULT_APP_IMAGEDATA_DIRECTORY = theFolder;
-        String mFullPath = setupFullPath(theImageName);
-
-        if (!mFullPath.equals("")) {
-            lastImagePath = mFullPath;
-            saveBitmap(mFullPath, theBitmap);
-        }
-
-        return mFullPath;
-    }
-
-    /*
-     * Saves 'theBitmap' into 'fullPath'
-     *
-     * @param fullPath  full path of the image file e.g. "Images/MeAtLunch.png"
-     * @param theBitmap the image you want to save as a Bitmap
-     * @return true if image was saved, false otherwise
-     */
-    public boolean putImageWithFullPath(String fullPath, Bitmap theBitmap) {
-        return !(fullPath == null || theBitmap == null) && saveBitmap(fullPath, theBitmap);
-    }
 
     // Getters
 
@@ -129,59 +91,6 @@ public class TinyDB {
         return mFolder.getPath() + '/' + imageName;
     }
 
-    /*
-     * Saves the Bitmap as a PNG file at path 'fullPath'
-     *
-     * @param fullPath path of the image file
-     * @param bitmap   the image as a Bitmap
-     * @return true if it successfully saved, false otherwise
-     */
-    private boolean saveBitmap(String fullPath, Bitmap bitmap) {
-        if (fullPath == null || bitmap == null)
-            return false;
-
-        boolean fileCreated = false;
-        boolean bitmapCompressed = false;
-        boolean streamClosed = false;
-
-        File imageFile = new File(fullPath);
-
-        if (imageFile.exists())
-            if (!imageFile.delete())
-                return false;
-
-        try {
-            fileCreated = imageFile.createNewFile();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(imageFile);
-            bitmapCompressed = bitmap.compress(CompressFormat.PNG, 100, out);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            bitmapCompressed = false;
-
-        } finally {
-            if (out != null) {
-                try {
-                    out.flush();
-                    out.close();
-                    streamClosed = true;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    streamClosed = false;
-                }
-            }
-        }
-
-        return (fileCreated && bitmapCompressed && streamClosed);
-    }
 
     /*
      * Get int value from SharedPreferences at 'key'. If key not found, return 'defaultValue'

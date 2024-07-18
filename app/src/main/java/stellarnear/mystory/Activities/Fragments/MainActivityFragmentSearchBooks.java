@@ -376,7 +376,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                 LibraryLoader.saveBook(selectedBook);
                 LibraryLoader.addBookToShelf(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à l'étagère !", "yellowshort");
@@ -518,6 +518,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            log.err("Error while setting number of page", e);
                         }
                     } else {
                         try {
@@ -526,10 +527,11 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            log.err("Error while setting number of page", e);
                         }
                     }
                 }
-                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                 LibraryLoader.saveBook(selectedBook);
                 LibraryLoader.addToWishList(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté à la liste d'envie !", "yellowshort");
@@ -584,7 +586,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                 LibraryLoader.saveBook(selectedBook);
                 LibraryLoader.addBookToDownload(selectedBook);
                 tools.customSnack(getContext(), returnFragView, "Livre ajouté aux téléchargements !", "yellowshort");
@@ -676,6 +678,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            log.err("Error while setting number of page", e);
                         }
                     } else {
                         try {
@@ -684,11 +687,12 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            log.err("Error while setting number of page", e);
                         }
                     }
                 }
                 if (LibraryLoader.getCurrentBook() == null) {
-                    Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                    tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                     LibraryLoader.addStartTime(selectedBook);
                     LibraryLoader.setCurrentBook(selectedBook);
                     LibraryLoader.saveBook(selectedBook);
@@ -748,7 +752,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tools.convertByteToStoredFile(selectedBook);//to force the save of the file
+                tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                 LibraryLoader.putCurrentToShelf();
                 LibraryLoader.addStartTime(selectedBook);
                 LibraryLoader.setCurrentBook(selectedBook);
@@ -819,11 +823,13 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         fos.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        log.err("Error while reading custom book image", e);
                     }
                     // Set the image path and perform additional operations
                     customBook.setImagePath(imageFile.getAbsolutePath());
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error while setting custom book image", e);
                 }
                 dialog.dismiss();
 

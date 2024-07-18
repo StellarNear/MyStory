@@ -29,9 +29,11 @@ import javax.xml.xpath.XPathFactory;
 
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.Log.CustomLog;
 
 public class BookNodeCalls {
 
+    private transient CustomLog log = new CustomLog(BookNodeCalls.class);
 
     private static final String baseUrl = "https://booknode.com/";
 
@@ -149,8 +151,10 @@ public class BookNodeCalls {
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                log.err("Error in async jsonGetBook background", e);
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error in async jsonGetBook background", e);
             } finally {
                 if (connection != null) {
                     connection.disconnect();
@@ -161,6 +165,7 @@ public class BookNodeCalls {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    log.err("Error in async jsonGetBook background", e);
                 }
             }
             return null;
@@ -181,7 +186,7 @@ public class BookNodeCalls {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-
+                log.err("Error in async getImage", e);
             } finally {
                 try {
                     if (stream != null) {
@@ -192,6 +197,7 @@ public class BookNodeCalls {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error in async getImage", e);
                 }
             }
         }
@@ -219,6 +225,7 @@ public class BookNodeCalls {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error in onPostExecute async", e);
                 if (mListenerFail != null) {
                     mListenerFail.onEvent();
                 }
@@ -280,7 +287,7 @@ public class BookNodeCalls {
             }
         } catch (Exception e) {
             e.printStackTrace();
-
+            log.err("Error in getSummary", e);
         } finally {
             try {
                 if (stream != null) {
@@ -291,6 +298,7 @@ public class BookNodeCalls {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                log.err("Error in getSummary", e);
             }
         }
     }
@@ -325,6 +333,7 @@ public class BookNodeCalls {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error in refreshImage background", e);
                 } finally {
                     try {
                         if (stream != null) {
@@ -335,14 +344,16 @@ public class BookNodeCalls {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        if(!imageSet){
+                        log.err("Error in refreshImage background", e);
+                        if (!imageSet) {
                             putBlankImage(book);
                         }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                if(!imageSet){
+                log.err("Error in refreshImage background", e);
+                if (!imageSet) {
                     putBlankImage(book);
                 }
             }
@@ -354,7 +365,7 @@ public class BookNodeCalls {
 
         //we do that to trigger the refresh (for example for the count on the repair setting)
         private void putBlankImage(Book book) {
-                book.setImageByte(null);
+            book.setImageByte(null);
         }
 
 

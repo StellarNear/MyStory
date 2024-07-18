@@ -74,6 +74,11 @@ public class MainActivityFragment extends CustomFragment {
     @Override
     public View onCreateViewCustom(final LayoutInflater inflater, final ViewGroup container,
                                    Bundle savedInstanceState) {
+
+        if (LibraryLoader.getLibrary() == null) {
+            LibraryLoader.loadLibrary(getContext());
+        }
+
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getActivity().getPackageName());
         getActivity().setTheme(themeId);
 
@@ -243,6 +248,7 @@ public class MainActivityFragment extends CustomFragment {
                     LibraryLoader.saveBook(book);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    log.err("Error when changing page size", e);
                 }
                 dialog.dismiss();
                 setScreen();
