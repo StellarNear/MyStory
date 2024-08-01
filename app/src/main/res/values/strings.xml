@@ -10,6 +10,10 @@
     <string name="time_spend">"113h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.7.0 :
+- ajout d'un ecran de perte de chaine de connexion
+- ajout de deux nouvelles récompenses :)
+
 v1.6.0 :
 - toutes les erreurs sont déposées dans le systeme de log général (pour rapport possible ou lors des crashs)
 - fix du rechargemet de la bibli lorsque l'appli etait dormante

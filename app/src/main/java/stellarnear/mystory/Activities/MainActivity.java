@@ -36,6 +36,7 @@ import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
+import stellarnear.mystory.UITools.MyLottieDialog;
 
 public class MainActivity extends CustomActivity {
 
@@ -70,6 +71,30 @@ public class MainActivity extends CustomActivity {
 
         if (LibraryLoader.getLibrary() == null) {
             LibraryLoader.loadLibrary(getApplicationContext());
+        }
+
+        if (LibraryLoader.getLibrary().getAccessStats().getnStreak() == 0) {
+            MyLottieDialog ohNoChain = new MyLottieDialog(MainActivity.this)
+                    .setTitle("Oh no ! RIP la chaîne...")
+                    .setAnimation(R.raw.crying)
+                    .setMessage("Moi qui pensais que tu aimais cette application, sniff...")
+                    .setAnimationRepeatCount(-1)
+                    .setAutoPlayAnimation(true)
+                    .setCancelable(false)
+                    .setOnShowListener(dialogInterface -> {
+                    })
+                    .setOnDismissListener(dialogInterface -> {
+                    })
+                    .setOnCancelListener(dialogInterface -> {
+                    });
+            ohNoChain.show();
+            final Handler closeAnim = new Handler();
+            closeAnim.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ohNoChain.dismiss();
+                }
+            }, 5000);
         }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

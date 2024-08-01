@@ -872,8 +872,9 @@ public class MainActivityFragment extends CustomFragment {
         daysPrize.put(60, "un repas au restaurant en amoureux");
         daysPrize.put(90, "un curry japonais du doudou");
         daysPrize.put(120, "le cours d'oenologie (enfin...)");
-        daysPrize.put(200, "une nouvelle smartwatch !");
-
+        daysPrize.put(150, "une nouvelle smartwatch !");
+        daysPrize.put(180, "une journée au spa en amoureux");
+        daysPrize.put(210, "des sessions de tatoo (yeux d'Horus)");
 
         if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastGrantedStreakReward() == streak)) {
             // if (true) {
