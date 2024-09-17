@@ -10,6 +10,10 @@
     <string name="time_spend">"113h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.8.0 :
+- affichage des type de récompense groupé
+- liste déroulante pour l'affichage des cadeaux si un jour tu atteins énormement de cadeau :D
+
 v1.7.0 :
 - ajout d'un ecran de perte de chaine de connexion
 - ajout de deux nouvelles récompenses :)

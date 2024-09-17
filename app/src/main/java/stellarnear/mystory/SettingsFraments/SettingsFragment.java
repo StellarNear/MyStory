@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -125,14 +127,19 @@ public class SettingsFragment extends CustomPreferenceFragment {
             loadPage();
             if (currentPageKey.equalsIgnoreCase("pref_gift")) {
                 PreferenceCategory otherList = (PreferenceCategory) findPreference("pref_gift_list_cat");
-                int nthgift = 0;
+
                 if (LibraryLoader.getAccessStats().getGiftsUnclaimed().size() > 0) {
-
-
+                    //we pack gift by types
+                    Map<String, Integer> giftNumber = new HashMap<>();
                     for (String gift : LibraryLoader.getAccessStats().getGiftsUnclaimed()) {
+                        giftNumber.putIfAbsent(gift, 0);
+                        giftNumber.put(gift, giftNumber.get(gift) + 1);
+                    }
+                    int nthgift = 0;
+                    for (Map.Entry<String, Integer> entry : giftNumber.entrySet()) {
                         Preference pref = new Preference(mC);
                         pref.setKey("gift_" + nthgift);
-                        pref.setTitle(gift);
+                        pref.setTitle(entry.getValue() + " x " + entry.getKey());
                         //pref.setSummary(txt);
                         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                             @Override
@@ -140,11 +147,11 @@ public class SettingsFragment extends CustomPreferenceFragment {
                                 new AlertDialog.Builder(mC)
                                         .setIcon(R.drawable.ic_warning_24dp)
                                         .setTitle("Réclamer ce cadeau ?")
-                                        .setMessage("Confirmes tu obtenir le cadeau :\n\n" + gift)
+                                        .setMessage("Confirmes tu obtenir le cadeau :\n\n" + entry.getKey())
                                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                LibraryLoader.getAccessStats().claimGift(gift);
+                                                LibraryLoader.getAccessStats().claimGift(entry.getKey());
                                                 LibraryLoader.saveAccessStats();
                                                 navigate();
                                             }

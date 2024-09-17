@@ -92,7 +92,6 @@ public class MainActivityFragment extends CustomFragment {
 
         setScreen();
 
-
         returnFragView.post(new Runnable() {
             @Override
             public void run() {
@@ -874,7 +873,6 @@ public class MainActivityFragment extends CustomFragment {
         daysPrize.put(120, "le cours d'oenologie (enfin...)");
         daysPrize.put(150, "une nouvelle smartwatch !");
         daysPrize.put(180, "une journée au spa en amoureux");
-        daysPrize.put(210, "des sessions de tatoo (yeux d'Horus)");
 
         if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastGrantedStreakReward() == streak)) {
             // if (true) {
