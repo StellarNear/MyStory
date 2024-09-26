@@ -35,6 +35,7 @@ public class SplashActivity extends CustomActivity {
 
     @Override
     protected void onCreateCustom() {
+
         //start loading of lib
 
         LibraryLoader.loadLibrary(getApplicationContext());

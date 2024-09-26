@@ -7,9 +7,13 @@
     <string name="ok">oui</string>
 
 
-    <string name="time_spend">"113h"</string>
+    <string name="time_spend">"115h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.9.0 :
+- ajout d'un systeme de notification
+- ajout d'un systeme de tache de fond pour controler la connexion journalière
+
 v1.8.0 :
 - affichage des type de récompense groupé
 - liste déroulante pour l'affichage des cadeaux si un jour tu atteins énormement de cadeau :D
@@ -20,7 +24,7 @@ v1.7.0 :
 
 v1.6.0 :
 - toutes les erreurs sont déposées dans le systeme de log général (pour rapport possible ou lors des crashs)
-- fix du rechargemet de la bibli lorsque l'appli etait dormante
+- fix du rechargement de la bibli lorsque l'appli etait dormante
 
 v1.5.4 :
 - plus de donnée d'images brut tout est en drawable

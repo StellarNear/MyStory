@@ -106,6 +106,7 @@ public class Library {
         private String currentLog = "";
 
         private List<String> giftsUnclaimed = new ArrayList<>();
+        private boolean displayBreakStreakAnim=true;
 
         public void storeLogin() {
             if (firstLog == null) {
@@ -233,6 +234,23 @@ public class Library {
                     return;
                 }
             }
+        }
+
+        public boolean wasTheApplicationLaunchedToday() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
+                    .withZone(ZoneId.systemDefault());
+            String currentDate = formatter.format(Instant.now());
+
+            return currentDate.equalsIgnoreCase(lastLog);
+
+        }
+
+        public boolean shouldDisplayBreakStreakAnim() {
+            return displayBreakStreakAnim;
+        }
+
+        public void setDisplayBreakStreakAnim(boolean displayBreakStreakAnim) {
+            this.displayBreakStreakAnim = displayBreakStreakAnim;
         }
     }
 }

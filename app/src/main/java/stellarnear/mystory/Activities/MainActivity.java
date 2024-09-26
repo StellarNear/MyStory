@@ -1,6 +1,8 @@
 package stellarnear.mystory.Activities;
 
 import android.animation.LayoutTransition;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,13 +29,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentDownloadList;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
+import stellarnear.mystory.DailyChecker.DailyCheckWorker;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.MyLottieDialog;
@@ -68,12 +79,14 @@ public class MainActivity extends CustomActivity {
     protected void onCreateCustom() throws Exception {
         int themeId = getResources().getIdentifier("AppThemePurple", "style", getPackageName());
         setTheme(themeId);
+        createChannelNotif();
+
 
         if (LibraryLoader.getLibrary() == null) {
             LibraryLoader.loadLibrary(getApplicationContext());
         }
 
-        if (LibraryLoader.getLibrary().getAccessStats().getnStreak() == 0) {
+        if (LibraryLoader.getLibrary().getAccessStats().getnStreak() == 0 && LibraryLoader.shouldDisplayBreakStreakAnim() ) {
             MyLottieDialog ohNoChain = new MyLottieDialog(MainActivity.this)
                     .setTitle("Oh no ! RIP la chaîne...")
                     .setAnimation(R.raw.crying)
@@ -88,6 +101,8 @@ public class MainActivity extends CustomActivity {
                     .setOnCancelListener(dialogInterface -> {
                     });
             ohNoChain.show();
+            LibraryLoader.setDisplayBreakStreakAnim(false);
+
             final Handler closeAnim = new Handler();
             closeAnim.postDelayed(new Runnable() {
                 @Override
@@ -171,10 +186,50 @@ public class MainActivity extends CustomActivity {
         initMainFragment();
     }
 
+    private void createChannelNotif() {
+        String channelId = "daily_reminder_channel_MS";
+        CharSequence name = "Rappel journalier";
+        String description = "Canal pour rappel journalier de l'applciation MS";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+        channel.setDescription(description);
+
+        // Register the channel with the system
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    public void setUpDailyChecker(Context mC) {
+        // Get the current time and the time for 18:00 tomorrow
+        Calendar current = Calendar.getInstance();
+        Calendar nextDay = Calendar.getInstance();
+
+        // Set nextDay to 18:00 tomorrow
+        nextDay.add(Calendar.DATE, 1);  // Move to the next day
+        nextDay.set(Calendar.HOUR_OF_DAY, 18);
+        nextDay.set(Calendar.MINUTE, 0);
+        nextDay.set(Calendar.SECOND, 0);
+
+        // Calculate the delay in milliseconds until tomorrow at 18:00
+        long delayInMillis = nextDay.getTimeInMillis() - current.getTimeInMillis();
+
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                .setRequiresBatteryNotLow(false).setRequiresStorageNotLow(false).setRequiresDeviceIdle(false)
+                .build();
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(DailyCheckWorker.class)
+                .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
+                .setConstraints(constraints)
+                .build();
+        WorkManager.getInstance(mC).enqueueUniqueWork("daily_checker_MS", ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
+    }
 
     @Override
     protected void onResumeCustom() throws Exception {
         checkOrientStart(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setUpDailyChecker(getApplicationContext());
     }
 
     private void checkOrientStart(int screenOrientation) {

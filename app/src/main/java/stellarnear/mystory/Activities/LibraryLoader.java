@@ -271,8 +271,11 @@ public class LibraryLoader {
 
     public static int checkStreak() {
         library.getAccessStats().storeLogin();
-        saveAccessStats();
         int nStreak = library.getAccessStats().getnStreak();
+        if(nStreak>=1){
+            library.getAccessStats().setDisplayBreakStreakAnim(true);
+        }
+        saveAccessStats();
         return nStreak;
     }
 
@@ -286,5 +289,18 @@ public class LibraryLoader {
 
     public static void resetLibrary() {
         library = new Library();
+    }
+
+    public static boolean wasTheApplicationLaunchedToday() {
+        return library.getAccessStats().wasTheApplicationLaunchedToday();
+    }
+
+    public static boolean shouldDisplayBreakStreakAnim() {
+        return library.getAccessStats().shouldDisplayBreakStreakAnim();
+    }
+
+    public static void setDisplayBreakStreakAnim(boolean b) {
+        library.getAccessStats().setDisplayBreakStreakAnim(b);
+        saveAccessStats();
     }
 }
