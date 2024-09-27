@@ -23,7 +23,7 @@ public class OpenLibraryCalls {
 
     //LOOK AT https://openlibrary.org/developers/api
 
-    private transient CustomLog log = new CustomLog(OpenLibraryCalls.class);
+    private final transient CustomLog log = new CustomLog(OpenLibraryCalls.class);
 
     private static final String baseUrl = "https://openlibrary.org";
     private Book book;

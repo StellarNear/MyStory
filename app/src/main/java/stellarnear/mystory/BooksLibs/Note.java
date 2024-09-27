@@ -1,8 +1,6 @@
 package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 import stellarnear.mystory.Constants;
 
@@ -30,8 +28,6 @@ public class Note {
     }
 
     public String getCreationDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(creation);
+        return Constants.DATE_FORMATTER.format(creation);
     }
 }

@@ -27,7 +27,7 @@ public class LibraryLoader {
     private static File internalStorageDir = null;
 
 
-    private static CustomLog log = new CustomLog(LibraryLoader.class);
+    private static final CustomLog log = new CustomLog(LibraryLoader.class);
 
     public static void loadLibrary(Context mC) {
         if (tinyDB == null || library == null) {
@@ -272,7 +272,7 @@ public class LibraryLoader {
     public static int checkStreak() {
         library.getAccessStats().storeLogin();
         int nStreak = library.getAccessStats().getnStreak();
-        if(nStreak>=1){
+        if (nStreak >= 1) {
             library.getAccessStats().setDisplayBreakStreakAnim(true);
         }
         saveAccessStats();
@@ -289,10 +289,6 @@ public class LibraryLoader {
 
     public static void resetLibrary() {
         library = new Library();
-    }
-
-    public static boolean wasTheApplicationLaunchedToday() {
-        return library.getAccessStats().wasTheApplicationLaunchedToday();
     }
 
     public static boolean shouldDisplayBreakStreakAnim() {

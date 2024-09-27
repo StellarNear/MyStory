@@ -71,9 +71,9 @@ public class MainActivityFragmentDownloadList extends CustomFragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main_download_list, container, false);
 
-        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_download_list);
+        backButton = returnFragView.findViewById(R.id.back_main_from_download_list);
 
-        email = (ImageButton) returnFragView.findViewById(R.id.email_download_list);
+        email = returnFragView.findViewById(R.id.email_download_list);
 
         Animation top = AnimationUtils.loadAnimation(getContext(), R.anim.infromtop);
 

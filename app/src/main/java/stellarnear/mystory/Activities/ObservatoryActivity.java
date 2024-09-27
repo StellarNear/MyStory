@@ -74,7 +74,7 @@ public class ObservatoryActivity extends CustomActivity {
     private FloatingActionButton fabWishList;
     private SharedPreferences settings;
 
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
     private ArrayList<String> labelList;
     private List<Book> currentDataBooksList;
     private ArrayList<Button> listSelectButtons;
@@ -112,9 +112,9 @@ public class ObservatoryActivity extends CustomActivity {
         currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
 
         listSelectButtons = new ArrayList<>();
-        listSelectButtons.add((Button) findViewById(R.id.observ_select_all));
-        listSelectButtons.add((Button) findViewById(R.id.observ_select_year));
-        listSelectButtons.add((Button) findViewById(R.id.observ_select_month));
+        listSelectButtons.add(findViewById(R.id.observ_select_all));
+        listSelectButtons.add(findViewById(R.id.observ_select_year));
+        listSelectButtons.add(findViewById(R.id.observ_select_month));
 
         for (Button button : listSelectButtons) {
             button.setOnClickListener(new View.OnClickListener() {

@@ -2,8 +2,6 @@ package stellarnear.mystory.BooksLibs;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -106,7 +104,7 @@ public class Library {
         private String currentLog = "";
 
         private List<String> giftsUnclaimed = new ArrayList<>();
-        private boolean displayBreakStreakAnim=true;
+        private boolean displayBreakStreakAnim = true;
 
         public void storeLogin() {
             if (firstLog == null) {
@@ -123,22 +121,18 @@ public class Library {
             // Storing the previous currentLog into lastLog
             lastLog = currentLog;
 
-            // Creating a formatter for your Constants.TIME_PATTERN_FORMAT
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                    .withZone(ZoneId.systemDefault());
-
             // Getting the current log time
-            currentLog = formatter.format(Instant.now());
+            currentLog = Constants.DATE_FORMATTER.format(Instant.now());
 
 
             if (firstLog.equalsIgnoreCase("")) {
-                firstLog = formatter.format(Instant.now());
+                firstLog = Constants.DATE_FORMATTER.format(Instant.now());
             }
 
             if (!lastLog.equalsIgnoreCase("")) {
                 // Parse the lastLog and currentLog to LocalDate
-                LocalDate lastLogDate = LocalDate.parse(lastLog, formatter);
-                LocalDate currentLogDate = LocalDate.parse(currentLog, formatter);
+                LocalDate lastLogDate = LocalDate.parse(lastLog, Constants.DATE_FORMATTER);
+                LocalDate currentLogDate = LocalDate.parse(currentLog, Constants.DATE_FORMATTER);
 
                 // If lastLog is empty, it means this is the first log, so we start the streak
                 if (lastLog.isEmpty()) {
@@ -187,10 +181,8 @@ public class Library {
         }
 
         public long getNdaysBetweenFirstAndCurrent() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                    .withZone(ZoneId.systemDefault());
-            LocalDate firstLogDate = LocalDate.parse(firstLog, formatter);
-            LocalDate currentLogDate = LocalDate.parse(currentLog, formatter);
+            LocalDate firstLogDate = LocalDate.parse(firstLog, Constants.DATE_FORMATTER);
+            LocalDate currentLogDate = LocalDate.parse(currentLog, Constants.DATE_FORMATTER);
             long daysBetween = ChronoUnit.DAYS.between(firstLogDate, currentLogDate);
             return daysBetween;
         }
@@ -234,15 +226,6 @@ public class Library {
                     return;
                 }
             }
-        }
-
-        public boolean wasTheApplicationLaunchedToday() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_PATTERN_FORMAT)
-                    .withZone(ZoneId.systemDefault());
-            String currentDate = formatter.format(Instant.now());
-
-            return currentDate.equalsIgnoreCase(lastLog);
-
         }
 
         public boolean shouldDisplayBreakStreakAnim() {

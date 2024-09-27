@@ -18,7 +18,7 @@ import stellarnear.mystory.Log.CustomLog;
 
 public class Book {
 
-    private transient CustomLog log = new CustomLog(Book.class);
+    private final transient CustomLog log = new CustomLog(Book.class);
     private UUID uuid;
 
     private byte[] imageByte = null;

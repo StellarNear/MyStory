@@ -6,10 +6,13 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-
-    <string name="time_spend">"115h"</string>
+    <string name="time_spend">"119h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.9.1 :
+- rework notif
+- unique affichage de la popup en cas de cassage de chaine
+
 v1.9.0 :
 - ajout d'un systeme de notification
 - ajout d'un systeme de tache de fond pour controler la connexion journalière

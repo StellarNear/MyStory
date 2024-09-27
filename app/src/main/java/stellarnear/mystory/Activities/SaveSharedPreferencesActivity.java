@@ -27,7 +27,7 @@ import stellarnear.mystory.Tools;
 
 public class SaveSharedPreferencesActivity extends Activity {
 
-    private transient CustomLog log = new CustomLog(SaveSharedPreferencesActivity.class);
+    private final transient CustomLog log = new CustomLog(SaveSharedPreferencesActivity.class);
 
     private final Tools tools = Tools.getTools();
     private String saveNamePath;

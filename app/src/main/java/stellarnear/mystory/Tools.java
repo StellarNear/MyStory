@@ -139,7 +139,7 @@ public class Tools extends SelfCustomLog {
             }
             Snackbar snack = Snackbar.make(mC, v, txt, dura);
             View view = snack.getView();
-            TextView tv = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
+            TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
             tv.setText(txt);
             tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);

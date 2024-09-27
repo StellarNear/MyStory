@@ -70,7 +70,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main_wish_list, container, false);
 
-        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_wish_list);
+        backButton = returnFragView.findViewById(R.id.back_main_from_wish_list);
 
         Animation right = AnimationUtils.loadAnimation(getContext(), R.anim.infromright);
 
@@ -263,7 +263,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
             @Override
             public void onClick(View view) {
                 try {
-                    EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
                     tools.customSnack(getContext(), returnFragView, "Nombre de pages mis à jour à " + page + " !", "pinkshort");

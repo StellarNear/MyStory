@@ -104,7 +104,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
 
         returnFragView = inflater.inflate(R.layout.fragment_main_search_books, container, false);
 
-        backButton = (ImageButton) returnFragView.findViewById(R.id.back_main_from_search);
+        backButton = returnFragView.findViewById(R.id.back_main_from_search);
 
         Animation left = AnimationUtils.loadAnimation(getContext(), R.anim.infromleft);
 
@@ -446,7 +446,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
 
-        RadioGroup radioGroup = (RadioGroup) alertInnerInfo.findViewById(R.id.radio_page_group);
+        RadioGroup radioGroup = alertInnerInfo.findViewById(R.id.radio_page_group);
 
         RadioButton pageOtherRadio = alertInnerInfo.findViewById(R.id.radio_page_other);
         pageOtherRadio.findViewById(R.id.radio_page_other).setOnClickListener(new View.OnClickListener() {
@@ -513,7 +513,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                     //on check si other a été selectionner
                     if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
                         try {
-                            EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                            EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                             Integer page = Integer.parseInt(valuePage.getText().toString());
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
@@ -522,7 +522,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         }
                     } else {
                         try {
-                            RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+                            RadioButton radioChecked = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
                             Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
@@ -608,7 +608,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
 
-        RadioGroup radioGroup = (RadioGroup) alertInnerInfo.findViewById(R.id.radio_page_group);
+        RadioGroup radioGroup = alertInnerInfo.findViewById(R.id.radio_page_group);
 
         RadioButton pageOtherRadio = alertInnerInfo.findViewById(R.id.radio_page_other);
         pageOtherRadio.findViewById(R.id.radio_page_other).setOnClickListener(new View.OnClickListener() {
@@ -673,7 +673,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                     //on check si other a été selectionner
                     if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
                         try {
-                            EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                            EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                             Integer page = Integer.parseInt(valuePage.getText().toString());
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
@@ -682,7 +682,7 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
                         }
                     } else {
                         try {
-                            RadioButton radioChecked = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+                            RadioButton radioChecked = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
                             Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
                             selectedBook.setMaxPages(page);
                         } catch (Exception e) {
@@ -802,8 +802,8 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText valueTitle = (EditText) notes.findViewById(R.id.book_create_title);
-                EditText valueAutor = (EditText) notes.findViewById(R.id.book_create_autor);
+                EditText valueTitle = notes.findViewById(R.id.book_create_title);
+                EditText valueAutor = notes.findViewById(R.id.book_create_autor);
                 Autor customAutor = new Autor(-1, "", "", valueAutor.getText().toString());
                 Book customBook = new Book(-1, valueTitle.getText().toString(), null, customAutor);
 

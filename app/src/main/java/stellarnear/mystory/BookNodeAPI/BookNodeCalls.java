@@ -33,7 +33,7 @@ import stellarnear.mystory.Log.CustomLog;
 
 public class BookNodeCalls {
 
-    private transient CustomLog log = new CustomLog(BookNodeCalls.class);
+    private final transient CustomLog log = new CustomLog(BookNodeCalls.class);
 
     private static final String baseUrl = "https://booknode.com/";
 

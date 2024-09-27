@@ -302,7 +302,7 @@ public class ShelfActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
                     tools.customSnack(getApplicationContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "brownshort");
@@ -596,7 +596,7 @@ public class ShelfActivity extends CustomActivity {
             View noteView = getLayoutInflater().inflate(R.layout.note, null);
             ((TextView) noteView.findViewById(R.id.note_creation_date)).setText(note.getCreationDate());
             ((TextView) noteView.findViewById(R.id.note_title)).setText(note.getTitle());
-            ((TextView) noteView.findViewById(R.id.note_title)).setOnClickListener(new View.OnClickListener() {
+            noteView.findViewById(R.id.note_title).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     new Tools().customToast(ShelfActivity.this, note.getNote());

@@ -37,6 +37,9 @@ import androidx.work.WorkManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +74,7 @@ public class MainActivity extends CustomActivity {
 
     private FragShown fragShown = null;
 
-    private Tools tools = Tools.getTools();
+    private final Tools tools = Tools.getTools();
 
     private static SharedPreferences prefs;
 
@@ -86,7 +89,7 @@ public class MainActivity extends CustomActivity {
             LibraryLoader.loadLibrary(getApplicationContext());
         }
 
-        if (LibraryLoader.getLibrary().getAccessStats().getnStreak() == 0 && LibraryLoader.shouldDisplayBreakStreakAnim() ) {
+        if (LibraryLoader.getLibrary().getAccessStats().getnStreak() == 0 && LibraryLoader.shouldDisplayBreakStreakAnim()) {
             MyLottieDialog ohNoChain = new MyLottieDialog(MainActivity.this)
                     .setTitle("Oh no ! RIP la chaîne...")
                     .setAnimation(R.raw.crying)
@@ -101,13 +104,13 @@ public class MainActivity extends CustomActivity {
                     .setOnCancelListener(dialogInterface -> {
                     });
             ohNoChain.show();
-            LibraryLoader.setDisplayBreakStreakAnim(false);
 
             final Handler closeAnim = new Handler();
             closeAnim.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     ohNoChain.dismiss();
+                    LibraryLoader.setDisplayBreakStreakAnim(false);
                 }
             }, 5000);
         }
@@ -131,7 +134,7 @@ public class MainActivity extends CustomActivity {
 
         window = getWindow();
 
-        mConstraintLayout = (ConstraintLayout) findViewById(R.id.main_constrain);
+        mConstraintLayout = findViewById(R.id.main_constrain);
         mConstraintLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
         fabSearchPanel.setOnClickListener(new View.OnClickListener() {
@@ -201,19 +204,36 @@ public class MainActivity extends CustomActivity {
     }
 
     public void setUpDailyChecker(Context mC) {
+
+        SharedPreferences.Editor editor = prefs.edit();
+
+        String debugFormat = "dd/MM/yyyy HH:mm:ss";
+        DateTimeFormatter debugFormater = DateTimeFormatter.ofPattern(debugFormat).withZone(ZoneId.systemDefault());
+
+        String currentLog = debugFormater.format(Instant.now());
+
+        // Getting the current log time
+        // String currentLog = Constants.DATE_FORMATTER.format(Instant.now());
+        editor.putString("daily_checker_MS_last_connect", currentLog);
+        editor.commit();
+
+        /*
+
+            Now setup the check for tommorow
+
+         */
         // Get the current time and the time for 18:00 tomorrow
         Calendar current = Calendar.getInstance();
         Calendar nextDay = Calendar.getInstance();
 
         // Set nextDay to 18:00 tomorrow
         nextDay.add(Calendar.DATE, 1);  // Move to the next day
-        nextDay.set(Calendar.HOUR_OF_DAY, 18);
+        nextDay.set(Calendar.HOUR_OF_DAY, 12);
         nextDay.set(Calendar.MINUTE, 0);
         nextDay.set(Calendar.SECOND, 0);
 
         // Calculate the delay in milliseconds until tomorrow at 18:00
         long delayInMillis = nextDay.getTimeInMillis() - current.getTimeInMillis();
-
 
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.NOT_REQUIRED)

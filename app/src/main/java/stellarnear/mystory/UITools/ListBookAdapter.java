@@ -118,7 +118,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView image;
+        private final ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);

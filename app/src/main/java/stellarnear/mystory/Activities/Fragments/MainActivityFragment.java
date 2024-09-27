@@ -65,7 +65,7 @@ public class MainActivityFragment extends CustomFragment {
     private ImageView skipStart;
     private ImageView skipEnd;
     private boolean locked = true;
-    private Tools tools = new Tools();
+    private final Tools tools = new Tools();
 
 
     public MainActivityFragment() {
@@ -119,8 +119,8 @@ public class MainActivityFragment extends CustomFragment {
         mainCenter = returnFragView.findViewById(R.id.mainframe_center_for_progress);
         if (book != null) {
 
-            constrainLayoutProgress = (ConstraintLayout) returnFragView.findViewById(R.id.mainfrag_center);
-            constrainLayoutMainFrag = (ConstraintLayout) returnFragView.findViewById(R.id.fragment_main);
+            constrainLayoutProgress = returnFragView.findViewById(R.id.mainfrag_center);
+            constrainLayoutMainFrag = returnFragView.findViewById(R.id.fragment_main);
             mainCenter.removeAllViews();
 
 
@@ -240,7 +240,7 @@ public class MainActivityFragment extends CustomFragment {
             @Override
             public void onClick(View view) {
                 try {
-                    EditText valuePage = (EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     book.setMaxPages(page);
                     tools.customSnack(getContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "purpleshort");
@@ -364,7 +364,7 @@ public class MainActivityFragment extends CustomFragment {
             View noteView = getActivity().getLayoutInflater().inflate(R.layout.note, null);
             ((TextView) noteView.findViewById(R.id.note_creation_date)).setText(note.getCreationDate());
             ((TextView) noteView.findViewById(R.id.note_title)).setText(note.getTitle());
-            ((TextView) noteView.findViewById(R.id.note_title)).setOnClickListener(new View.OnClickListener() {
+            noteView.findViewById(R.id.note_title).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     new Tools().customToast(getContext(), note.getNote());
@@ -536,11 +536,11 @@ public class MainActivityFragment extends CustomFragment {
         seekBar.setOnProgressChangedListener(new OnProgressChangedListener() {
             @Override
             public void onProgressChanged(float v) {
-                if (((TextView) returnFragView.findViewById(R.id.mainframe_progress_text)) != null) {
+                if (returnFragView.findViewById(R.id.mainframe_progress_text) != null) {
                     ((TextView) returnFragView.findViewById(R.id.mainframe_progress_text)).setText(((int) v) + " %");
                 }
 
-                if (((TextView) returnFragView.findViewById(R.id.mainframe_progress_page_text)) != null) {
+                if (returnFragView.findViewById(R.id.mainframe_progress_page_text) != null) {
                     if (book != null && book.getMaxPages() != null && book.getMaxPages() > 0) {
                         ((TextView) returnFragView.findViewById(R.id.mainframe_progress_page_text)).setText("(" + book.getCurrentPage() + "/" + book.getMaxPages() + " pages)");
                     } else {
@@ -621,7 +621,7 @@ public class MainActivityFragment extends CustomFragment {
                     alert.setView(input);
                     alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            int percent = (int) ((int) 100 * (1.0 * Integer.parseInt(input.getText().toString()) / (1.0 * book.getMaxPages())));
+                            int percent = (int) (100 * (1.0 * Integer.parseInt(input.getText().toString()) / (1.0 * book.getMaxPages())));
                             seekBar.setProgress(percent);
                         }
                     });
