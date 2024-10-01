@@ -2,4 +2,5 @@
 <resources>
     <bool name="switch_fullscreen_mode_def">true</bool>
     <bool name="switch_direct_add_to_shelf_def">false</bool>
+    <bool name="switch_fake_forced_notif_def">false</bool>
 </resources>

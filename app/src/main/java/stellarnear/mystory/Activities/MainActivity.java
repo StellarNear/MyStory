@@ -1,8 +1,10 @@
 package stellarnear.mystory.Activities;
 
 import android.animation.LayoutTransition;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,25 +31,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
-import androidx.work.Constraints;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentDownloadList;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
-import stellarnear.mystory.DailyChecker.DailyCheckWorker;
+import stellarnear.mystory.Constants;
+import stellarnear.mystory.DailyChecker.DailyChecker;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.MyLottieDialog;
@@ -75,8 +70,6 @@ public class MainActivity extends CustomActivity {
     private FragShown fragShown = null;
 
     private final Tools tools = Tools.getTools();
-
-    private static SharedPreferences prefs;
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -115,7 +108,6 @@ public class MainActivity extends CustomActivity {
             }, 5000);
         }
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         gestureDetector = new GestureDetector(this, listener);
         setContentView(R.layout.activity_main);
         mainFrameFrag = findViewById(R.id.fragment_start_main_frame_layout);
@@ -203,14 +195,11 @@ public class MainActivity extends CustomActivity {
         notificationManager.createNotificationChannel(channel);
     }
 
-    public void setUpDailyChecker(Context mC) {
+    public static void setUpDailyChecker(Context mC) {
 
-        SharedPreferences.Editor editor = prefs.edit();
-
-        String debugFormat = "dd/MM/yyyy HH:mm:ss";
-        DateTimeFormatter debugFormater = DateTimeFormatter.ofPattern(debugFormat).withZone(ZoneId.systemDefault());
-
-        String currentLog = debugFormater.format(Instant.now());
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mC);
+        SharedPreferences.Editor editor = pref.edit();
+        String currentLog = Constants.DATE_FORMATTER.format(Instant.now());
 
         // Getting the current log time
         // String currentLog = Constants.DATE_FORMATTER.format(Instant.now());
@@ -222,28 +211,47 @@ public class MainActivity extends CustomActivity {
             Now setup the check for tommorow
 
          */
-        // Get the current time and the time for 18:00 tomorrow
-        Calendar current = Calendar.getInstance();
-        Calendar nextDay = Calendar.getInstance();
+        // Cancel any existing alarms
+        cancelExistingAlarm(mC);
 
-        // Set nextDay to 18:00 tomorrow
-        nextDay.add(Calendar.DATE, 1);  // Move to the next day
-        nextDay.set(Calendar.HOUR_OF_DAY, 12);
-        nextDay.set(Calendar.MINUTE, 0);
-        nextDay.set(Calendar.SECOND, 0);
+        // Set up the time for noon tomorrow
+        Calendar calendar = Calendar.getInstance();
 
-        // Calculate the delay in milliseconds until tomorrow at 18:00
-        long delayInMillis = nextDay.getTimeInMillis() - current.getTimeInMillis();
+        String hourTxt = pref.getString("notif_hour", String.valueOf(mC.getResources().getInteger(R.integer.notif_hour_def)));
+        int hour = mC.getResources().getInteger(R.integer.notif_hour_def);
+        try {
+            hour = Integer.parseInt(hourTxt);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        if (hour < 1 || hour > 23) {
+            hour = mC.getResources().getInteger(R.integer.notif_hour_def);
+        }
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                .setRequiresBatteryNotLow(false).setRequiresStorageNotLow(false).setRequiresDeviceIdle(false)
-                .build();
-        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(DailyCheckWorker.class)
-                .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
-                .setConstraints(constraints)
-                .build();
-        WorkManager.getInstance(mC).enqueueUniqueWork("daily_checker_MS", ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
+        // Schedule the alarm using AlarmManager
+        AlarmManager alarmManager = (AlarmManager) mC.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mC, DailyChecker.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                mC, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (alarmManager != null) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    public static void cancelExistingAlarm(Context mContext) {
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mContext, DailyChecker.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
     }
 
     @Override

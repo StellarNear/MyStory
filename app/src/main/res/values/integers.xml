@@ -2,4 +2,5 @@
 <resources>
     <integer name="translationFragDuration">500</integer>
     <integer name="custom_alert_long_duration_DEF">10000</integer>
+    <integer name="notif_hour_def">12</integer>
 </resources>

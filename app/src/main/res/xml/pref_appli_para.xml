@@ -13,4 +13,23 @@
         android:icon="@drawable/ic_book_shelf"
         android:summary="Permet d'ajouter directement les livres depuis la recherche à l'étagère" />
 
+
+    <SwitchPreference
+        android:defaultValue="@bool/switch_fake_forced_notif_def"
+        android:key="switch_fake_forced_notif"
+        android:title="Forcer la notification de lecture"
+        android:icon="@drawable/ic_notification_book_24"
+        android:summary="Forcer la notification qui apparait quand on ne n'est pas connecté aujourd'hui. Cela considerera qu'on ne s'est pas connecté" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/notif_hour_def"
+        android:key="notif_hour"
+        android:title="Choisir une heure de déclenchement"
+        android:summary="Par défaut à midi (12)"
+        android:inputType="number"
+        android:digits="0123456789"
+    />
+
+
+
 </PreferenceScreen>

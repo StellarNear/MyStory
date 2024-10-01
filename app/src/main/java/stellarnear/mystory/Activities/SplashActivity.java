@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -99,6 +100,13 @@ public class SplashActivity extends CustomActivity {
                                 openning.setMediaController(null);
                                 openning.setVideoURI(Uri.parse(fileName));
                                 openning.setZOrderOnTop(true);
+                                // Mute the video to avoid pausing external music
+                                openning.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                    @Override
+                                    public void onPrepared(MediaPlayer mp) {
+                                        mp.setVolume(0f, 0f); // Mute the video
+                                    }
+                                });
                                 openning.start();
 
                                 Snackbar finalSnack = snack;
