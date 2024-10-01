@@ -11,6 +11,7 @@
     <string name="patch_list">"
 v1.9.3 :
 - rework du systeme de notif en alarme interne
+- le son de la cinématique d'intro a été enlevé
 
 v1.9.2 :
 - try fix notif
