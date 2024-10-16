@@ -36,7 +36,7 @@ public class DailyChecker extends BroadcastReceiver {
         }
     }
 
-    private void sendNotification(Context context) {
+    public static void sendNotification(Context context) {
         String[] notificationMessages = {
                 "C'est quoi cette histoire, tu lis plus là ?",
                 "N'oublie pas de te connecter aujourd'hui !",
@@ -52,7 +52,7 @@ public class DailyChecker extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "daily_reminder_channel")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "daily_reminder_channel_MS")
                 .setSmallIcon(R.drawable.ic_notification_book_24)
                 .setContentTitle("Rappel de connexion")
                 .setContentText(randomMessage)
@@ -63,4 +63,5 @@ public class DailyChecker extends BroadcastReceiver {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(1, builder.build());
     }
+
 }

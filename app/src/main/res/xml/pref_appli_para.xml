@@ -30,6 +30,10 @@
         android:digits="0123456789"
     />
 
+    <Preference
+        android:key="test_button_notif"
+        android:title="Envoyer une notification maintenant"
+        />
 
 
 </PreferenceScreen>

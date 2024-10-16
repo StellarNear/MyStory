@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stellarnear.mystory.Activities.LibraryLoader;
+import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.BooksLibs.Note;
 import stellarnear.mystory.R;
@@ -493,9 +494,30 @@ public class MainActivityFragment extends CustomFragment {
         byte[] b = book.getImage();
         if (b == null || b.length < 7) {
             ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(getResources().getDrawable(R.drawable.no_image));
+
+            //we try to refresh the image
+            try {
+                book.setOnImageRefreshedEventListener(new Book.OnImageRefreshedEventListener() {
+                    @Override
+                    public void onEvent() {
+                        tools.convertByteToStoredFile(book);
+                        byte[] bRetry = book.getImage();
+                        if (bRetry != null && bRetry.length > 7) {
+                            Drawable imageRetry = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(bRetry, 0, bRetry.length));
+                            ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(imageRetry);
+                        }
+                    }
+                });
+                new BookNodeCalls().refreshImage(book);
+            } catch (Exception e) {
+                e.printStackTrace();//we have to count it into done
+                log.err("Error in fixMissingImage in main activity", e);
+            }
         } else {
             Drawable image = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b, 0, b.length));
             ((ImageView) returnFragView.findViewById(R.id.mainfram_cover)).setImageDrawable(image);
+
+
         }
     }
 

@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -172,8 +173,6 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         returnFragView.findViewById(R.id.add_book_linear).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.linearBooksFoundInfosSub).setVisibility(View.GONE);
         returnFragView.findViewById(R.id.pickerScroller).setVisibility(View.GONE);
-        returnFragView.findViewById(R.id.loading_search).setVisibility(View.GONE);
-
         returnFragView.findViewById(R.id.linearSearchPrompt).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.search_title_prompt).setVisibility(View.VISIBLE);
         returnFragView.findViewById(R.id.search_author_prompt).setVisibility(View.VISIBLE);
@@ -190,6 +189,10 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
     }
 
     public void startSearch() {
+        ((TextView) returnFragView.findViewById(R.id.loading_search)).setText("Recherche en cours...");
+        float textSizeInSp = getResources().getDimension(R.dimen.list_book_title_size);
+        ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeInSp);
+        ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextColor(getContext().getColor(R.color.primary_middle_yellow));
         String search = titlePrompt.getText().toString().trim() + " " + authorPrompt.getText().toString().trim();
         if (search.trim().length() < 3) {
             tools.customToast(getContext(), "Entres au moins un titre ou un auteur");
@@ -202,8 +205,27 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
             @Override
             public void onEvent(List<Book> allBooks) {
                 tools.customSnack(getContext(), returnFragView, allBooks.size() + " livres trouvés", "yellow");
-                booksList.addAll(allBooks);
-                displayListBookToPick(booksList);
+                if (allBooks.size() > 0) {
+                    booksList.addAll(allBooks);
+                    displayListBookToPick(booksList);
+                } else {
+                    returnFragView.findViewById(R.id.loading_search).clearAnimation();
+                    ((TextView) returnFragView.findViewById(R.id.loading_search)).setText("Aucun livre trouvé");
+                    ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextSize(26);
+                    ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextColor(getContext().getColor(R.color.red));
+                }
+
+            }
+        });
+
+        bookCall.setOnDataFailEventListener(new BookNodeCalls.OnDataFailEventListener() {
+            @Override
+            public void onEvent() {
+                returnFragView.findViewById(R.id.loading_search).clearAnimation();
+                ((TextView) returnFragView.findViewById(R.id.loading_search)).setText("Erreur");
+                ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextSize(26);
+                ((TextView) returnFragView.findViewById(R.id.loading_search)).setTextColor(getContext().getColor(R.color.red));
+                tools.customSnack(getContext(), returnFragView, "Erreur lors de la recherche\nBookNode semble être inaccessible...", "yellow");
             }
         });
 

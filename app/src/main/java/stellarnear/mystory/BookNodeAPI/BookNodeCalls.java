@@ -120,7 +120,8 @@ public class BookNodeCalls {
                     if (i < 3) {
                         getSummary(book);
                     }
-                    new OpenLibraryCalls().addExtraMetadatas(book);
+
+                    // OpenLibrary seems to not work permadown anymore new OpenLibraryCalls().addExtraMetadatas(book);
                     allBooks.add(book);
                 }
 

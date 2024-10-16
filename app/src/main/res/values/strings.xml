@@ -6,9 +6,17 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"121h"</string>
+    <string name="time_spend">"122h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.10.0 :
+- OpenLibrary semble mort, l'application ne chercfhera plus le nombre de page dessus ...
+- Ajout d'un message d'alerte quand BookNode n'est pas joignable
+- Ajout d'un re-telechargement automatique de l'image si le livre en cours n'en a pas au chargement de la page principale
+
+v1.9.4 :
+- bouton pour forcer une notif
+
 v1.9.3 :
 - rework du systeme de notif en alarme interne
 - le son de la cinématique d'intro a été enlevé

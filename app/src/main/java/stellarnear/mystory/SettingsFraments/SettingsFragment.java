@@ -34,6 +34,7 @@ import stellarnear.mystory.Activities.ObservatoryActivity;
 import stellarnear.mystory.Activities.SaveSharedPreferencesActivity;
 import stellarnear.mystory.Activities.ShelfActivity;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.DailyChecker.DailyChecker;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.MyLottieDialog;
@@ -348,6 +349,11 @@ public class SettingsFragment extends CustomPreferenceFragment {
                         .show();
 
                 break;
+            case "test_button_notif":
+                DailyChecker.sendNotification(mC);
+                break;
+
+
         }
     }
 
