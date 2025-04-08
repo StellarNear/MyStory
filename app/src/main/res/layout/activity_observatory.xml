@@ -20,12 +20,15 @@
             app:popupTheme="@style/Theme.MyStory.PopupOverlay">
 
             <LinearLayout
+
                 android:id="@+id/observatory_toolbar_select_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
+                android:gravity="center_vertical"
                 android:layout_marginEnd="@dimen/general_margin"
                 android:orientation="horizontal">
+
 
 
                 <Button
@@ -67,7 +70,34 @@
                     android:textColor="@color/primary_dark_blue"
                     android:textSize="14sp"
                     app:backgroundTint="@null" />
+                <RadioGroup
+                    android:id="@+id/observatory_radio_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <RadioButton
+                        android:id="@+id/observatory_radio_roman"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.9"
+                        android:drawableStart="@drawable/book_type_novel"
+                        android:text="Roman"
+                        android:textColor="?attr/colorVariantLight"
+                        android:buttonTint="?attr/colorVariantLight"/>
+
+                    <RadioButton
+                        android:id="@+id/observatory_radio_manga"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/general_margin"
+                        android:drawableStart="@drawable/book_type_manga"
+                        android:text="Manga"
+                        android:alpha="0.9"
+                        android:textColor="?attr/colorVariantLight"
+                        android:buttonTint="?attr/colorVariantLight"/>
+
+                </RadioGroup>
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>

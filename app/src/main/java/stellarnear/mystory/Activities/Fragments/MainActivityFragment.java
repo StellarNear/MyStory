@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,6 +36,7 @@ import java.util.Map;
 import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.BookType;
 import stellarnear.mystory.BooksLibs.Note;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -198,8 +200,12 @@ public class MainActivityFragment extends CustomFragment {
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(book.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(book.getAutor().getFullName());
-        alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
-        alertInnerInfo.findViewById(R.id.radio_page_group).setVisibility(View.GONE);
+        if (book.getMaxPages() != null) {
+            ((EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt)).setHint(book.getMaxPages() + " pages");
+        }
+        if (book.getBookType() == BookType.MANGA) {
+            ((RadioButton) alertInnerInfo.findViewById(R.id.radio_manga)).setChecked(true);
+        }
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -240,16 +246,24 @@ public class MainActivityFragment extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RadioButton mangaButton = alertInnerInfo.findViewById(R.id.radio_manga);
+                if (mangaButton.isChecked()) {
+                    book.setBookType(BookType.MANGA);
+                } else {
+                    book.setBookType(BookType.ROMAN);
+                }
                 try {
                     EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     book.setMaxPages(page);
-                    tools.customSnack(getContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "purpleshort");
-                    LibraryLoader.saveBook(book);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.err("Error when changing page size", e);
                 }
+                tools.customSnack(getContext(), returnFragView, "Infos mise à jour, le " + book.getBookTypeDisplay() + " a " + book.getMaxPages() + " pages !", "purpleshort");
+                LibraryLoader.saveBook(book);
                 dialog.dismiss();
                 setScreen();
             }
@@ -893,8 +907,8 @@ public class MainActivityFragment extends CustomFragment {
         daysPrize.put(60, "un repas au restaurant en amoureux");
         daysPrize.put(90, "un curry japonais du doudou");
         daysPrize.put(120, "le cours d'oenologie (enfin...)");
-        daysPrize.put(150, "une nouvelle smartwatch !");
-        daysPrize.put(180, "une journée au spa en amoureux");
+        daysPrize.put(150, "une journée au spa en amoureux");
+        daysPrize.put(180, "TBD");
 
         if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastGrantedStreakReward() == streak)) {
             // if (true) {

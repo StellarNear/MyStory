@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.BookType;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.ListBookAdapter;
@@ -153,7 +155,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
             title.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    popupSelectMaxPage();
+                    popupEditInfos();
                     return false;
                 }
             });
@@ -205,7 +207,7 @@ public class MainActivityFragmentWishList extends CustomFragment {
 
     }
 
-    private void popupSelectMaxPage() {
+    private void popupEditInfos() {
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -215,8 +217,12 @@ public class MainActivityFragmentWishList extends CustomFragment {
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
-        alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
-        alertInnerInfo.findViewById(R.id.radio_page_group).setVisibility(View.GONE);
+        if (selectedBook.getMaxPages() != null) {
+            ((EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt)).setHint(selectedBook.getMaxPages() + " pages");
+        }
+        if (selectedBook.getBookType() == BookType.MANGA) {
+            ((RadioButton) alertInnerInfo.findViewById(R.id.radio_manga)).setChecked(true);
+        }
 
         Button okButton = new Button(getContext());
         okButton.setBackground(getContext().getDrawable(R.drawable.button_ok_gradient));
@@ -262,16 +268,22 @@ public class MainActivityFragmentWishList extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RadioButton mangaButton = alertInnerInfo.findViewById(R.id.radio_manga);
+                if (mangaButton.isChecked()) {
+                    selectedBook.setBookType(BookType.MANGA);
+                } else {
+                    selectedBook.setBookType(BookType.ROMAN);
+                }
                 try {
                     EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
-                    tools.customSnack(getContext(), returnFragView, "Nombre de pages mis à jour à " + page + " !", "pinkshort");
-                    LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.err("Error while setting number of page", e);
                 }
+                tools.customSnack(getContext(), returnFragView, "Infos mise à jour, le " + selectedBook.getBookTypeDisplay() + " a " + selectedBook.getMaxPages() + " pages !", "pinkshort");
+                LibraryLoader.saveBook(selectedBook);
                 dialog.dismiss();
                 loadWishList();
             }

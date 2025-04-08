@@ -2,7 +2,6 @@ package stellarnear.mystory.Activities.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -46,6 +44,7 @@ import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
 import stellarnear.mystory.BooksLibs.Autor;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.BookType;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
 import stellarnear.mystory.UITools.DatePickerFragment;
@@ -467,28 +466,11 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
-
-        RadioGroup radioGroup = alertInnerInfo.findViewById(R.id.radio_page_group);
-
-        RadioButton pageOtherRadio = alertInnerInfo.findViewById(R.id.radio_page_other);
-        pageOtherRadio.findViewById(R.id.radio_page_other).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
-            }
-        });
-        ColorStateList colorStateList = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_enabled} //enabled
-                },
-                new int[]{getContext().getColor(R.color.primary_light_yellow)}
-        );
-        for (int i : selectedBook.getPagesFounds()) {
-            RadioButton button = new RadioButton(getContext());
-            button.setTextColor(getContext().getColor(R.color.primary_light_yellow));
-            button.setButtonTintList(colorStateList);
-            button.setText(i + " pages");
-            radioGroup.addView(button, 0);
+        if (selectedBook.getMaxPages() != null) {
+            ((EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt)).setHint(selectedBook.getMaxPages() + " pages");
+        }
+        if (selectedBook.getBookType() == BookType.MANGA) {
+            ((RadioButton) alertInnerInfo.findViewById(R.id.radio_manga)).setChecked(true);
         }
 
         Button okButton = new Button(getContext());
@@ -531,27 +513,20 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (radioGroup.getCheckedRadioButtonId() != -1) {
-                    //on check si other a été selectionner
-                    if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
-                        try {
-                            EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
-                            Integer page = Integer.parseInt(valuePage.getText().toString());
-                            selectedBook.setMaxPages(page);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            log.err("Error while setting number of page", e);
-                        }
-                    } else {
-                        try {
-                            RadioButton radioChecked = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
-                            selectedBook.setMaxPages(page);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            log.err("Error while setting number of page", e);
-                        }
-                    }
+                RadioButton mangaButton = alertInnerInfo.findViewById(R.id.radio_manga);
+                if (mangaButton.isChecked()) {
+                    selectedBook.setBookType(BookType.MANGA);
+                } else {
+                    selectedBook.setBookType(BookType.ROMAN);
+                }
+
+                try {
+                    EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    Integer page = Integer.parseInt(valuePage.getText().toString());
+                    selectedBook.setMaxPages(page);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.err("Error while setting number of page", e);
                 }
                 tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                 LibraryLoader.saveBook(selectedBook);
@@ -629,28 +604,11 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
-
-        RadioGroup radioGroup = alertInnerInfo.findViewById(R.id.radio_page_group);
-
-        RadioButton pageOtherRadio = alertInnerInfo.findViewById(R.id.radio_page_other);
-        pageOtherRadio.findViewById(R.id.radio_page_other).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
-            }
-        });
-        ColorStateList colorStateList = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_enabled} //enabled
-                },
-                new int[]{getContext().getColor(R.color.primary_light_yellow)}
-        );
-        for (int i : selectedBook.getPagesFounds()) {
-            RadioButton button = new RadioButton(getContext());
-            button.setTextColor(getContext().getColor(R.color.primary_light_yellow));
-            button.setButtonTintList(colorStateList);
-            button.setText(i + " pages");
-            radioGroup.addView(button, 0);
+        if (selectedBook.getMaxPages() != null) {
+            ((EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt)).setHint(selectedBook.getMaxPages() + " pages");
+        }
+        if (selectedBook.getBookType() == BookType.MANGA) {
+            ((RadioButton) alertInnerInfo.findViewById(R.id.radio_manga)).setChecked(true);
         }
 
         Button okButton = new Button(getContext());
@@ -691,28 +649,22 @@ public class MainActivityFragmentSearchBooks extends CustomFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (radioGroup.getCheckedRadioButtonId() != -1) {
-                    //on check si other a été selectionner
-                    if (radioGroup.getCheckedRadioButtonId() == pageOtherRadio.getId()) {
-                        try {
-                            EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
-                            Integer page = Integer.parseInt(valuePage.getText().toString());
-                            selectedBook.setMaxPages(page);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            log.err("Error while setting number of page", e);
-                        }
-                    } else {
-                        try {
-                            RadioButton radioChecked = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-                            Integer page = Integer.parseInt(radioChecked.getText().toString().replace(" pages", ""));
-                            selectedBook.setMaxPages(page);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            log.err("Error while setting number of page", e);
-                        }
-                    }
+                RadioButton mangaButton = alertInnerInfo.findViewById(R.id.radio_manga);
+                if (mangaButton.isChecked()) {
+                    selectedBook.setBookType(BookType.MANGA);
+                } else {
+                    selectedBook.setBookType(BookType.ROMAN);
                 }
+                try {
+                    EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
+                    Integer page = Integer.parseInt(valuePage.getText().toString());
+                    selectedBook.setMaxPages(page);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.err("Error while setting number of page", e);
+                }
+
+
                 if (LibraryLoader.getCurrentBook() == null) {
                     tools.convertByteToStoredFile(selectedBook);//to force the save of the file
                     LibraryLoader.addStartTime(selectedBook);

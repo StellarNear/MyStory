@@ -6,9 +6,20 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"122h"</string>
+    <string name="time_spend">"125h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+ v1.12.0 :
+- Ajout de la difference Manga/Roman avec deux icones associées
+- Possiblité de choisir Roman ou manga lors de l'ajout d'un livre
+- Possiblité de changer Roman ou Manga en page principale en restant appuyer sur le titre
+- Possiblité de changer Roman ou Manga en page étagère en restant appuyer sur le titre
+- Possiblité de choisir Roman ou Manga dans l'écran de statistiques
+- Affichage de l'information du type sur l'étagère
+
+v1.11.0 :
+- année de préselection par défaut > année en cours
+
 v1.10.0 :
 - OpenLibrary semble mort, l'application ne chercfhera plus le nombre de page dessus ...
 - Ajout d'un message d'alerte quand BookNode n'est pas joignable

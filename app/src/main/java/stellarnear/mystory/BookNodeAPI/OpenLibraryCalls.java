@@ -19,6 +19,11 @@ import java.util.TreeSet;
 import stellarnear.mystory.BooksLibs.Book;
 import stellarnear.mystory.Log.CustomLog;
 
+
+/*
+THIS CLASS IS NOT USED ANYMORE DON'T CARE ABOUT AUTO FETCH PAGES
+
+ */
 public class OpenLibraryCalls {
 
     //LOOK AT https://openlibrary.org/developers/api

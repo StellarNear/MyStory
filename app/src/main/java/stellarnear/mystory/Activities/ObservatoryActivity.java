@@ -56,6 +56,7 @@ import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.BookType;
 import stellarnear.mystory.Constants;
 import stellarnear.mystory.R;
 import stellarnear.mystory.Tools;
@@ -83,6 +84,7 @@ public class ObservatoryActivity extends CustomActivity {
     private ModeSelect modeSelect = ModeSelect.ALL;
     private boolean alternate = false;
 
+    private String bookTypeDisplay = "livre";
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -125,6 +127,35 @@ public class ObservatoryActivity extends CustomActivity {
             });
         }
 
+        findViewById(R.id.observatory_radio_roman).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentDataBooksList = new ArrayList<>();
+                for (Book book : LibraryLoader.getShelf()) {
+                    if (book.getBookType().equals(BookType.ROMAN)) {
+                        currentDataBooksList.add(book);
+                    }
+                }
+                bookTypeDisplay = "roman";
+                addInfos();
+                initBarChart();
+            }
+        });
+        findViewById(R.id.observatory_radio_manga).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentDataBooksList = new ArrayList<>();
+                for (Book book : LibraryLoader.getShelf()) {
+                    if (book.getBookType().equals(BookType.MANGA)) {
+                        currentDataBooksList.add(book);
+                    }
+                }
+                bookTypeDisplay = "manga";
+                addInfos();
+                initBarChart();
+            }
+        });
+
         initBarChart();
         addInfos();
     }
@@ -141,7 +172,7 @@ public class ObservatoryActivity extends CustomActivity {
             findViewById(R.id.obs_no_book).setVisibility(View.GONE);
         }
 
-        addInfo("Nombre de livres", String.valueOf(currentDataBooksList.size()));
+        addInfo("Nombre de " + bookTypeDisplay + "s", String.valueOf(currentDataBooksList.size()));
 
         LocalDate minDate = null;
         LocalDate maxDate = null;
@@ -190,7 +221,7 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         if (nBookPaged != 0) {
-            addInfo("Nombre de livres avec pages", String.valueOf(nBookPaged));
+            addInfo("Nombre de " + bookTypeDisplay + "s avec pages", String.valueOf(nBookPaged));
         }
 
         if (minPage != null) {
@@ -201,12 +232,12 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         if (nBookPaged != 0) {
-            addInfo("Nombre de pages en moyenne par livre", String.valueOf(totalPages / nBookPaged));
+            addInfo("Nombre de pages en moyenne par " + bookTypeDisplay, String.valueOf(totalPages / nBookPaged));
         }
 
         try {
             long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
-            addInfo("Nombre de livres par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
+            addInfo("Nombre de " + bookTypeDisplay + "s par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
         } catch (Exception e) {
             //nah
         }
@@ -216,14 +247,14 @@ public class ObservatoryActivity extends CustomActivity {
             addInfo("Estimation nombre de pages lu", String.valueOf(currentDataBooksList.size() * (totalPages / nBookPaged)));
         }
 
-        addInfo("Nombre de livre pas fini", String.valueOf(nUnfinishedBooks));
+        addInfo("Nombre de " + bookTypeDisplay + " pas fini", String.valueOf(nUnfinishedBooks));
 
         try {
             long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
-            addInfo("Livre le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
-            addInfo("Livre le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
+            addInfo(bookTypeDisplay + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
+            addInfo(bookTypeDisplay + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
             addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
-            addInfo("Nombre de pages par jour en moyenne", String.valueOf((currentDataBooksList.size() * (totalPages / nBookPaged)) / nDays));
+            addInfo("Nombre de pages par jour en moyenne", String.valueOf(((long) currentDataBooksList.size() * (totalPages / nBookPaged)) / nDays));
         } catch (Exception e) {
             //nah
         }
@@ -307,7 +338,8 @@ public class ObservatoryActivity extends CustomActivity {
                     final EditText input = new EditText(getApplicationContext());
                     input.setInputType(InputType.TYPE_CLASS_NUMBER);
                     input.setRawInputType(Configuration.KEYBOARD_12KEY);
-                    input.setHint("2024");
+                    int currentYear = LocalDate.now().getYear();
+                    input.setHint(String.valueOf(currentYear));
                     alert.setView(input);
                     alert.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -352,13 +384,13 @@ public class ObservatoryActivity extends CustomActivity {
                                     initBarChart();
                                 }
                             }).setNegativeButton(new OnCancelMonthDialogListener() {
-                        @Override
-                        public void onCancel(AlertDialog dialog) {
-                            modeSelect = ModeSelect.ALL;
-                            triggerSelect(findViewById(R.id.observ_select_all));
-                            dialog.dismiss();
-                        }
-                    });
+                                @Override
+                                public void onCancel(AlertDialog dialog) {
+                                    modeSelect = ModeSelect.ALL;
+                                    triggerSelect(findViewById(R.id.observ_select_all));
+                                    dialog.dismiss();
+                                }
+                            });
                     picker.setColorTheme(R.color.primary_light_blue);
                     picker.show();
                 }
@@ -418,7 +450,7 @@ public class ObservatoryActivity extends CustomActivity {
 
             labelList = new ArrayList<>();
             LineData data = new LineData();
-            data.addDataSet(computeLineDataSet("nombre de livres lu"));
+            data.addDataSet(computeLineDataSet("nombre de " + bookTypeDisplay + "s lu"));
             data.setValueTextColor(getColor(R.color.primary_dark_blue));
 
             chart.setData(data);
@@ -492,10 +524,10 @@ public class ObservatoryActivity extends CustomActivity {
             if (modeSelect.equals(ModeSelect.MONTH)) {
                 int day = Integer.parseInt(entry.getKey().substring(6));
                 int month = Integer.parseInt(entry.getKey().substring(3, 5));
-                descr = entry.getValue() + " livres lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+                descr = entry.getValue() + " " + bookTypeDisplay + "s lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             } else {
                 int month = Integer.parseInt(entry.getKey().substring(3));
-                descr = entry.getValue() + " livres lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+                descr = entry.getValue() + " " + bookTypeDisplay + "s lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             }
             listVal.add(new Entry(index, entry.getValue(), descr));
             index++;

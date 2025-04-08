@@ -103,6 +103,8 @@ public class Book {
     private Autor autor;
     private String cover_url;
 
+    private BookType bookType = null;
+
 
     public Book(long id, String name, String cover_url, Autor autor) {
         this.id = id;
@@ -205,6 +207,7 @@ public class Book {
     public String getImagePath() {
         return imagePath;
     }
+
 
     public interface OnImageRefreshedEventListener {
         void onEvent();
@@ -312,4 +315,15 @@ public class Book {
     }
 
 
+    public BookType getBookType() {
+        return bookType != null ? bookType : BookType.ROMAN;
+    }
+
+    public void setBookType(BookType bookType) {
+        this.bookType = bookType;
+    }
+
+    public String getBookTypeDisplay() {
+        return getBookType().name().toLowerCase();
+    }
 }

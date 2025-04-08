@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ import stellarnear.mystory.Activities.Fragments.MainActivityFragment;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentSearchBooks;
 import stellarnear.mystory.Activities.Fragments.MainActivityFragmentWishList;
 import stellarnear.mystory.BooksLibs.Book;
+import stellarnear.mystory.BooksLibs.BookType;
 import stellarnear.mystory.BooksLibs.Note;
 import stellarnear.mystory.Constants;
 import stellarnear.mystory.R;
@@ -185,7 +187,16 @@ public class ShelfActivity extends CustomActivity {
         infoLine2.setVisibility(View.VISIBLE);
 
         TextView toolBarInfo = findViewById(R.id.shelf_toolbar_infos);
-        toolBarInfo.setText(bookAdapter.getItemCount() + " livres");
+        Integer nNovel = 0;
+        Integer nManga = 0;
+        for (Book book : bookAdapter.getBooks()) {
+            if (book.getBookType() == BookType.ROMAN) {
+                nNovel++;
+            } else {
+                nManga++;
+            }
+        }
+        toolBarInfo.setText(bookAdapter.getItemCount() + " livres" + " (" + nNovel + " romans" + " et " + nManga + " mangas)");
         findStartAndEndDate(findViewById(R.id.shelf_toolbar_infos_start_date), findViewById(R.id.shelf_toolbar_infos_end_date));
 
         scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
@@ -198,7 +209,12 @@ public class ShelfActivity extends CustomActivity {
                 info1 += " de " + selectedBook.getAutor().getFullName();
 
                 if (selectedBook.getMaxPages() != null) {
-                    info1 += "(" + selectedBook.getMaxPages() + " pages)";
+                    info1 += " (" + selectedBook.getMaxPages() + " pages)";
+                }
+                if (selectedBook.getBookType() == BookType.MANGA) {
+                    info1 += " [Manga]";
+                } else {
+                    info1 += " [Roman]";
                 }
 
                 infoLine1.setText(info1);
@@ -259,8 +275,12 @@ public class ShelfActivity extends CustomActivity {
 
         ((TextView) alertInnerInfo.findViewById(R.id.alert_title_info)).setText(selectedBook.getName());
         ((TextView) alertInnerInfo.findViewById(R.id.alert_author_info)).setText(selectedBook.getAutor().getFullName());
-        alertInnerInfo.findViewById(R.id.radio_page_other_prompt).setVisibility(View.VISIBLE);
-        alertInnerInfo.findViewById(R.id.radio_page_group).setVisibility(View.GONE);
+        if (selectedBook.getMaxPages() != null) {
+            ((EditText) alertInnerInfo.findViewById(R.id.radio_page_other_prompt)).setHint(selectedBook.getMaxPages() + " pages");
+        }
+        if (selectedBook.getBookType() == BookType.MANGA) {
+            ((RadioButton) alertInnerInfo.findViewById(R.id.radio_manga)).setChecked(true);
+        }
 
         Button okButton = new Button(getApplicationContext());
         okButton.setBackground(getApplicationContext().getDrawable(R.drawable.button_ok_gradient));
@@ -301,16 +321,22 @@ public class ShelfActivity extends CustomActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RadioButton mangaButton = alertInnerInfo.findViewById(R.id.radio_manga);
+                if (mangaButton.isChecked()) {
+                    selectedBook.setBookType(BookType.MANGA);
+                } else {
+                    selectedBook.setBookType(BookType.ROMAN);
+                }
                 try {
                     EditText valuePage = alertInnerInfo.findViewById(R.id.radio_page_other_prompt);
                     Integer page = Integer.parseInt(valuePage.getText().toString());
                     selectedBook.setMaxPages(page);
-                    tools.customSnack(getApplicationContext(), okButton, "Nombre de pages mis à jour à " + page + " !", "brownshort");
-                    LibraryLoader.saveBook(selectedBook);
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.err("Error while getting setting max page", e);
                 }
+                tools.customSnack(getApplicationContext(), okButton, "Infos mise à jour, le " + selectedBook.getBookTypeDisplay() + " a " + selectedBook.getMaxPages() + " pages !", "brownshort");
+                LibraryLoader.saveBook(selectedBook);
                 dialog.dismiss();
                 initShelf();
             }
