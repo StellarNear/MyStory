@@ -127,6 +127,16 @@ public class ObservatoryActivity extends CustomActivity {
             });
         }
 
+        findViewById(R.id.observatory_radio_allbooks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
+                bookTypeDisplay = "livre";
+                addInfos();
+                initBarChart();
+            }
+        });
+
         findViewById(R.id.observatory_radio_roman).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
