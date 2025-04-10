@@ -1,5 +1,6 @@
 package stellarnear.mystory.BooksLibs;
 
 public enum BookType {
-    ROMAN, MANGA
+    ROMAN, MANGA,ALL;
+
 }

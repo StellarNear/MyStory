@@ -84,7 +84,9 @@ public class ObservatoryActivity extends CustomActivity {
     private ModeSelect modeSelect = ModeSelect.ALL;
     private boolean alternate = false;
 
-    private String bookTypeDisplay = "livre";
+    private BookType selectedBookType = BookType.ROMAN;
+    private Integer selectedYear = null;
+    private Integer selectedMonth = null;
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -131,7 +133,8 @@ public class ObservatoryActivity extends CustomActivity {
             @Override
             public void onClick(View v) {
                 currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
-                bookTypeDisplay = "livre";
+                selectedBookType = BookType.ALL;
+                filterBooks();
                 addInfos();
                 initBarChart();
             }
@@ -140,13 +143,9 @@ public class ObservatoryActivity extends CustomActivity {
         findViewById(R.id.observatory_radio_roman).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentDataBooksList = new ArrayList<>();
-                for (Book book : LibraryLoader.getShelf()) {
-                    if (book.getBookType().equals(BookType.ROMAN)) {
-                        currentDataBooksList.add(book);
-                    }
-                }
-                bookTypeDisplay = "roman";
+
+                selectedBookType = BookType.ROMAN;
+                filterBooks();
                 addInfos();
                 initBarChart();
             }
@@ -160,7 +159,8 @@ public class ObservatoryActivity extends CustomActivity {
                         currentDataBooksList.add(book);
                     }
                 }
-                bookTypeDisplay = "manga";
+                selectedBookType = BookType.MANGA;
+                filterBooks();
                 addInfos();
                 initBarChart();
             }
@@ -169,6 +169,7 @@ public class ObservatoryActivity extends CustomActivity {
         initBarChart();
         addInfos();
     }
+
 
     private void addInfos() {
         LinearLayout infos = findViewById(R.id.obser_data_line_info);
@@ -182,7 +183,7 @@ public class ObservatoryActivity extends CustomActivity {
             findViewById(R.id.obs_no_book).setVisibility(View.GONE);
         }
 
-        addInfo("Nombre de " + bookTypeDisplay + "s", String.valueOf(currentDataBooksList.size()));
+        addInfo("Nombre de " + getBookTypeDisplay() + "s", String.valueOf(currentDataBooksList.size()));
 
         LocalDate minDate = null;
         LocalDate maxDate = null;
@@ -231,7 +232,7 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         if (nBookPaged != 0) {
-            addInfo("Nombre de " + bookTypeDisplay + "s avec pages", String.valueOf(nBookPaged));
+            addInfo("Nombre de " + getBookTypeDisplay() + "s avec pages", String.valueOf(nBookPaged));
         }
 
         if (minPage != null) {
@@ -242,12 +243,12 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         if (nBookPaged != 0) {
-            addInfo("Nombre de pages en moyenne par " + bookTypeDisplay, String.valueOf(totalPages / nBookPaged));
+            addInfo("Nombre de pages en moyenne par " + getBookTypeDisplay(), String.valueOf(totalPages / nBookPaged));
         }
 
         try {
             long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
-            addInfo("Nombre de " + bookTypeDisplay + "s par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
+            addInfo("Nombre de " + getBookTypeDisplay() + "s par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
         } catch (Exception e) {
             //nah
         }
@@ -257,12 +258,12 @@ public class ObservatoryActivity extends CustomActivity {
             addInfo("Estimation nombre de pages lu", String.valueOf(currentDataBooksList.size() * (totalPages / nBookPaged)));
         }
 
-        addInfo("Nombre de " + bookTypeDisplay + " pas fini", String.valueOf(nUnfinishedBooks));
+        addInfo("Nombre de " + getBookTypeDisplay() + " pas fini", String.valueOf(nUnfinishedBooks));
 
         try {
             long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
-            addInfo(bookTypeDisplay + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
-            addInfo(bookTypeDisplay + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
+            addInfo(getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
+            addInfo(getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
             addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
             addInfo("Nombre de pages par jour en moyenne", String.valueOf(((long) currentDataBooksList.size() * (totalPages / nBookPaged)) / nDays));
         } catch (Exception e) {
@@ -288,6 +289,16 @@ public class ObservatoryActivity extends CustomActivity {
 
     }
 
+    private String getBookTypeDisplay() {
+        if (selectedBookType.equals(BookType.ROMAN)) {
+            return "roman";
+        } else if (selectedBookType.equals(BookType.MANGA)) {
+            return "manga";
+        } else {
+            return "livre";
+        }
+    }
+
     private View addInfo(String s, String s2) {
         LinearLayout infos = findViewById(R.id.obser_data_line_info);
 
@@ -308,7 +319,6 @@ public class ObservatoryActivity extends CustomActivity {
         i1.setText(s);
 
         line.addView(i1);
-
 
         TextView i2 = getEditTextInfo(s2);
         i2.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
@@ -337,6 +347,9 @@ public class ObservatoryActivity extends CustomActivity {
                 if (button.equals(findViewById(R.id.observ_select_all))) {
                     currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
                     modeSelect = ModeSelect.ALL;
+                    selectedMonth = null;
+                    selectedYear = null;
+                    filterBooks();
                     addInfos();
                     initBarChart();
                     ((Button) findViewById(R.id.observ_select_month)).setText("mois");
@@ -359,10 +372,11 @@ public class ObservatoryActivity extends CustomActivity {
                                     value = input.getHint().toString();
                                 }
                                 Integer year = Integer.parseInt(value);
-                                currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
-                                filterDataYear(year);
                                 ((Button) findViewById(R.id.observ_select_year)).setText(String.valueOf(year));
                                 modeSelect = ModeSelect.YEAR;
+                                selectedYear = year;
+                                selectedMonth = null;
+                                filterBooks();
                                 addInfos();
                                 initBarChart();
                             } catch (Exception e) {
@@ -387,9 +401,12 @@ public class ObservatoryActivity extends CustomActivity {
                                 @Override
                                 public void onDateMonth(int month, int startDate, int endDate, int year, String monthLabel) {
                                     currentDataBooksList = new ArrayList<>(LibraryLoader.getShelf());
-                                    filterDataYearMonth(year, month);
+
                                     ((Button) findViewById(R.id.observ_select_month)).setText(month + "/" + year);
                                     modeSelect = ModeSelect.MONTH;
+                                    selectedMonth = month;
+                                    selectedYear = year;
+                                    filterBooks();
                                     addInfos();
                                     initBarChart();
                                 }
@@ -410,35 +427,31 @@ public class ObservatoryActivity extends CustomActivity {
         }
     }
 
-    private void filterDataYear(Integer year) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : currentDataBooksList) {
-            if (book.getLastEndTime() == null) {
-                continue;
-            }
-            String dateString = book.getLastEndTime();
-            Integer yearBook = Integer.parseInt(dateString.substring(6));
-            if (yearBook.equals(year)) {
-                result.add(book);
+    private void filterBooks() {
+        List<Book> selectedBooks = new ArrayList<>();
+        for (Book book : LibraryLoader.getShelf()) {
+            if (selectedBookType.equals(BookType.ALL) || book.getBookType().equals(selectedBookType)) {
+                selectedBooks.add(book);
             }
         }
-        currentDataBooksList = result;
-    }
+        if (selectedYear != null) {
+            List<Book> selectedBooksDate = new ArrayList<>();
+            for (Book book : selectedBooks) {
+                if (book.getLastEndTime() == null) {
+                    continue;
+                }
+                String dateString = book.getLastEndTime();
+                Integer monthBook = Integer.parseInt(dateString.substring(3, 5));
+                Integer yearBook = Integer.parseInt(dateString.substring(6));
+                if (yearBook.equals(selectedYear) && (selectedMonth == null || monthBook.equals(selectedMonth))) {
+                    selectedBooksDate.add(book);
+                }
+            }
+            currentDataBooksList = selectedBooksDate;
+        } else {
+            currentDataBooksList = selectedBooks;
+        }
 
-    private void filterDataYearMonth(int year, int month) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : currentDataBooksList) {
-            if (book.getLastEndTime() == null) {
-                continue;
-            }
-            String dateString = book.getLastEndTime();
-            Integer monthBook = Integer.parseInt(dateString.substring(3, 5));
-            Integer yearBook = Integer.parseInt(dateString.substring(6));
-            if (yearBook == year && monthBook == month) {
-                result.add(book);
-            }
-        }
-        currentDataBooksList = result;
     }
 
     private void initBarChart() {
@@ -460,7 +473,7 @@ public class ObservatoryActivity extends CustomActivity {
 
             labelList = new ArrayList<>();
             LineData data = new LineData();
-            data.addDataSet(computeLineDataSet("nombre de " + bookTypeDisplay + "s lu"));
+            data.addDataSet(computeLineDataSet("nombre de " + getBookTypeDisplay() + "s lu"));
             data.setValueTextColor(getColor(R.color.primary_dark_blue));
 
             chart.setData(data);
@@ -534,10 +547,10 @@ public class ObservatoryActivity extends CustomActivity {
             if (modeSelect.equals(ModeSelect.MONTH)) {
                 int day = Integer.parseInt(entry.getKey().substring(6));
                 int month = Integer.parseInt(entry.getKey().substring(3, 5));
-                descr = entry.getValue() + " " + bookTypeDisplay + "s lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+                descr = entry.getValue() + " " + getBookTypeDisplay() + "s lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             } else {
                 int month = Integer.parseInt(entry.getKey().substring(3));
-                descr = entry.getValue() + " " + bookTypeDisplay + "s lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+                descr = entry.getValue() + " " + getBookTypeDisplay() + "s lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             }
             listVal.add(new Entry(index, entry.getValue(), descr));
             index++;

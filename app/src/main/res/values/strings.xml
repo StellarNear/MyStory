@@ -9,6 +9,9 @@
     <string name="time_spend">"126h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.12.2 :
+- fix les filtres des livres lors de l'affichage des stats lorsque des filtres de temps et de livres sont actifs en même temps
+
 v1.12.1 :
 - Ajout du bouton Tout dans l'observatoire pour afficher tous les livres
 - fix des couleurs arrière plan dans l'étagère pour une meilleure lisibilité
