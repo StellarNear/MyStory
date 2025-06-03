@@ -24,6 +24,7 @@
         <item name="colorPrimaryDark">@color/primary_dark_purple</item>
         <item name="colorVariantMiddle">@color/primary_middle_purple</item>
         <item name="colorVariantLight">@color/primary_light_purple</item>
+        <item name="colorPrimaryVariant">@color/primary_light_purple</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textColorPrimary">@color/primary_light_purple</item>
@@ -36,6 +37,7 @@
         <item name="colorPrimaryDark">@color/primary_dark_pink</item>
         <item name="colorVariantMiddle">@color/primary_middle_pink</item>
         <item name="colorVariantLight">@color/primary_light_pink</item>
+        <item name="colorPrimaryVariant">@color/primary_light_pink</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:colorPrimary">@color/primary_dark_pink</item>
@@ -47,6 +49,7 @@
         <item name="colorPrimaryDark">@color/primary_dark_blue</item>
         <item name="colorVariantMiddle">@color/primary_middle_blue</item>
         <item name="colorVariantLight">@color/primary_light_blue</item>
+        <item name="colorPrimaryVariant">@color/primary_light_blue</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:colorPrimary">@color/primary_dark_blue</item>
@@ -59,6 +62,7 @@
         <item name="colorPrimaryDark">@color/primary_dark_yellow</item>
         <item name="colorVariantMiddle">@color/primary_middle_yellow</item>
         <item name="colorVariantLight">@color/primary_light_yellow</item>
+        <item name="colorPrimaryVariant">@color/primary_light_yellow</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:colorPrimary">@color/primary_dark_yellow</item>
@@ -71,6 +75,7 @@
         <item name="colorPrimaryDark">@color/primary_dark_brown</item>
         <item name="colorVariantMiddle">@color/primary_middle_brown</item>
         <item name="colorVariantLight">@color/primary_light_brown</item>
+        <item name="colorPrimaryVariant">@color/primary_light_brown</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:colorPrimary">@color/primary_dark_brown</item>
@@ -116,5 +121,10 @@
         <item name="android:layout_marginBottom">1dp</item>
     </style>
 
-
+    <style name="CustomSliderTooltip" parent="Widget.MaterialComponents.Tooltip">
+        <!-- Tooltip text color -->
+        <item name="android:textColor">@color/primary_light_brown</item>
+        <!-- Tooltip background color -->
+        <item name="backgroundTint">@color/primary_dark_brown</item>
+    </style>
 </resources>

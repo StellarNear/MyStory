@@ -701,12 +701,12 @@ public class MainActivityFragment extends CustomFragment {
 
                 skipStart = new ImageView(getContext());
                 skipStart.setId(View.generateViewId());
-                skipStart.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_previous_24));
+                skipStart.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_previous));
                 constrainLayoutProgress.addView(skipStart);
 
                 skipEnd = new ImageView(getContext());
                 skipEnd.setId(View.generateViewId());
-                skipEnd.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_next_24));
+                skipEnd.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_skip_next));
                 constrainLayoutProgress.addView(skipEnd);
 
                 int width = constrainLayoutProgress.getMeasuredWidth();

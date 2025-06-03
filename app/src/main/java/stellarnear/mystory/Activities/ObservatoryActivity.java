@@ -47,6 +47,7 @@ import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -194,6 +195,12 @@ public class ObservatoryActivity extends CustomActivity {
         Integer totalPages = 0;
         Integer nUnfinishedBooks = 0;
 
+        //to account for multiple time read books
+        Integer nTotalBooksRead = 0;
+        Integer nTotalPagesRead = 0;
+
+        Book mostReadBook=null;
+        Map<Integer,Integer> numberOfReadHisto = new HashMap<>();
 
         for (Book book : currentDataBooksList) {
 
@@ -224,6 +231,15 @@ public class ObservatoryActivity extends CustomActivity {
                     e.printStackTrace();
                     log.err("Error while parsing dates for observatory", e);
                 }
+                nTotalBooksRead += book.getEndTimes().size();
+                if(book.getMaxPages() != null){
+                    nTotalPagesRead += book.getMaxPages()*book.getEndTimes().size();
+                }
+
+                if(mostReadBook == null || book.getEndTimes().size() > mostReadBook.getEndTimes().size()){
+                    mostReadBook = book;
+                }
+                numberOfReadHisto.put(book.getEndTimes().size(),numberOfReadHisto.getOrDefault(book.getEndTimes().size(),0)+1);
 
             } else {
                 nUnfinishedBooks++;
@@ -248,32 +264,40 @@ public class ObservatoryActivity extends CustomActivity {
 
         try {
             long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
-            addInfo("Nombre de " + getBookTypeDisplay() + "s par mois en moyenne", String.valueOf(currentDataBooksList.size() / nMonth));
+            addInfo("Nombre de " + getBookTypeDisplay() + "s lu par mois en moyenne", String.format("%.2f",(1.0*nTotalBooksRead) / (1.0*nMonth)));
         } catch (Exception e) {
             //nah
         }
 
 
         if (nBookPaged != 0) {
-            addInfo("Estimation nombre de pages lu", String.valueOf(currentDataBooksList.size() * (totalPages / nBookPaged)));
+            addInfo("Estimation nombre de pages lu", String.valueOf(nTotalPagesRead));
         }
 
         addInfo("Nombre de " + getBookTypeDisplay() + " pas fini", String.valueOf(nUnfinishedBooks));
 
         try {
             long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
-            addInfo(getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
-            addInfo(getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
+            addInfo("Date du "+getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
+            addInfo("Date du "+getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
             addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
-            addInfo("Nombre de pages par jour en moyenne", String.valueOf(((long) currentDataBooksList.size() * (totalPages / nBookPaged)) / nDays));
+            addInfo("Nombre de pages par jour en moyenne", String.format("%.2f",(1.0*nTotalPagesRead) / (1.0*nDays)));
         } catch (Exception e) {
             //nah
         }
 
+
+        for(Map.Entry<Integer,Integer> entry : numberOfReadHisto.entrySet()){
+            addInfo("Nombre de " + getBookTypeDisplay() + " lu " + entry.getKey() + " fois", String.valueOf(entry.getValue()));
+        }
+
+        addInfo("Le " + getBookTypeDisplay() + " le plus lu ("+mostReadBook.getEndTimes().size()+" fois)", mostReadBook.getName().substring(0,30)+(mostReadBook.getName().length()>30?"...":""));
+
+        // connexion chain
         try {
             addInfo("Nombre de connexions total", String.valueOf(LibraryLoader.getAccessStats().getnTotal()));
             addInfo("Plus grande chaine de connexion", String.valueOf(LibraryLoader.getAccessStats().getBestStreak()));
-            View firstCo = addInfo("Première connexion", LibraryLoader.getAccessStats().getFirstLog());
+            addInfo("Première connexion", LibraryLoader.getAccessStats().getFirstLog());
 
 
             addInfo("Dernière connexion", LibraryLoader.getAccessStats().getLastLog());

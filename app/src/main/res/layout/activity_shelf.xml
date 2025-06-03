@@ -175,6 +175,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/shelfPicker">
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/shelf_slider"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            app:thumbColor="@color/primary_light_brown"
+            app:thumbStrokeColor="@color/primary_middle_brown"
+            app:trackColor="@color/primary_dark_brown"
+            app:haloColor="@color/primary_middle_brown"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:labelStyle="@style/CustomSliderTooltip"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/shelf_info_sub"

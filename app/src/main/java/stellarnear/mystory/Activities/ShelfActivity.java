@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.BlendModeColorFilterCompat;
@@ -24,6 +25,7 @@ import androidx.core.graphics.BlendModeCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.slider.Slider;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
@@ -65,6 +67,8 @@ public class ShelfActivity extends CustomActivity {
 
     private ChronoLocalDate minDate = null;
     private ChronoLocalDate maxDate = null;
+    private DiscreteScrollView scrollView;
+    private Slider shelfSlider;
 
 
     @Override
@@ -99,16 +103,19 @@ public class ShelfActivity extends CustomActivity {
             listShelf = filterWithDate("max", listShelf);
         }
         if (listShelf != null && listShelf.size() > 0) {
-            populatePicker(listShelf);
+            initPage(listShelf);
         } else {
             findViewById(R.id.shelfPicker).setVisibility(View.GONE);
             findViewById(R.id.shelf_info_sub).setVisibility(View.GONE);
             findViewById(R.id.shelf_book_linear).setVisibility(View.GONE);
             findViewById(R.id.shelf_no_book).setVisibility(View.VISIBLE);
             findViewById(R.id.shelf_toolbar_infos_dates_line).setVisibility(View.GONE);
+            findViewById(R.id.shelf_slider).setVisibility(View.GONE);
         }
 
     }
+
+
 
     private List<Book> filterWithDate(String mode, List<Book> listShelf) {
         List<Book> result = new ArrayList<>();
@@ -139,8 +146,8 @@ public class ShelfActivity extends CustomActivity {
         return result;
     }
 
-    private void populatePicker(List<Book> listShelf) {
-        DiscreteScrollView scrollView = findViewById(R.id.shelfPicker);
+    private void initPage(List<Book> listShelf) {
+        scrollView = findViewById(R.id.shelfPicker);
         scrollView.removeAllViews();
         scrollView.setSlideOnFling(true);
         scrollView.setItemTransformer(new ScaleTransformer.Builder()
@@ -164,6 +171,34 @@ public class ShelfActivity extends CustomActivity {
                 scrollView.smoothScrollToPosition(0);
             }
         });
+
+        shelfSlider = findViewById(R.id.shelf_slider);
+        shelfSlider.setValueFrom(0);
+        shelfSlider.setValueTo(listShelf.size() - 1);
+        shelfSlider.setStepSize(1);
+
+        shelfSlider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull Slider slider) {
+                // Optional: pause updates, animations, etc.
+            }
+
+            @Override
+            public void onStopTrackingTouch(@NonNull Slider slider) {
+                // Do the actual scroll once user has released the slider
+                float value = slider.getValue();
+                scrollView.smoothScrollToPosition(Math.round(value));
+            }
+        });
+
+
+        shelfSlider.setLabelFormatter(value -> {
+            int index = Math.round(value);
+            String bookDate = listShelf.get(index).getLastEndTime();
+            return bookDate; // Implement this method
+        });
+
+        // then current book info
 
         TextView infoLine1 = findViewById(R.id.shelf_book_info_line1);
         infoLine1.setVisibility(View.VISIBLE);
@@ -204,6 +239,8 @@ public class ShelfActivity extends CustomActivity {
             public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
                 selectedBook = bookAdapter.getBook(adapterPosition);
 
+                shelfSlider.setValue(adapterPosition);
+
                 String info1 = selectedBook.getName();
 
                 info1 += " de " + selectedBook.getAutor().getFullName();
@@ -227,7 +264,7 @@ public class ShelfActivity extends CustomActivity {
                     info2 += " fini le " + selectedBook.getLastEndTime();
                 }
                 if (selectedBook.getEndTimes().size() > 1) {
-                    info2 += " lu " + selectedBook.getEndTimes().size() + " fois";
+                    info2 += " (lu " + selectedBook.getEndTimes().size() + " fois)";
                 }
                 infoLine2.setText(info2);
                 infoLine2.setOnLongClickListener(new View.OnLongClickListener() {
@@ -500,6 +537,7 @@ public class ShelfActivity extends CustomActivity {
                     LibraryLoader.setCurrentBook(selectedBook);
                     LibraryLoader.removeBookFromShelf(selectedBook);
                     tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
+                    selectedBook.setCurrentPercent(0);
                     initShelf();
                     dialog.dismiss();
                 } else {
@@ -558,6 +596,7 @@ public class ShelfActivity extends CustomActivity {
                 LibraryLoader.setCurrentBook(selectedBook);
                 LibraryLoader.removeBookFromShelf(selectedBook);
                 tools.customSnack(ShelfActivity.this, okButton, "Bonne lecture !", "brownshort");
+                selectedBook.setCurrentPercent(0);
                 initShelf();
                 dialog.dismiss();
             }
