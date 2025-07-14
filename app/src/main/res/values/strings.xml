@@ -9,6 +9,12 @@
     <string name="time_spend">"128h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.14.1 :
+- fix d'un crash lorsque l'ont selectionne un interval de temps + type de livres où aucun livre n'est selectionné
+
+v1.14.0 :
+- ajout des cadeaux jusqu'à 900 jours de chaine
+
 v1.13.0 :
 - ajout d'un slider sur l'étagère pour naviger plus facilement
 - affichage de la date correspondante au slider

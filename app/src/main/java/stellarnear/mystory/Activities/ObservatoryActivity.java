@@ -179,6 +179,7 @@ public class ObservatoryActivity extends CustomActivity {
         if (currentDataBooksList == null || currentDataBooksList.size() < 1) {
             findViewById(R.id.obs_list_infos).setVisibility(View.GONE);
             findViewById(R.id.obs_no_book).setVisibility(View.VISIBLE);
+            return; //nothing to show then
         } else {
             findViewById(R.id.obs_list_infos).setVisibility(View.VISIBLE);
             findViewById(R.id.obs_no_book).setVisibility(View.GONE);
@@ -199,8 +200,8 @@ public class ObservatoryActivity extends CustomActivity {
         Integer nTotalBooksRead = 0;
         Integer nTotalPagesRead = 0;
 
-        Book mostReadBook=null;
-        Map<Integer,Integer> numberOfReadHisto = new HashMap<>();
+        Book mostReadBook = null;
+        Map<Integer, Integer> numberOfReadHisto = new HashMap<>();
 
         for (Book book : currentDataBooksList) {
 
@@ -232,14 +233,14 @@ public class ObservatoryActivity extends CustomActivity {
                     log.err("Error while parsing dates for observatory", e);
                 }
                 nTotalBooksRead += book.getEndTimes().size();
-                if(book.getMaxPages() != null){
-                    nTotalPagesRead += book.getMaxPages()*book.getEndTimes().size();
+                if (book.getMaxPages() != null) {
+                    nTotalPagesRead += book.getMaxPages() * book.getEndTimes().size();
                 }
 
-                if(mostReadBook == null || book.getEndTimes().size() > mostReadBook.getEndTimes().size()){
+                if (mostReadBook == null || book.getEndTimes().size() > mostReadBook.getEndTimes().size()) {
                     mostReadBook = book;
                 }
-                numberOfReadHisto.put(book.getEndTimes().size(),numberOfReadHisto.getOrDefault(book.getEndTimes().size(),0)+1);
+                numberOfReadHisto.put(book.getEndTimes().size(), numberOfReadHisto.getOrDefault(book.getEndTimes().size(), 0) + 1);
 
             } else {
                 nUnfinishedBooks++;
@@ -264,7 +265,7 @@ public class ObservatoryActivity extends CustomActivity {
 
         try {
             long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
-            addInfo("Nombre de " + getBookTypeDisplay() + "s lu par mois en moyenne", String.format("%.2f",(1.0*nTotalBooksRead) / (1.0*nMonth)));
+            addInfo("Nombre de " + getBookTypeDisplay() + "s lu par mois en moyenne", String.format("%.2f", (1.0 * nTotalBooksRead) / (1.0 * nMonth)));
         } catch (Exception e) {
             //nah
         }
@@ -274,24 +275,32 @@ public class ObservatoryActivity extends CustomActivity {
             addInfo("Estimation nombre de pages lu", String.valueOf(nTotalPagesRead));
         }
 
-        addInfo("Nombre de " + getBookTypeDisplay() + " pas fini", String.valueOf(nUnfinishedBooks));
+        try {
+            addInfo("Nombre de " + getBookTypeDisplay() + " pas fini", String.valueOf(nUnfinishedBooks));
+        } catch (Exception e) {
+            //nah
+        }
 
         try {
             long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
-            addInfo("Date du "+getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
-            addInfo("Date du "+getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
+            addInfo("Date du " + getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
+            addInfo("Date du " + getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
             addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
-            addInfo("Nombre de pages par jour en moyenne", String.format("%.2f",(1.0*nTotalPagesRead) / (1.0*nDays)));
+            addInfo("Nombre de pages par jour en moyenne", String.format("%.2f", (1.0 * nTotalPagesRead) / (1.0 * nDays)));
         } catch (Exception e) {
             //nah
         }
 
 
-        for(Map.Entry<Integer,Integer> entry : numberOfReadHisto.entrySet()){
+        for (Map.Entry<Integer, Integer> entry : numberOfReadHisto.entrySet()) {
             addInfo("Nombre de " + getBookTypeDisplay() + " lu " + entry.getKey() + " fois", String.valueOf(entry.getValue()));
         }
 
-        addInfo("Le " + getBookTypeDisplay() + " le plus lu ("+mostReadBook.getEndTimes().size()+" fois)", mostReadBook.getName().substring(0,30)+(mostReadBook.getName().length()>30?"...":""));
+        try {
+            addInfo("Le " + getBookTypeDisplay() + " le plus lu (" + mostReadBook.getEndTimes().size() + " fois)", mostReadBook.getName().substring(0, 30) + (mostReadBook.getName().length() > 30 ? "..." : ""));
+        } catch (Exception e) {
+            //nah
+        }
 
         // connexion chain
         try {

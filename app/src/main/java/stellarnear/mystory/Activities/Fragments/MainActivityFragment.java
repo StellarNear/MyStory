@@ -905,10 +905,11 @@ public class MainActivityFragment extends CustomFragment {
         daysPrize.put(15, "un massage du dos");
         daysPrize.put(30, "un massage intégrale (oui avec pieds aussi !)");
         daysPrize.put(60, "un repas au restaurant en amoureux");
-        daysPrize.put(90, "un curry japonais du doudou");
-        daysPrize.put(120, "le cours d'oenologie (enfin...)");
-        daysPrize.put(150, "une journée au spa en amoureux");
-        daysPrize.put(180, "TBD");
+        daysPrize.put(120, "des pates carbo du doudou");
+        daysPrize.put(150, "le cours d'oenologie (enfin...)");
+        daysPrize.put(300, "une journée au spa en amoureux");
+        daysPrize.put(600, "un bijou custom (instagram ou artisan)");
+        daysPrize.put(900, "des vacances dans un pays limitrophe/corse");
 
         if (daysPrize.containsKey(streak) && !(LibraryLoader.getAccessStats().getLastGrantedStreakReward() == streak)) {
             // if (true) {
