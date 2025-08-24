@@ -88,6 +88,7 @@ public class ObservatoryActivity extends CustomActivity {
     private BookType selectedBookType = BookType.ROMAN;
     private Integer selectedYear = null;
     private Integer selectedMonth = null;
+    private boolean pagePlot=false;
 
     @Override
     protected void onCreateCustom() throws Exception {
@@ -144,7 +145,6 @@ public class ObservatoryActivity extends CustomActivity {
         findViewById(R.id.observatory_radio_roman).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 selectedBookType = BookType.ROMAN;
                 filterBooks();
                 addInfos();
@@ -154,13 +154,27 @@ public class ObservatoryActivity extends CustomActivity {
         findViewById(R.id.observatory_radio_manga).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentDataBooksList = new ArrayList<>();
-                for (Book book : LibraryLoader.getShelf()) {
-                    if (book.getBookType().equals(BookType.MANGA)) {
-                        currentDataBooksList.add(book);
-                    }
-                }
                 selectedBookType = BookType.MANGA;
+                filterBooks();
+                addInfos();
+                initBarChart();
+            }
+        });
+
+        findViewById(R.id.observatory_radio_plot_book).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pagePlot=false;
+                filterBooks();
+                addInfos();
+                initBarChart();
+            }
+        });
+
+        findViewById(R.id.observatory_radio_plot_page).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pagePlot=true;
                 filterBooks();
                 addInfos();
                 initBarChart();
@@ -506,7 +520,7 @@ public class ObservatoryActivity extends CustomActivity {
 
             labelList = new ArrayList<>();
             LineData data = new LineData();
-            data.addDataSet(computeLineDataSet("nombre de " + getBookTypeDisplay() + "s lu"));
+            data.addDataSet(computeLineDataSet("nombre de "+(pagePlot? "pages pour les ":"") + getBookTypeDisplay() + "s lu"));
             data.setValueTextColor(getColor(R.color.primary_dark_blue));
 
             chart.setData(data);
@@ -569,7 +583,13 @@ public class ObservatoryActivity extends CustomActivity {
             }
 
             monthCount.putIfAbsent(valueMap, 0);
-            monthCount.put(valueMap, monthCount.get(valueMap) + 1);
+            if(pagePlot){
+                int nPages = book.getMaxPages()==null? 0: book.getMaxPages();
+                monthCount.put(valueMap, monthCount.get(valueMap) + nPages);
+            } else {
+                monthCount.put(valueMap, monthCount.get(valueMap) + 1);
+            }
+
         }
 
         ArrayList<Entry> listVal = new ArrayList<>();
@@ -580,10 +600,11 @@ public class ObservatoryActivity extends CustomActivity {
             if (modeSelect.equals(ModeSelect.MONTH)) {
                 int day = Integer.parseInt(entry.getKey().substring(6));
                 int month = Integer.parseInt(entry.getKey().substring(3, 5));
-                descr = entry.getValue() + " " + getBookTypeDisplay() + "s lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+
+                descr = entry.getValue() + " " + (pagePlot? "pages pour les ":"") + getBookTypeDisplay() + "s lu le " + day + " " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             } else {
                 int month = Integer.parseInt(entry.getKey().substring(3));
-                descr = entry.getValue() + " " + getBookTypeDisplay() + "s lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
+                descr = entry.getValue() + " " + (pagePlot? "pages pour les ":"") + getBookTypeDisplay() + "s lu en " + DateFormatSymbols.getInstance().getMonths()[month - 1].toLowerCase() + " " + "20" + entry.getKey().substring(0, 2);
             }
             listVal.add(new Entry(index, entry.getValue(), descr));
             index++;

@@ -117,7 +117,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_observatory"
-        android:foregroundGravity="center"></FrameLayout>
+        android:foregroundGravity="center"/>
 
     <LinearLayout
 
@@ -173,7 +173,8 @@
             android:layout_margin="@dimen/general_margin"
             android:layout_weight="1"
             android:gravity="center"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:orientation="vertical">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/line_chart"
@@ -189,6 +190,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/no_graph" />
+
+            <RadioGroup
+                android:id="@+id/observatory_radio_group_plot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/observatory_radio_plot_book"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.9"
+                    android:text="Livres"
+                    android:textColor="?attr/colorVariantLight"
+                    android:buttonTint="?attr/colorVariantLight"/>
+
+                <RadioButton
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:id="@+id/observatory_radio_plot_page"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.9"
+                    android:text="Pages"
+                    android:textColor="?attr/colorVariantLight"
+                    android:buttonTint="?attr/colorVariantLight"/>
+
+
+            </RadioGroup>
         </LinearLayout>
 
     </LinearLayout>
