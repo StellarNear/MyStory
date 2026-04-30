@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +22,29 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionInflater;
 
 import com.seosh817.circularseekbar.BarStrokeCap;
 import com.seosh817.circularseekbar.CircularSeekBar;
 import com.seosh817.circularseekbar.CircularSeekBarAnimation;
 import com.seosh817.circularseekbar.callbacks.OnProgressChangedListener;
+import com.yarolegovich.discretescrollview.DSVOrientation;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
+import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
+import com.yarolegovich.discretescrollview.transform.DiscreteScrollItemTransformer;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import stellarnear.mystory.Activities.LibraryLoader;
 import stellarnear.mystory.BookNodeAPI.BookNodeCalls;
@@ -161,13 +174,23 @@ public class MainActivityFragment extends CustomFragment {
                     } else {
                         zoomedProgress = false;
                         if (seekBar != null) {
-                            book.setLastRead();
-                            book.setCurrentPercent((int) seekBar.getProgress());
-                            if (seekBar.getProgress() == 100) {
-                                popupEndBookPutOnShelf();
+
+                            if (book.getCurrentPercent() != (int) seekBar.getProgress()) {
+                                int previousPercent = book.getCurrentPercent();
+                                book.setLastRead();
+                                book.setCurrentPercent((int) seekBar.getProgress());
+                                LibraryLoader.saveBook(book);
+                                LibraryLoader.saveCurrent();
+
+                                if (seekBar.getProgress() == 100) {
+                                    popupEndBookPutOnShelf();
+                                }
+                                if (book.getMaxPages() != null) {
+                                    // here calculate the number of pages read on the last session (based on seekbar > current percent)
+                                    popupGetHowMuchTime(previousPercent);
+                                }
+
                             }
-                            LibraryLoader.saveBook(book);
-                            LibraryLoader.saveCurrent();
                         }
                         unzoomProgress();
                     }
@@ -186,6 +209,288 @@ public class MainActivityFragment extends CustomFragment {
             returnFragView.findViewById(R.id.mainfrag_info_linear).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainfrag_center).setVisibility(View.GONE);
             returnFragView.findViewById(R.id.mainframe_no_current).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void popupGetHowMuchTime(int previousPercent) {
+
+        int pagesRead = 0;
+        if (book.getMaxPages() != null && book.getMaxPages() > 0) {
+            int newPercent = (int) seekBar.getProgress();
+            pagesRead = (int) ((newPercent - previousPercent) * book.getMaxPages() / 100.0);
+        }
+        final int finalPagesRead = pagesRead;
+
+        Context ctx = getContext();
+        float density = getResources().getDisplayMetrics().density;
+        int pad = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        int itemHeightPx = (int) (52 * density);
+        int scrollHeightPx = itemHeightPx * 3;
+
+        // --- Données ---
+        List<String> hourItems = new ArrayList<>();
+        for (int i = 0; i <= 10; i++) hourItems.add(i + "h");
+
+        List<String> minuteItems = new ArrayList<>();
+        for (int i = 0; i <= 59; i++) minuteItems.add(String.format("%02d", i) + "m");
+
+        // Adapter minutes infini
+        SimpleStringAdapter minuteBaseAdapter = new SimpleStringAdapter(
+                minuteItems, ctx.getColor(R.color.primary_light_purple));
+        InfiniteScrollAdapter minuteInfiniteAdapter =
+                InfiniteScrollAdapter.wrap(minuteBaseAdapter);
+
+        // Adapter heures normal (borné 0-10)
+        SimpleStringAdapter hourAdapter = new SimpleStringAdapter(
+                hourItems, ctx.getColor(R.color.primary_light_purple));
+
+        // --- Label central ---
+        TextView centerLabel = new TextView(ctx);
+        centerLabel.setTextSize(18);
+        centerLabel.setText("0h 00m");
+        centerLabel.setTextColor(ctx.getColor(R.color.primary_light_purple));
+        centerLabel.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        centerLabel.setGravity(Gravity.CENTER);
+
+        TextView minutesTotalLabel = new TextView(ctx);
+        minutesTotalLabel.setTextSize(11);
+        minutesTotalLabel.setText("= 0 min");
+        minutesTotalLabel.setTextColor(ctx.getColor(R.color.primary_middle_purple));
+        minutesTotalLabel.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        minutesTotalLabel.setGravity(Gravity.CENTER);
+
+        LinearLayout centerBox = new LinearLayout(ctx);
+        centerBox.setOrientation(LinearLayout.VERTICAL);
+        centerBox.setGravity(Gravity.CENTER);
+        centerBox.setPadding(pad / 2, 0, pad / 2, 0);
+        centerBox.addView(centerLabel);
+        centerBox.addView(minutesTotalLabel);
+        LinearLayout.LayoutParams centerBoxParams = new LinearLayout.LayoutParams(
+                (int) (96 * density), scrollHeightPx);
+        centerBox.setLayoutParams(centerBoxParams);
+
+        // --- Pickers ---
+        DiscreteScrollView hourPicker = new DiscreteScrollView(ctx);
+        hourPicker.setLayoutParams(new LinearLayout.LayoutParams(0, scrollHeightPx, 1f));
+        hourPicker.setOrientation(DSVOrientation.VERTICAL);
+        hourPicker.setAdapter(hourAdapter);
+        hourPicker.setItemTransformer(new WheelItemTransformer());
+        hourPicker.setSlideOnFling(true);
+        hourPicker.setSlideOnFlingThreshold(1800);
+        hourPicker.setOverScrollEnabled(false);
+        hourPicker.scrollToPosition(0);
+
+        DiscreteScrollView minutePicker = new DiscreteScrollView(ctx);
+        minutePicker.setLayoutParams(new LinearLayout.LayoutParams(0, scrollHeightPx, 1f));
+        minutePicker.setOrientation(DSVOrientation.VERTICAL);
+        minutePicker.setAdapter(minuteInfiniteAdapter);
+        minutePicker.setItemTransformer(new WheelItemTransformer());
+        minutePicker.setSlideOnFling(true);
+        minutePicker.setSlideOnFlingThreshold(1800);
+        minutePicker.setOverScrollEnabled(false);
+        // Démarrer au vrai 0 — InfiniteScrollAdapter place le centre au milieu
+        minutePicker.scrollToPosition(minuteInfiniteAdapter.getClosestPosition(0));
+
+        // --- État partagé ---
+        final int[] selectedHour = {0};
+        final int[] selectedMinute = {0};
+
+        Runnable updateLabel = () -> {
+            int total = selectedHour[0] * 60 + selectedMinute[0];
+            centerLabel.setText(selectedHour[0] + "h "
+                    + String.format("%02d", selectedMinute[0]) + "m");
+            minutesTotalLabel.setText("= " + total + " min");
+        };
+
+        hourPicker.addOnItemChangedListener((viewHolder, adapterPosition) -> {
+            selectedHour[0] = adapterPosition;
+            updateLabel.run();
+        });
+
+        minutePicker.addOnItemChangedListener((viewHolder, adapterPosition) -> {
+            selectedMinute[0] = minuteInfiniteAdapter.getRealPosition(adapterPosition);
+            updateLabel.run();
+        });
+
+        // --- Row pickers ---
+        LinearLayout pickerRow = new LinearLayout(ctx);
+        pickerRow.setOrientation(LinearLayout.HORIZONTAL);
+        pickerRow.setGravity(Gravity.CENTER_VERTICAL);
+        pickerRow.addView(hourPicker);
+        pickerRow.addView(centerBox);
+        pickerRow.addView(minutePicker);
+
+        // --- Bouton +30min ---
+        Button plus30Button = new Button(ctx);
+        plus30Button.setText("+ 30 min");
+        plus30Button.setTextColor(ctx.getColor(R.color.white));
+        plus30Button.setBackground(ctx.getDrawable(R.drawable.button_basic_gradient));
+        plus30Button.setTextSize(12);
+        LinearLayout.LayoutParams plus30Params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        plus30Params.gravity = Gravity.CENTER_HORIZONTAL;
+        plus30Params.topMargin = pad*2;
+        plus30Params.bottomMargin = pad * 2;
+        plus30Button.setLayoutParams(plus30Params);
+
+        plus30Button.setOnClickListener(v -> {
+            int totalMinutes = selectedHour[0] * 60 + selectedMinute[0] + 30;
+            if (totalMinutes > 600) totalMinutes = 600;
+
+            int newHour = totalMinutes / 60;
+            int newMinute = totalMinutes % 60;
+
+            // On écrit l'état AVANT de scroller pour que updateLabel soit cohérent
+            // même si les listeners arrivent dans un ordre imprévisible
+            selectedHour[0] = newHour;
+            selectedMinute[0] = newMinute;
+
+            // Scroller les roues — les listeners vont confirmer les valeurs
+            // mais selectedHour/selectedMinute sont déjà bons
+            hourPicker.smoothScrollToPosition(newHour);
+            // getClosestPosition à partir de la position réelle actuelle
+            int currentInfinitePos = minutePicker.getCurrentItem();
+            int currentRealMinute = minuteInfiniteAdapter.getRealPosition(currentInfinitePos);
+            int delta = newMinute - currentRealMinute;
+            // Ajuster le delta pour prendre le chemin le plus court sur la roue infinie
+            if (delta > 30) delta -= 60;
+            if (delta < -30) delta += 60;
+            minutePicker.smoothScrollToPosition(currentInfinitePos + delta);
+
+            updateLabel.run();
+        });
+
+        // --- Wrapper complet ---
+        LinearLayout wrapper = new LinearLayout(ctx);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setGravity(Gravity.CENTER);
+        wrapper.setPadding(0, pad / 2, 0, 0);
+
+        TextView msgView = new TextView(ctx);
+        msgView.setText("Combien de temps as-tu lu ?");
+        msgView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        msgView.setTextColor(ctx.getColor(R.color.primary_light_purple));
+        msgView.setPadding(0, 0, 0, pad);
+        wrapper.addView(msgView);
+        wrapper.addView(pickerRow);
+        wrapper.addView(plus30Button);
+
+        // --- Boutons dialog ---
+        Button okButton = new Button(ctx);
+        okButton.setBackground(ctx.getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Enregistrer");
+        okButton.setTextColor(ctx.getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(ctx);
+        cancelButton.setBackground(ctx.getDrawable(R.drawable.button_cancel_gradient));
+        cancelButton.setText("Ignorer");
+        cancelButton.setTextColor(ctx.getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(ctx)
+                .setAnimation(R.raw.book_close)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Fin de session")
+                .setMessage(wrapper)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {})
+                .setOnDismissListener(dialogInterface -> {})
+                .setOnCancelListener(dialogInterface -> {});
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        okButton.setOnClickListener(v -> {
+            int totalMinutes = selectedHour[0] * 60 + selectedMinute[0];
+            if (totalMinutes == 0) {
+                dialog.dismiss();
+                return;
+            }
+
+            String[] messages = {
+                    "Jolie session de lecture !",
+                    "Bravo, tu dévores les pages !",
+                    "Pas un dernier chapitre ? :p",
+                    "Belle concentration, continue comme ça !",
+                    "Tu avances bien, bravo !",
+                    "Session réussie, on sent la motivation !",
+                    "Lecture du jour accomplie, mission réussie !"
+            };
+
+            Random random = new Random();
+            String motivation = messages[random.nextInt(messages.length)];
+
+            new Tools().customToast(ctx, motivation);
+
+            String sessionKey = LocalDate.now().toString()
+                    + " "
+                    + LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString();
+
+            LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead);
+            LibraryLoader.saveAccessStats();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
+    }
+
+    private static class WheelItemTransformer implements DiscreteScrollItemTransformer {
+        @Override
+        public void transformItem(View item, float position) {
+            float absPos = Math.abs(position);
+            float scale = 1f - (0.25f * absPos);
+            item.setScaleX(scale);
+            item.setScaleY(scale);
+            item.setAlpha(1f - (0.75f * absPos));
+        }
+    }
+
+    private static class SimpleStringAdapter
+            extends RecyclerView.Adapter<SimpleStringAdapter.VH> {
+
+        private final List<String> items;
+        private final int textColor;
+
+        SimpleStringAdapter(List<String> items, int textColor) {
+            this.items = items;
+            this.textColor = textColor;
+        }
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            TextView tv = new TextView(parent.getContext());
+            tv.setGravity(Gravity.CENTER);
+            tv.setTextSize(20);
+            tv.setTextColor(textColor);
+            float density = parent.getContext().getResources().getDisplayMetrics().density;
+            tv.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    (int) (52 * density)));
+            return new VH(tv);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull VH holder, int position) {
+            holder.tv.setText(items.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return items.size();
+        }
+
+        static class VH extends RecyclerView.ViewHolder {
+            final TextView tv;
+
+            VH(TextView tv) {
+                super(tv);
+                this.tv = tv;
+            }
         }
     }
 

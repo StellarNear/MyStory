@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import stellarnear.mystory.Constants;
 
@@ -105,6 +107,18 @@ public class Library {
 
         private List<String> giftsUnclaimed = new ArrayList<>();
         private boolean displayBreakStreakAnim = true;
+
+        private List<String> sessionKeys = new ArrayList<>();
+        private Map<String, SessionData> sessionLog = new LinkedHashMap<>();
+
+        public void addSession(String key, int minutes, int pages) {
+            sessionKeys.add(key);
+            sessionLog.put(key, new SessionData(minutes, pages));
+        }
+
+        public Map<String, SessionData> getSessionLog() {
+            return sessionLog;
+        }
 
         public void storeLogin() {
             if (firstLog == null) {
@@ -234,6 +248,26 @@ public class Library {
 
         public void setDisplayBreakStreakAnim(boolean displayBreakStreakAnim) {
             this.displayBreakStreakAnim = displayBreakStreakAnim;
+        }
+
+
+        // Nouveau type de valeur pour la map
+        public class SessionData {
+            private int minutes;
+            private int pages;
+
+            public SessionData(int minutes, int pages) {
+                this.minutes = minutes;
+                this.pages = pages;
+            }
+
+            public int getMinutes() {
+                return minutes;
+            }
+
+            public int getPages() {
+                return pages;
+            }
         }
     }
 }

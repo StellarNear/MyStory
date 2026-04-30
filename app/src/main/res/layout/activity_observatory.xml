@@ -70,6 +70,20 @@
                     android:textColor="@color/primary_dark_blue"
                     android:textSize="14sp"
                     app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/observ_select_week"
+                    android:layout_width="@dimen/observ_button_width_select"
+                    android:layout_height="@dimen/observ_button_height_select"
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:layout_marginEnd="@dimen/general_margin"
+                    android:alpha="0.9"
+                    android:background="@drawable/button_basic_gradient"
+                    android:text="Semaine"
+                    android:textColor="@color/primary_dark_blue"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:backgroundTint="@null" />
                 <RadioGroup
                     android:id="@+id/observatory_radio_group"
                     android:layout_width="wrap_content"
@@ -107,9 +121,25 @@
                         android:buttonTint="?attr/colorVariantLight"/>
 
                 </RadioGroup>
+
+                <ToggleButton
+                    android:id="@+id/observ_toggle_reading_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/observ_button_height_select"
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:textOn="⏱ Temps"
+                    android:textOff="⏱ Temps"
+                    android:textSize="12sp"
+                    android:textColor="@color/primary_dark_blue"
+                    android:background="@drawable/button_basic_gradient"
+                    app:backgroundTint="@null" />
             </LinearLayout>
 
+
+
         </androidx.appcompat.widget.Toolbar>
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
