@@ -325,7 +325,7 @@ public class MainActivityFragment extends CustomFragment {
         plus30Button.setText("+ 30 min");
         plus30Button.setTextColor(ctx.getColor(R.color.white));
         plus30Button.setBackground(ctx.getDrawable(R.drawable.button_basic_gradient));
-        plus30Button.setTextSize(12);
+        plus30Button.setTextSize(11);
         LinearLayout.LayoutParams plus30Params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -380,11 +380,13 @@ public class MainActivityFragment extends CustomFragment {
         Button okButton = new Button(ctx);
         okButton.setBackground(ctx.getDrawable(R.drawable.button_ok_gradient));
         okButton.setText("Enregistrer");
+        okButton.setTextSize(12);
         okButton.setTextColor(ctx.getColor(R.color.end_gradient_button_ok));
 
         Button cancelButton = new Button(ctx);
         cancelButton.setBackground(ctx.getDrawable(R.drawable.button_cancel_gradient));
         cancelButton.setText("Ignorer");
+        cancelButton.setTextSize(12);
         cancelButton.setTextColor(ctx.getColor(R.color.end_gradient_button_cancel));
 
         MyLottieDialog dialog = new MyLottieDialog(ctx)
@@ -625,9 +627,9 @@ public class MainActivityFragment extends CustomFragment {
     }
 
     private LinearLayout.LayoutParams getButtonParam() {
-        int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        param.setMargins(0, margin, 0, 0);
+        int margin = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        param.setMargins(margin, margin, margin, margin);
         return param;
     }
 

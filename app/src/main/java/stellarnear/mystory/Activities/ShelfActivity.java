@@ -174,8 +174,14 @@ public class ShelfActivity extends CustomActivity {
 
         shelfSlider = findViewById(R.id.shelf_slider);
         shelfSlider.setValueFrom(0);
-        shelfSlider.setValueTo(listShelf.size() - 1);
-        shelfSlider.setStepSize(1);
+        if (listShelf.size() <= 1) {
+            // Un seul livre : le slider n'a pas de sens, on le cache
+            shelfSlider.setVisibility(View.GONE);
+        } else {
+            shelfSlider.setVisibility(View.VISIBLE);
+            shelfSlider.setValueTo(listShelf.size() - 1);
+            shelfSlider.setStepSize(1);
+        }
 
         shelfSlider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
             @Override

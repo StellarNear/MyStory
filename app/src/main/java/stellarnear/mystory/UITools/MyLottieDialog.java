@@ -3,6 +3,7 @@ package stellarnear.mystory.UITools;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
@@ -58,9 +59,7 @@ public class MyLottieDialog {
      * Lottie animation view to control the animation
      */
     private final LottieAnimationView lottieDialogAnimationView;
-
     private final View lottieDialogInnerMessageView;
-
     private final Context mC;
     private final View view;
 
@@ -74,13 +73,21 @@ public class MyLottieDialog {
      */
     public static final int INFINITE = LottieDrawable.INFINITE;
 
-
-    /**
-     * Layout params used for action buttons to the weight of each one equal to 1
-     */
-    private static final LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT, 1);
+    // --- NOUVEAU : plus de static, on détecte l'orientation à l'ajout du bouton ---
+    private LinearLayout.LayoutParams getButtonLayoutParams() {
+        int orientation = mC.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Landscape : boutons empilés verticalement dans le panel de droite
+            // width=MATCH_PARENT, height=0 + weight → chaque bouton prend une part égale en hauteur
+            return new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
+        } else {
+            // Portrait : boutons côte à côte horizontalement
+            // width=0 + weight, height=MATCH_PARENT → chaque bouton prend une part égale en largeur
+            return new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        }
+    }
 
     public MyLottieDialog(Context context) {
         this.mC = context;
@@ -187,10 +194,8 @@ public class MyLottieDialog {
         return this;
     }
 
-    // my addition to replace with inner view
     public MyLottieDialog setMessage(View alertInnerInfo) {
         this.lottieDialogMessage.setVisibility(View.GONE);
-
         ViewGroup parent = (ViewGroup) lottieDialogMessage.getParent();
         if (parent != null) {
             final int index = parent.indexOfChild(this.lottieDialogInnerMessageView);
@@ -447,7 +452,7 @@ public class MyLottieDialog {
      * @return the instance of lottie dialog to make a chain of function easily
      */
     public MyLottieDialog addActionButton(Button button) {
-        this.lottieDialogButtonsLayout.addView(button, linearLayoutParams);
+        this.lottieDialogButtonsLayout.addView(button, getButtonLayoutParams());
         return this;
     }
 
@@ -459,7 +464,7 @@ public class MyLottieDialog {
      * @return the instance of lottie dialog to make a chain of function easily
      */
     public MyLottieDialog addActionButton(Button button, int index) {
-        this.lottieDialogButtonsLayout.addView(button, index, linearLayoutParams);
+        this.lottieDialogButtonsLayout.addView(button, index, getButtonLayoutParams());
         return this;
     }
 
@@ -584,7 +589,6 @@ public class MyLottieDialog {
         this.lottieDialog.setOnDismissListener(listener);
         return this;
     }
-
 
     public MyLottieDialog setCancelOnTouchItself(boolean b) {
         if (b) {

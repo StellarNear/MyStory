@@ -107,12 +107,12 @@ public class Library {
 
         private List<String> giftsUnclaimed = new ArrayList<>();
         private boolean displayBreakStreakAnim = true;
-
-        private List<String> sessionKeys = new ArrayList<>();
         private Map<String, SessionData> sessionLog = new LinkedHashMap<>();
 
         public void addSession(String key, int minutes, int pages) {
-            sessionKeys.add(key);
+            if(sessionLog==null){
+               this.sessionLog = new LinkedHashMap<>();
+            }
             sessionLog.put(key, new SessionData(minutes, pages));
         }
 

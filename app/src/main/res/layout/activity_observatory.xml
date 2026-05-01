@@ -246,6 +246,26 @@
                     android:textColor="?attr/colorVariantLight"
                     android:buttonTint="?attr/colorVariantLight"/>
 
+                <RadioButton
+                    android:id="@+id/observatory_radio_plot_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.9"
+                    android:text="Temps"
+                    android:textColor="?attr/colorVariantLight"
+                    android:buttonTint="?attr/colorVariantLight"
+                    android:visibility="gone"/>
+
+                <RadioButton
+                    android:layout_marginStart="@dimen/general_margin"
+                    android:id="@+id/observatory_radio_plot_sessions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.9"
+                    android:text="Sessions"
+                    android:textColor="?attr/colorVariantLight"
+                    android:buttonTint="?attr/colorVariantLight"
+                    android:visibility="gone"/>
 
             </RadioGroup>
         </LinearLayout>

@@ -82,6 +82,7 @@ public class ObservatoryActivity extends CustomActivity {
 
     // --- NOUVEAU ---
     private boolean readingTimeMode = false;
+    private boolean sessionCountPlot = false; // false = Temps, true = Sessions
     private ModeSelectWeek modeSelectWeek = null; // null = pas en mode semaine
     private Button weekButton;
     private ToggleButton toggleReadingTime;
@@ -129,34 +130,44 @@ public class ObservatoryActivity extends CustomActivity {
         toggleReadingTime.setOnCheckedChangeListener((buttonView, isChecked) -> {
             readingTimeMode = isChecked;
 
-            toggleReadingTime.setBackground(getDrawable(R.drawable.button_ok_gradient));
-            findViewById(R.id.observatory_radio_group).setVisibility(View.GONE);
-
-            // Grise / dégrise Roman/Manga
+            // Grise / dégrise Roman/Manga/Tout
             RadioButton radioRoman = findViewById(R.id.observatory_radio_roman);
             RadioButton radioManga = findViewById(R.id.observatory_radio_manga);
             RadioButton radioAll = findViewById(R.id.observatory_radio_allbooks);
-            float alpha = isChecked ? 0.35f : 0.9f;
-            radioRoman.setAlpha(alpha);
-            radioManga.setAlpha(alpha);
-            radioAll.setAlpha(alpha);
+            float alphaBookType = isChecked ? 0.35f : 0.9f;
+            radioRoman.setAlpha(alphaBookType);
+            radioManga.setAlpha(alphaBookType);
+            radioAll.setAlpha(alphaBookType);
             radioRoman.setEnabled(!isChecked);
             radioManga.setEnabled(!isChecked);
             radioAll.setEnabled(!isChecked);
+            findViewById(R.id.observatory_radio_group)
+                    .setVisibility(isChecked ? View.GONE : View.VISIBLE);
 
-            // Grise / dégrise pagePlot
-            RadioButton radioPlotPage = findViewById(R.id.observatory_radio_plot_page);
+            // Swap des 4 radio buttons plot
             RadioButton radioPlotBook = findViewById(R.id.observatory_radio_plot_book);
-            radioPlotPage.setAlpha(alpha);
-            radioPlotBook.setAlpha(alpha);
-            radioPlotPage.setEnabled(!isChecked);
-            radioPlotBook.setEnabled(!isChecked);
+            RadioButton radioPlotPage = findViewById(R.id.observatory_radio_plot_page);
+            RadioButton radioPlotTime = findViewById(R.id.observatory_radio_plot_time);
+            RadioButton radioPlotSessions = findViewById(R.id.observatory_radio_plot_sessions);
 
-            // Affiche / masque le bouton Semaine
-            weekButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            if (!isChecked) {
+            if (isChecked) {
+                radioPlotBook.setVisibility(View.GONE);
+                radioPlotPage.setVisibility(View.GONE);
+                radioPlotTime.setVisibility(View.VISIBLE);
+                radioPlotSessions.setVisibility(View.VISIBLE);
+                radioPlotTime.setChecked(true);
+                sessionCountPlot = false;
+                weekButton.setVisibility(View.VISIBLE);
+                toggleReadingTime.setBackground(getDrawable(R.drawable.button_ok_gradient));
+            } else {
+                radioPlotTime.setVisibility(View.GONE);
+                radioPlotSessions.setVisibility(View.GONE);
+                radioPlotBook.setVisibility(View.VISIBLE);
+                radioPlotPage.setVisibility(View.VISIBLE);
+                radioPlotBook.setChecked(true);
+                pagePlot = false;
+                weekButton.setVisibility(View.GONE);
                 modeSelectWeek = null;
-                findViewById(R.id.observatory_radio_group).setVisibility(View.VISIBLE);
                 toggleReadingTime.setBackground(getDrawable(R.drawable.button_basic_gradient));
             }
 
@@ -196,6 +207,15 @@ public class ObservatoryActivity extends CustomActivity {
             pagePlot = true;
             filterBooks();
             addInfos();
+            initBarChart();
+        });
+
+        findViewById(R.id.observatory_radio_plot_time).setOnClickListener(v -> {
+            sessionCountPlot = false;
+            initBarChart();
+        });
+        findViewById(R.id.observatory_radio_plot_sessions).setOnClickListener(v -> {
+            sessionCountPlot = true;
             initBarChart();
         });
 
@@ -358,6 +378,23 @@ public class ObservatoryActivity extends CustomActivity {
         }
         findViewById(R.id.obs_list_infos).setVisibility(View.VISIBLE);
         findViewById(R.id.obs_no_book).setVisibility(View.GONE);
+
+// Stats du jour — toujours sur toutes les sessions, indépendant du filtre
+        String todayKey = LocalDate.now().toString(); // "2026-05-01"
+        int todaySessions = 0;
+        int todayMinutes = 0;
+        Map<String, Library.AccessStats.SessionData> allSessions =
+                LibraryLoader.getAccessStats().getSessionLog();
+        if (allSessions != null) {
+            for (Map.Entry<String, Library.AccessStats.SessionData> e : allSessions.entrySet()) {
+                if (e.getKey().startsWith(todayKey)) {
+                    todaySessions++;
+                    todayMinutes += e.getValue().getMinutes();
+                }
+            }
+        }
+        addInfo("Sessions aujourd'hui", String.valueOf(todaySessions));
+        addInfo("Temps de lecture aujourd'hui", formatMinutes(todayMinutes));
 
         int totalMinutes = 0;
         int totalPages = 0;
@@ -601,20 +638,28 @@ public class ObservatoryActivity extends CustomActivity {
         LineData data = new LineData();
 
         if (readingTimeMode) {
-            data.addDataSet(computeReadingTimeDataSet());
+            data.addDataSet(sessionCountPlot
+                    ? computeSessionCountDataSet()
+                    : computeReadingTimeDataSet());
             data.setValueTextColor(getColor(R.color.primary_dark_blue));
             chart.setData(data);
-            // Formateur personnalisé pour afficher "Xh" sur l'axe Y
-            chart.getAxisLeft().setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
-                @Override
-                public String getFormattedValue(float value) {
-                    int h = (int) value / 60;
-                    int m = (int) value % 60;
-                    if (h == 0) return m + "m";
-                    if (m == 0) return h + "h";
-                    return h + "h" + String.format("%02d", m);
-                }
-            });
+            if (sessionCountPlot) {
+                chart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+                chart.getAxisLeft().setGranularity(1f);
+                chart.getAxisLeft().setGranularityEnabled(true);
+            } else {
+                chart.getAxisLeft().setValueFormatter(
+                        new com.github.mikephil.charting.formatter.ValueFormatter() {
+                            @Override
+                            public String getFormattedValue(float value) {
+                                int h = (int) value / 60;
+                                int m = (int) value % 60;
+                                if (h == 0) return m + "m";
+                                if (m == 0) return h + "h";
+                                return h + "h" + String.format("%02d", m);
+                            }
+                        });
+            }
         } else {
             data.addDataSet(computeLineDataSet(
                     "nombre de " + (pagePlot ? "pages pour les " : "") +
@@ -726,6 +771,67 @@ public class ObservatoryActivity extends CustomActivity {
             @Override
             public String getPointLabel(Entry entry) {
                 return formatMinutes((int) entry.getY());
+            }
+        });
+        return set;
+    }
+
+    private LineDataSet computeSessionCountDataSet() {
+        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions();
+        String[] dowNames = {"Lundi", "Mardi", "Mercredi", "Jeudi",
+                "Vendredi", "Samedi", "Dimanche"};
+        ArrayList<Entry> listVal = new ArrayList<>();
+
+        if (modeSelectWeek != null) {
+            int[] sessionsByDow = new int[7];
+            for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
+                try {
+                    LocalDate date = LocalDate.parse(entry.getKey().substring(0, 10));
+                    sessionsByDow[date.getDayOfWeek().getValue() - 1]++;
+                } catch (Exception ignored) {
+                }
+            }
+            for (int i = 0; i < 7; i++) {
+                labelList.add(dowNames[i]);
+                listVal.add(new Entry(i, sessionsByDow[i],
+                        sessionsByDow[i] + " session(s) le " + dowNames[i]));
+            }
+        } else {
+            TreeMap<String, Integer> sessionsByPeriod = new TreeMap<>();
+            for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
+                try {
+                    LocalDate date = LocalDate.parse(entry.getKey().substring(0, 10));
+                    String periodKey = (modeSelect == ModeSelect.MONTH)
+                            ? String.format("%02d/%02d/%02d",
+                            date.getYear() % 100, date.getMonthValue(), date.getDayOfMonth())
+                            : String.format("%02d/%02d",
+                            date.getYear() % 100, date.getMonthValue());
+                    sessionsByPeriod.merge(periodKey, 1, Integer::sum);
+                } catch (Exception ignored) {
+                }
+            }
+            int index = 0;
+            for (Map.Entry<String, Integer> entry : sessionsByPeriod.entrySet()) {
+                labelList.add(entry.getKey());
+                listVal.add(new Entry(index, entry.getValue(),
+                        entry.getValue() + " session(s) en " + entry.getKey()));
+                index++;
+            }
+        }
+
+        LineDataSet set = new LineDataSet(listVal,
+                "sessions (" + (modeSelectWeek != null ? "par jour" : "par période") + ")");
+        set.setValueTextSize(15);
+        set.setValueTextColor(getColor(R.color.primary_dark_blue));
+        set.setCircleHoleColor(getColor(R.color.primary_light_blue));
+        set.setColor(getColor(R.color.primary_dark_blue));
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setCircleColor(getColor(R.color.primary_dark_blue));
+        set.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
+            @Override
+            public String getPointLabel(Entry entry) {
+                return String.valueOf((int) entry.getY());
             }
         });
         return set;
