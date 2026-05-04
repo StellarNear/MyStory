@@ -6,9 +6,13 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"134h"</string>
+    <string name="time_spend">"135h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.16.2 :
+- ajout de deux bouton +15 -15 min pour faciliter la saisie
+- filtrage des types de livre aussi sur les stats de sessions
+
 v1.16.1 :
 - quelques optimisations pour les affichages des stats sessions
 - fix des boutons des popup custom animées

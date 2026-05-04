@@ -176,6 +176,7 @@ public class MainActivityFragment extends CustomFragment {
                         if (seekBar != null) {
 
                             if (book.getCurrentPercent() != (int) seekBar.getProgress()) {
+                                BookType cuurentBookType = book.getBookType();
                                 int previousPercent = book.getCurrentPercent();
                                 book.setLastRead();
                                 book.setCurrentPercent((int) seekBar.getProgress());
@@ -185,9 +186,9 @@ public class MainActivityFragment extends CustomFragment {
                                 if (seekBar.getProgress() == 100) {
                                     popupEndBookPutOnShelf();
                                 }
-                                if (book.getMaxPages() != null) {
+                                if (book.getMaxPages() != null && previousPercent < (int) seekBar.getProgress()) {
                                     // here calculate the number of pages read on the last session (based on seekbar > current percent)
-                                    popupGetHowMuchTime(previousPercent);
+                                    popupGetHowMuchTime(previousPercent,cuurentBookType);
                                 }
 
                             }
@@ -212,7 +213,7 @@ public class MainActivityFragment extends CustomFragment {
         }
     }
 
-    private void popupGetHowMuchTime(int previousPercent) {
+    private void popupGetHowMuchTime(int previousPercent, BookType type) {
 
         int pagesRead = 0;
         if (book.getMaxPages() != null && book.getMaxPages() > 0) {
@@ -320,22 +321,77 @@ public class MainActivityFragment extends CustomFragment {
         pickerRow.addView(centerBox);
         pickerRow.addView(minutePicker);
 
-        // --- Bouton +30min ---
-        Button plus30Button = new Button(ctx);
-        plus30Button.setText("+ 30 min");
-        plus30Button.setTextColor(ctx.getColor(R.color.white));
-        plus30Button.setBackground(ctx.getDrawable(R.drawable.button_basic_gradient));
-        plus30Button.setTextSize(11);
-        LinearLayout.LayoutParams plus30Params = new LinearLayout.LayoutParams(
+        // --- Boutons -15min et +15min côte à côte ---
+        Button minus15Button = new Button(ctx);
+        minus15Button.setText("- 15 min");
+        minus15Button.setTextColor(ctx.getColor(R.color.start_gradient_button_cancel));
+        minus15Button.setBackground(ctx.getDrawable(R.drawable.button_basic_gradient_ko_border));
+        minus15Button.setTextSize(11);
+
+        Button plus15Button = new Button(ctx);
+        plus15Button.setText("+ 15 min");
+        plus15Button.setTextColor(ctx.getColor(R.color.start_gradient_button_ok));
+        plus15Button.setBackground(ctx.getDrawable(R.drawable.button_basic_gradient_ok_border));
+        plus15Button.setTextSize(11);
+
+// Conteneur horizontal pour les deux boutons
+        LinearLayout shortcutRow = new LinearLayout(ctx);
+        shortcutRow.setOrientation(LinearLayout.HORIZONTAL);
+        shortcutRow.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout.LayoutParams shortcutRowParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        plus30Params.gravity = Gravity.CENTER_HORIZONTAL;
-        plus30Params.topMargin = pad*2;
-        plus30Params.bottomMargin = pad * 2;
-        plus30Button.setLayoutParams(plus30Params);
+        shortcutRowParams.topMargin = pad * 2;
+        shortcutRowParams.bottomMargin = pad * 2;
+        shortcutRow.setLayoutParams(shortcutRowParams);
 
-        plus30Button.setOnClickListener(v -> {
-            int totalMinutes = selectedHour[0] * 60 + selectedMinute[0] + 30;
+// Params individuels avec margin entre les deux boutons
+        LinearLayout.LayoutParams minusParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        LinearLayout.LayoutParams plusParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+// Séparation entre les deux boutons via margin gauche sur le +15
+        plusParams.leftMargin = pad;
+
+        minus15Button.setLayoutParams(minusParams);
+        plus15Button.setLayoutParams(plusParams);
+
+// --- Listener -15min ---
+        minus15Button.setOnClickListener(v -> {
+            int totalMinutes = selectedHour[0] * 60 + selectedMinute[0] - 15;
+            // Plancher à 0 — on ne peut pas lire un temps négatif
+            if (totalMinutes < 0) totalMinutes = 0;
+
+            int newHour = totalMinutes / 60;
+            int newMinute = totalMinutes % 60;
+
+            // On écrit l'état AVANT de scroller pour que updateLabel soit cohérent
+            // même si les listeners arrivent dans un ordre imprévisible
+            selectedHour[0] = newHour;
+            selectedMinute[0] = newMinute;
+
+            // Scroller les roues — les listeners vont confirmer les valeurs
+            // mais selectedHour/selectedMinute sont déjà bons
+            hourPicker.smoothScrollToPosition(newHour);
+            // getClosestPosition à partir de la position réelle actuelle
+            int currentInfinitePosM = minutePicker.getCurrentItem();
+            int currentRealMinuteM = minuteInfiniteAdapter.getRealPosition(currentInfinitePosM);
+            int deltaM = newMinute - currentRealMinuteM;
+            // Ajuster le delta pour prendre le chemin le plus court sur la roue infinie
+            if (deltaM > 30) deltaM -= 60;
+            if (deltaM < -30) deltaM += 60;
+            minutePicker.smoothScrollToPosition(currentInfinitePosM + deltaM);
+
+            updateLabel.run();
+        });
+
+// --- Listener +15min ---
+        plus15Button.setOnClickListener(v -> {
+            int totalMinutes = selectedHour[0] * 60 + selectedMinute[0] + 15;
+            // Plafond à 600 min (10h)
             if (totalMinutes > 600) totalMinutes = 600;
 
             int newHour = totalMinutes / 60;
@@ -350,18 +406,21 @@ public class MainActivityFragment extends CustomFragment {
             // mais selectedHour/selectedMinute sont déjà bons
             hourPicker.smoothScrollToPosition(newHour);
             // getClosestPosition à partir de la position réelle actuelle
-            int currentInfinitePos = minutePicker.getCurrentItem();
-            int currentRealMinute = minuteInfiniteAdapter.getRealPosition(currentInfinitePos);
-            int delta = newMinute - currentRealMinute;
+            int currentInfinitePosP = minutePicker.getCurrentItem();
+            int currentRealMinuteP = minuteInfiniteAdapter.getRealPosition(currentInfinitePosP);
+            int deltaP = newMinute - currentRealMinuteP;
             // Ajuster le delta pour prendre le chemin le plus court sur la roue infinie
-            if (delta > 30) delta -= 60;
-            if (delta < -30) delta += 60;
-            minutePicker.smoothScrollToPosition(currentInfinitePos + delta);
+            if (deltaP > 30) deltaP -= 60;
+            if (deltaP < -30) deltaP += 60;
+            minutePicker.smoothScrollToPosition(currentInfinitePosP + deltaP);
 
             updateLabel.run();
         });
 
-        // --- Wrapper complet ---
+        shortcutRow.addView(minus15Button);
+        shortcutRow.addView(plus15Button);
+
+// --- Wrapper complet ---
         LinearLayout wrapper = new LinearLayout(ctx);
         wrapper.setOrientation(LinearLayout.VERTICAL);
         wrapper.setGravity(Gravity.CENTER);
@@ -374,7 +433,8 @@ public class MainActivityFragment extends CustomFragment {
         msgView.setPadding(0, 0, 0, pad);
         wrapper.addView(msgView);
         wrapper.addView(pickerRow);
-        wrapper.addView(plus30Button);
+//  ligne -15 / +15
+        wrapper.addView(shortcutRow);
 
         // --- Boutons dialog ---
         Button okButton = new Button(ctx);
@@ -430,7 +490,7 @@ public class MainActivityFragment extends CustomFragment {
                     + " "
                     + LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString();
 
-            LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead);
+            LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead,type);
             LibraryLoader.saveAccessStats();
             dialog.dismiss();
         });

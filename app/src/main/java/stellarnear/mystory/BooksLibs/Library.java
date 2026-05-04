@@ -109,11 +109,11 @@ public class Library {
         private boolean displayBreakStreakAnim = true;
         private Map<String, SessionData> sessionLog = new LinkedHashMap<>();
 
-        public void addSession(String key, int minutes, int pages) {
+        public void addSession(String key, int minutes, int pages, BookType type) {
             if(sessionLog==null){
                this.sessionLog = new LinkedHashMap<>();
             }
-            sessionLog.put(key, new SessionData(minutes, pages));
+            sessionLog.put(key, new SessionData(minutes, pages, type));
         }
 
         public Map<String, SessionData> getSessionLog() {
@@ -253,6 +253,7 @@ public class Library {
 
         // Nouveau type de valeur pour la map
         public class SessionData {
+            private BookType type = null;
             private int minutes;
             private int pages;
 
@@ -261,12 +262,25 @@ public class Library {
                 this.pages = pages;
             }
 
+            public SessionData(int minutes, int pages, BookType type) {
+                this.minutes = minutes;
+                this.pages = pages;
+                this.type = type;
+            }
+
             public int getMinutes() {
                 return minutes;
             }
 
             public int getPages() {
                 return pages;
+            }
+
+            public BookType getType() {
+                if(this.type==null){
+                    return BookType.ROMAN;
+                }
+                return type;
             }
         }
     }

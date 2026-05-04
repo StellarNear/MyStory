@@ -75,7 +75,7 @@ public class ObservatoryActivity extends CustomActivity {
 
     private ModeSelect modeSelect = ModeSelect.ALL;
     private boolean alternate = false;
-    private BookType selectedBookType = BookType.ROMAN;
+    private BookType selectedBookType = BookType.ALL;
     private Integer selectedYear = null;
     private Integer selectedMonth = null;
     private boolean pagePlot = false;
@@ -130,19 +130,6 @@ public class ObservatoryActivity extends CustomActivity {
         toggleReadingTime.setOnCheckedChangeListener((buttonView, isChecked) -> {
             readingTimeMode = isChecked;
 
-            // Grise / dégrise Roman/Manga/Tout
-            RadioButton radioRoman = findViewById(R.id.observatory_radio_roman);
-            RadioButton radioManga = findViewById(R.id.observatory_radio_manga);
-            RadioButton radioAll = findViewById(R.id.observatory_radio_allbooks);
-            float alphaBookType = isChecked ? 0.35f : 0.9f;
-            radioRoman.setAlpha(alphaBookType);
-            radioManga.setAlpha(alphaBookType);
-            radioAll.setAlpha(alphaBookType);
-            radioRoman.setEnabled(!isChecked);
-            radioManga.setEnabled(!isChecked);
-            radioAll.setEnabled(!isChecked);
-            findViewById(R.id.observatory_radio_group)
-                    .setVisibility(isChecked ? View.GONE : View.VISIBLE);
 
             // Swap des 4 radio buttons plot
             RadioButton radioPlotBook = findViewById(R.id.observatory_radio_plot_book);
@@ -344,6 +331,7 @@ public class ObservatoryActivity extends CustomActivity {
                 boolean keep = true;
                 if (selectedYear != null && date.getYear() != selectedYear) keep = false;
                 if (selectedMonth != null && date.getMonthValue() != selectedMonth) keep = false;
+                if (selectedBookType != null && selectedBookType != BookType.ALL && entry.getValue().getType() != selectedBookType) keep = false;
                 if (keep) result.add(entry);
             } catch (Exception e) {
                 // clé malformée, on ignore
