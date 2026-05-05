@@ -331,7 +331,8 @@ public class ObservatoryActivity extends CustomActivity {
                 boolean keep = true;
                 if (selectedYear != null && date.getYear() != selectedYear) keep = false;
                 if (selectedMonth != null && date.getMonthValue() != selectedMonth) keep = false;
-                if (selectedBookType != null && selectedBookType != BookType.ALL && entry.getValue().getType() != selectedBookType) keep = false;
+                if (selectedBookType != null && selectedBookType != BookType.ALL && entry.getValue().getType() != selectedBookType)
+                    keep = false;
                 if (keep) result.add(entry);
             } catch (Exception e) {
                 // clé malformée, on ignore
@@ -367,28 +368,11 @@ public class ObservatoryActivity extends CustomActivity {
         findViewById(R.id.obs_list_infos).setVisibility(View.VISIBLE);
         findViewById(R.id.obs_no_book).setVisibility(View.GONE);
 
-// Stats du jour — toujours sur toutes les sessions, indépendant du filtre
-        String todayKey = LocalDate.now().toString(); // "2026-05-01"
-        int todaySessions = 0;
-        int todayMinutes = 0;
-        Map<String, Library.AccessStats.SessionData> allSessions =
-                LibraryLoader.getAccessStats().getSessionLog();
-        if (allSessions != null) {
-            for (Map.Entry<String, Library.AccessStats.SessionData> e : allSessions.entrySet()) {
-                if (e.getKey().startsWith(todayKey)) {
-                    todaySessions++;
-                    todayMinutes += e.getValue().getMinutes();
-                }
-            }
-        }
-        addInfo("Sessions aujourd'hui", String.valueOf(todaySessions));
-        addInfo("Temps de lecture aujourd'hui", formatMinutes(todayMinutes));
 
         int totalMinutes = 0;
         int totalPages = 0;
         int minMinutes = Integer.MAX_VALUE;
         int maxMinutes = 0;
-        String maxDay = "";
 
         // Accumulation par jour de semaine (0=Lundi … 6=Dimanche)
         int[] minutesByDow = new int[7];
@@ -407,7 +391,6 @@ public class ObservatoryActivity extends CustomActivity {
             if (min < minMinutes) minMinutes = min;
             if (min > maxMinutes) {
                 maxMinutes = min;
-                maxDay = dateStr;
             }
 
             try {
@@ -433,6 +416,34 @@ public class ObservatoryActivity extends CustomActivity {
 
         int sessionCount = sessions.size();
         int avgMinutes = sessionCount > 0 ? totalMinutes / sessionCount : 0;
+
+        // Stats du jour — toujours sur toutes les sessions, indépendant du filtre
+        String todayKey = LocalDate.now().toString(); // "2026-05-01"
+        int todaySessions = 0;
+        int todayMinutes = 0;
+        Map<String, Library.AccessStats.SessionData> allSessions =
+                LibraryLoader.getAccessStats().getSessionLog();
+        if (allSessions != null) {
+            for (Map.Entry<String, Library.AccessStats.SessionData> e : allSessions.entrySet()) {
+                if (e.getKey().startsWith(todayKey)) {
+                    todaySessions++;
+                    todayMinutes += e.getValue().getMinutes();
+                }
+            }
+        }
+        addInfo("Sessions aujourd'hui", String.valueOf(todaySessions));
+        addInfo("Temps de lecture aujourd'hui", formatMinutes(todayMinutes));
+        Book currentBook = LibraryLoader.getCurrentBook();
+        if (currentBook != null && currentBook.getMaxPages() != null
+                && currentBook.getCurrentPercent() < 100) {
+            int pagesRemaining = (int) (currentBook.getMaxPages()
+                    * (100 - currentBook.getCurrentPercent()) / 100.0);
+            if (totalPages > 0 && totalMinutes > 0) {
+                float minPerPage = (float) totalMinutes / totalPages;
+                addInfo("[ESTIM] Temps restant pour le livre en cours",
+                        formatMinutes((int) (minPerPage * pagesRemaining)));
+            }
+        }
 
         addInfo("Nombre de sessions enregistrées", String.valueOf(sessionCount));
         addInfo("Temps total de lecture", formatMinutes(totalMinutes));
@@ -460,34 +471,73 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         // Temps par page
-        if (totalPages > 0) {
+        if (totalPages > 0 & totalMinutes > 0) {
             float minPerPage = (float) totalMinutes / totalPages;
             addInfo("Temps moyen par page",
                     String.format("%.1f min/page", minPerPage));
+            addInfo("Pages par heure moyenne",
+                    String.format("%.2f", ((1.0 * 60) / (1.0 * minPerPage))));
+
+
+            // Nombre de jours distincts lus
+            addInfo("Jours distincts avec lecture", String.valueOf(minutesByDate.size()));
+
+            // Moyenne quotidienne (totalMinutes / jours distincts)
+            if (!minutesByDate.isEmpty()) {
+                addInfo("Temps de lecture quotidien moyen",
+                        formatMinutes(totalMinutes / minutesByDate.size()));
+            }
+            int nBookPaged = 0;
+            Integer totalPagesFromShelf = 0;
+            Integer totalEstimBookMinutes = 0;
+            for (Book book : currentDataBooksList) {
+                if (book.getMaxPages() != null && book.getEndTimes().size() == 1) {
+                    nBookPaged++;
+                    totalPagesFromShelf += book.getMaxPages();
+                    totalEstimBookMinutes += (int) (minPerPage * book.getMaxPages());
+                }
+            }
+            if (nBookPaged > 0 && totalPagesFromShelf > 0) {
+                addInfo("[ESTIM] Temps total passé à lire les " + nBookPaged + " " + getBookTypeDisplay() + "s", formatMinutes((int) (totalPagesFromShelf * minPerPage)));
+                addInfo("[ESTIM] Durée moyenne par livre",
+                        formatMinutes(totalEstimBookMinutes / nBookPaged));
+            }
         }
-
-        // Nombre de jours distincts lus
-        addInfo("Jours distincts avec lecture", String.valueOf(minutesByDate.size()));
-
-        // Moyenne quotidienne (totalMinutes / jours distincts)
-        if (!minutesByDate.isEmpty()) {
-            addInfo("Temps de lecture quotidien moyen",
-                    formatMinutes(totalMinutes / minutesByDate.size()));
-        }
-
 
     }
 
     /**
-     * Formate des minutes en "Xh YYmin" ou "YYmin" si < 60.
+     * Formate des minutes en string human-readable.
+     * Exemples :
+     * 45        → "45min"
+     * 90        → "1h 30min"
+     * 1500      → "1j 1h"
+     * 50000     → "1mois 4j 18h"
+     * 600000    → "1an 1mois 19j"
      */
     private String formatMinutes(int totalMin) {
         if (totalMin <= 0) return "0 min";
-        int h = totalMin / 60;
-        int m = totalMin % 60;
-        if (h == 0) return m + " min";
-        if (m == 0) return h + "h";
-        return h + "h " + String.format("%02d", m) + "min";
+
+        // Décomposition par unités décroissantes
+        int years = totalMin / (60 * 24 * 365);
+        int rem = totalMin % (60 * 24 * 365);
+        int months = rem / (60 * 24 * 30);
+        rem = rem % (60 * 24 * 30);
+        int days = rem / (60 * 24);
+        rem = rem % (60 * 24);
+        int hours = rem / 60;
+        int mins = rem % 60;
+
+        StringBuilder sb = new StringBuilder();
+
+        // Pluriel sur années et jours, mois invariable
+        if (years > 0) sb.append(years).append(years > 1 ? "ans " : "an ");
+        if (months > 0) sb.append(months).append("mois ");
+        if (days > 0) sb.append(days).append(days > 1 ? "js " : "j ");
+        if (hours > 0) sb.append(hours).append("h ");
+        if (mins > 0) sb.append(mins).append("min");
+
+        return sb.toString().trim();
     }
 
 
@@ -581,6 +631,42 @@ public class ObservatoryActivity extends CustomActivity {
         } catch (Exception ignored) {
         }
 
+        // Temps moyen par livre en jours (start → end)
+// On ignore : livres sans start, sans end, relus (endTimes > 1),
+// et cas aberrants (start après end)
+        try {
+            int totalDays = 0;
+            int nBooksWithDuration = 0;
+            for (Book book : currentDataBooksList) {
+                // Sécurité : on exclut les relus car start ne correspond
+                // pas forcément à la dernière lecture
+                if (book.getEndTimes().size() > 1) continue;
+                if (book.getLastStartTime() == null) continue;
+                if (book.getLastEndTime() == null) continue;
+                try {
+                    LocalDate start = LocalDate.parse(
+                            book.getLastStartTime(), Constants.DATE_FORMATTER);
+                    LocalDate end = LocalDate.parse(
+                            book.getLastEndTime(), Constants.DATE_FORMATTER);
+                    long days = ChronoUnit.DAYS.between(start, end);
+                    // Ignore données corrompues (end avant start)
+                    if (days < 0) continue;
+                    // Un livre lu le même jour compte pour 1
+                    totalDays += Math.max(1, days);
+                    nBooksWithDuration++;
+                } catch (Exception ignored) {
+                }
+            }
+            // N'affiche que si on a au moins 2 livres valides
+            if (nBooksWithDuration >= 2) {
+                float avgDays = (float) totalDays / nBooksWithDuration;
+                addInfo("Durée moyenne par " + getBookTypeDisplay()
+                                + " (" + nBooksWithDuration + " livres)",
+                        String.format("%.1f jours", avgDays));
+            }
+        } catch (Exception ignored) {
+        }
+
         try {
             addInfo("Nombre de connexions total", String.valueOf(LibraryLoader.getAccessStats().getnTotal()));
             addInfo("Plus grande chaine de connexion", String.valueOf(LibraryLoader.getAccessStats().getBestStreak()));
@@ -593,6 +679,8 @@ public class ObservatoryActivity extends CustomActivity {
             addInfo("Nombre de connexion par semaine", String.format("%.1f", nConnexionDay * 7));
         } catch (Exception ignored) {
         }
+
+
     }
 
     // -------------------------------------------------------------------------
