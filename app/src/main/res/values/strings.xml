@@ -6,9 +6,12 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"136h"</string>
+    <string name="time_spend">"137h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.17.0 :
+- fonction recherche ajoutée à l'étagère
+
 v1.16.3 :
 - ajout de plein de statistiques liées au temps
 

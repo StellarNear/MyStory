@@ -69,7 +69,13 @@
 
             </LinearLayout>
 
-
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical|end"
+                android:gravity="center_vertical"
+                android:layout_marginRight="@dimen/general_margin">
             <TextView
                 android:id="@+id/shelf_toolbar_infos"
                 android:shadowColor="?attr/colorVariantLight"
@@ -78,11 +84,21 @@
                 android:shadowRadius="5"
                 android:textSize="@dimen/text_shelf_info_size"
                 android:textColor="?attr/colorPrimaryDark"
-                android:layout_gravity="center_vertical|end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/general_margin"
+                android:gravity="center"
+                android:lines="2"
                 android:text="" />
+
+                <ImageView
+                    android:id="@+id/shelf_search_button"
+                    android:layout_width="@dimen/add_book_from_search"
+                    android:layout_height="@dimen/add_book_from_search"
+                    android:layout_margin="@dimen/general_margin"
+                    android:src="@drawable/ic_baseline_search_24"
+                    app:tint="@color/primary_dark_brown" />
+            </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

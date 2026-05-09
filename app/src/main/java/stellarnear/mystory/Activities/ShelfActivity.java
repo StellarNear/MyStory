@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ public class ShelfActivity extends CustomActivity {
 
     private ChronoLocalDate minDate = null;
     private ChronoLocalDate maxDate = null;
+    private String currentSearch = null; // null = pas de filtre texte actif
     private DiscreteScrollView scrollView;
     private Slider shelfSlider;
 
@@ -102,6 +104,10 @@ public class ShelfActivity extends CustomActivity {
         if (maxDate != null) {
             listShelf = filterWithDate("max", listShelf);
         }
+        // Filtre texte — combiné avec les filtres de date
+        if (currentSearch != null && !currentSearch.trim().isEmpty()) {
+            listShelf = filterWithSearch(currentSearch, listShelf);
+        }
         if (listShelf != null && listShelf.size() > 0) {
             initPage(listShelf);
         } else {
@@ -115,6 +121,21 @@ public class ShelfActivity extends CustomActivity {
 
     }
 
+    private List<Book> filterWithSearch(String query, List<Book> listShelf) {
+        String q = query.toLowerCase().trim();
+        List<Book> result = new ArrayList<>();
+        for (Book book : listShelf) {
+            boolean titleMatch = book.getName() != null
+                    && book.getName().toLowerCase().contains(q);
+            boolean authorMatch = book.getAutor() != null
+                    && book.getAutor().getFullName() != null
+                    && book.getAutor().getFullName().toLowerCase().contains(q);
+            if (titleMatch || authorMatch) {
+                result.add(book);
+            }
+        }
+        return result;
+    }
 
 
     private List<Book> filterWithDate(String mode, List<Book> listShelf) {
@@ -237,8 +258,18 @@ public class ShelfActivity extends CustomActivity {
                 nManga++;
             }
         }
-        toolBarInfo.setText(bookAdapter.getItemCount() + " livres" + " (" + nNovel + " romans" + " et " + nManga + " mangas)");
+        toolBarInfo.setText(bookAdapter.getItemCount() + " livres" + "\n(" + nNovel + " romans" + ", " + nManga + " mangas)");
         findStartAndEndDate(findViewById(R.id.shelf_toolbar_infos_start_date), findViewById(R.id.shelf_toolbar_infos_end_date));
+
+        // --- Bouton recherche ---
+        ImageView searchButton = findViewById(R.id.shelf_search_button);
+        searchButton.setOnClickListener(v -> popupSearch());
+// Si une recherche est déjà active, on colore le bouton en vert dès le départ
+        if (currentSearch != null && !currentSearch.trim().isEmpty()) {
+            searchButton.setImageTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            getColor(R.color.start_gradient_button_ok)));
+        }
 
         scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
             @Override
@@ -787,6 +818,88 @@ public class ShelfActivity extends CustomActivity {
                 dialog.dismiss();
             }
         });
+        dialog.show();
+        cancelButton.setLayoutParams(getButtonParam());
+        okButton.setLayoutParams(getButtonParam());
+    }
+
+    private void popupSearch() {
+        Context ctx = ShelfActivity.this;
+
+        // Champ texte de recherche
+        EditText searchInput = new EditText(ctx);
+        searchInput.setHint("Titre ou auteur...");
+        searchInput.setTextColor(getColor(R.color.primary_light_brown));
+        searchInput.setHintTextColor(getColor(R.color.primary_middle_brown));
+        searchInput.setSingleLine(true);
+        // Pré-remplir si une recherche est déjà active
+        if (currentSearch != null) {
+            searchInput.setText(currentSearch);
+            searchInput.setSelection(currentSearch.length());
+        }
+        int pad = getResources().getDimensionPixelSize(R.dimen.general_margin);
+        searchInput.setPadding(pad, pad, pad, pad);
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        inputParams.setMargins(pad, pad, pad, pad);
+        searchInput.setLayoutParams(inputParams);
+
+        Button okButton = new Button(ctx);
+        okButton.setBackground(getDrawable(R.drawable.button_ok_gradient));
+        okButton.setText("Filtrer");
+        okButton.setTextColor(getColor(R.color.end_gradient_button_ok));
+
+        Button cancelButton = new Button(ctx);
+        cancelButton.setBackground(getDrawable(R.drawable.button_cancel_gradient));
+        cancelButton.setText("Annuler");
+        cancelButton.setTextColor(getColor(R.color.end_gradient_button_cancel));
+
+        MyLottieDialog dialog = new MyLottieDialog(ctx)
+                .setAnimationRepeatCount(-1)
+                .setAutoPlayAnimation(true)
+                .setTitle("Rechercher des livres")
+                .setMessage(searchInput)
+                .setCancelable(false)
+                .addActionButton(cancelButton)
+                .addActionButton(okButton)
+                .setOnShowListener(dialogInterface -> {
+                })
+                .setOnDismissListener(dialogInterface -> {
+                })
+                .setOnCancelListener(dialogInterface -> {
+                });
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        okButton.setOnClickListener(v -> {
+            String query = searchInput.getText().toString().trim();
+            if (!query.isEmpty()) {
+                // Stocke la recherche et recolore le bouton en vert pour signaler l'état actif
+                currentSearch = query;
+                ImageView btn = findViewById(R.id.shelf_search_button);
+                if (btn != null) {
+                    btn.setImageTintList(
+                            android.content.res.ColorStateList.valueOf(
+                                    getColor(R.color.start_gradient_button_ok)));
+                }
+            } else {
+                // Champ vide = reset du filtre texte
+                currentSearch = null;
+                ImageView btn = findViewById(R.id.shelf_search_button);
+                if (btn != null) {
+                    // Remet la couleur d'origine en supprimant le tint
+                    // Remet la couleur d'origine définie dans le XML
+                    btn.setImageTintList(
+                            android.content.res.ColorStateList.valueOf(
+                                    getColor(R.color.primary_dark_brown)));
+                }
+            }
+            dialog.dismiss();
+            // Relance initShelf avec le nouveau filtre combiné
+            initShelf();
+        });
+
         dialog.show();
         cancelButton.setLayoutParams(getButtonParam());
         okButton.setLayoutParams(getButtonParam());

@@ -279,6 +279,8 @@ public class MainActivityFragment extends CustomFragment {
         hourPicker.setSlideOnFling(true);
         hourPicker.setSlideOnFlingThreshold(1800);
         hourPicker.setOverScrollEnabled(false);
+        // Animation rapide pour que les clics rapides (+15/-15) ne se chevauchent pas
+        hourPicker.setItemTransitionTimeMillis(120);
         hourPicker.scrollToPosition(0);
 
         DiscreteScrollView minutePicker = new DiscreteScrollView(ctx);
@@ -289,6 +291,8 @@ public class MainActivityFragment extends CustomFragment {
         minutePicker.setSlideOnFling(true);
         minutePicker.setSlideOnFlingThreshold(1800);
         minutePicker.setOverScrollEnabled(false);
+        // Animation rapide pour que les clics rapides (+15/-15) ne se chevauchent pas
+        minutePicker.setItemTransitionTimeMillis(120);
         // Démarrer au vrai 0 — InfiniteScrollAdapter place le centre au milieu
         minutePicker.scrollToPosition(minuteInfiniteAdapter.getClosestPosition(0));
 
