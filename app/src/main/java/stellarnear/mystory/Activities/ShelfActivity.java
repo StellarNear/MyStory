@@ -142,10 +142,8 @@ public class ShelfActivity extends CustomActivity {
         List<Book> result = new ArrayList<>();
 
         for (Book book : listShelf) {
-            //les rare cas non set on les laisses
             if (book.getLastEndTime() == null) {
-                result.add(book);
-                continue;
+                continue; // filtrage date actif par choix utilisateur -> on exclut les livres sans fin de lecture
             }
             try {
                 if (mode.equalsIgnoreCase("min")) {

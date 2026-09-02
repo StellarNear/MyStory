@@ -183,14 +183,15 @@ public class MainActivityFragment extends CustomFragment {
                                 LibraryLoader.saveBook(book);
                                 LibraryLoader.saveCurrent();
 
-                                if (seekBar.getProgress() == 100) {
+                                boolean finished = (int) seekBar.getProgress() == 100; // <-- fix bug #1
+                                boolean askTime = book.getMaxPages() != null && previousPercent < (int) seekBar.getProgress();
+
+                                if (askTime) {
+                                    popupGetHowMuchTime(previousPercent, cuurentBookType,
+                                            finished ? MainActivityFragment.this::popupEndBookPutOnShelf : null);
+                                } else if (finished) {
                                     popupEndBookPutOnShelf();
                                 }
-                                if (book.getMaxPages() != null && previousPercent < (int) seekBar.getProgress()) {
-                                    // here calculate the number of pages read on the last session (based on seekbar > current percent)
-                                    popupGetHowMuchTime(previousPercent,cuurentBookType);
-                                }
-
                             }
                         }
                         unzoomProgress();
@@ -213,7 +214,7 @@ public class MainActivityFragment extends CustomFragment {
         }
     }
 
-    private void popupGetHowMuchTime(int previousPercent, BookType type) {
+    private void popupGetHowMuchTime(int previousPercent, BookType type, Runnable onFinished) {
 
         int pagesRead = 0;
         if (book.getMaxPages() != null && book.getMaxPages() > 0) {
@@ -466,12 +467,16 @@ public class MainActivityFragment extends CustomFragment {
                 .setOnDismissListener(dialogInterface -> {})
                 .setOnCancelListener(dialogInterface -> {});
 
-        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        cancelButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (onFinished != null) onFinished.run();
+        });
 
         okButton.setOnClickListener(v -> {
             int totalMinutes = selectedHour[0] * 60 + selectedMinute[0];
             if (totalMinutes == 0) {
                 dialog.dismiss();
+                if (onFinished != null) onFinished.run();
                 return;
             }
 
@@ -497,6 +502,7 @@ public class MainActivityFragment extends CustomFragment {
             LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead,type);
             LibraryLoader.saveAccessStats();
             dialog.dismiss();
+            if (onFinished != null) onFinished.run();
         });
 
         dialog.show();
@@ -1163,7 +1169,7 @@ public class MainActivityFragment extends CustomFragment {
         });
     }
 
-    private void popupEndBookPutOnShelf() {
+    protected void popupEndBookPutOnShelf() {
         String text = "Bravo tu as fini " + book.getName() + " !\nIl va être mit sur l'étagère. Si tu ne souhaites pas le conserver tu peux le supprimer.";
 
         Button okButton = new Button(getContext());

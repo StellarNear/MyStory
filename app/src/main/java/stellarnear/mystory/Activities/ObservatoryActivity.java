@@ -46,9 +46,11 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import stellarnear.mystory.BooksLibs.Book;
@@ -600,8 +602,11 @@ public class ObservatoryActivity extends CustomActivity {
 
         try {
             long nMonth = minDate.until(maxDate, ChronoUnit.MONTHS) + 1;
+            long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
+            addInfo("Nombre de pages par jour en moyenne", String.format("%.2f", (1.0 * nTotalPagesRead) / (1.0 * nDays)));
             addInfo("Nombre de " + getBookTypeDisplay() + "s lu par mois en moyenne",
                     String.format("%.2f", (1.0 * nTotalBooksRead) / (1.0 * nMonth)));
+            addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
         } catch (Exception ignored) {
         }
 
@@ -613,11 +618,8 @@ public class ObservatoryActivity extends CustomActivity {
         }
 
         try {
-            long nDays = minDate.until(maxDate, ChronoUnit.DAYS);
             addInfo("Date du " + getBookTypeDisplay() + " le plus ancien fini", Constants.DATE_FORMATTER.format(minDate));
             addInfo("Date du " + getBookTypeDisplay() + " le plus recemment fini", Constants.DATE_FORMATTER.format(maxDate));
-            addInfo("Nombre de jour passé à lire", String.valueOf(nDays));
-            addInfo("Nombre de pages par jour en moyenne", String.format("%.2f", (1.0 * nTotalPagesRead) / (1.0 * nDays)));
         } catch (Exception ignored) {
         }
 
@@ -783,20 +785,27 @@ public class ObservatoryActivity extends CustomActivity {
         ArrayList<Entry> listVal = new ArrayList<>();
 
         if (modeSelectWeek != null) {
-            // Mode Semaine : somme par jour de semaine
             int[] minutesByDow = new int[7];
+            Set<String>[] datesByDow = new HashSet[7];
+            for (int i = 0; i < 7; i++) datesByDow[i] = new HashSet<>();
+
             for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
                 try {
-                    LocalDate date = LocalDate.parse(entry.getKey().substring(0, 10));
+                    String dateStr = entry.getKey().substring(0, 10);
+                    LocalDate date = LocalDate.parse(dateStr);
                     int dow = date.getDayOfWeek().getValue() - 1;
                     minutesByDow[dow] += entry.getValue().getMinutes();
+                    datesByDow[dow].add(dateStr); // dates distinctes pour ce jour de semaine
                 } catch (Exception ignored) {
                 }
             }
             for (int i = 0; i < 7; i++) {
                 labelList.add(dowNames[i]);
-                String descr = formatMinutes(minutesByDow[i]) + " le " + dowNames[i];
-                listVal.add(new Entry(i, minutesByDow[i], descr));
+                int nOccurrences = datesByDow[i].size();
+                int avgMinutes = nOccurrences > 0 ? minutesByDow[i] / nOccurrences : 0;
+                String descr = formatMinutes(avgMinutes) + " en moyenne le " + dowNames[i]
+                        + " (" + nOccurrences + " " + dowNames[i].toLowerCase() + "s)";
+                listVal.add(new Entry(i, avgMinutes, descr));
             }
         } else {
             // Mode normal : même logique que computeLineDataSet mais en minutes
@@ -860,17 +869,26 @@ public class ObservatoryActivity extends CustomActivity {
 
         if (modeSelectWeek != null) {
             int[] sessionsByDow = new int[7];
+            Set<String>[] datesByDow = new HashSet[7];
+            for (int i = 0; i < 7; i++) datesByDow[i] = new HashSet<>();
+
             for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
                 try {
-                    LocalDate date = LocalDate.parse(entry.getKey().substring(0, 10));
-                    sessionsByDow[date.getDayOfWeek().getValue() - 1]++;
+                    String dateStr = entry.getKey().substring(0, 10);
+                    LocalDate date = LocalDate.parse(dateStr);
+                    int dow = date.getDayOfWeek().getValue() - 1;
+                    sessionsByDow[dow]++;
+                    datesByDow[dow].add(dateStr);
                 } catch (Exception ignored) {
                 }
             }
             for (int i = 0; i < 7; i++) {
                 labelList.add(dowNames[i]);
-                listVal.add(new Entry(i, sessionsByDow[i],
-                        sessionsByDow[i] + " session(s) le " + dowNames[i]));
+                int nOccurrences = datesByDow[i].size();
+                float avgSessions = nOccurrences > 0 ? (float) sessionsByDow[i] / nOccurrences : 0f;
+                String descr = String.format("%.2f session(s) en moyenne le %s (%d %s)",
+                        avgSessions, dowNames[i], nOccurrences, dowNames[i].toLowerCase());
+                listVal.add(new Entry(i, avgSessions, descr));
             }
         } else {
             TreeMap<String, Integer> sessionsByPeriod = new TreeMap<>();
@@ -907,7 +925,9 @@ public class ObservatoryActivity extends CustomActivity {
         set.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
             @Override
             public String getPointLabel(Entry entry) {
-                return String.valueOf((int) entry.getY());
+                return modeSelectWeek != null
+                        ? String.format("%.1f", entry.getY())
+                        : String.valueOf((int) entry.getY());
             }
         });
         return set;

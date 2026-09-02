@@ -6,9 +6,14 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"137h"</string>
+    <string name="time_spend">"138h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+v1.18.0
+- Observatory: Calcul de la moyenne des session quand on est en semaine.
+- MainActivityFragment: Enchainement des popups plus sur pour pas rater d'evenements.
+- ShelfActivity: Enlever les livres sans dates de fin quand on selectionnes des dates.
+
 v1.17.0 :
 - fonction recherche ajoutée à l'étagère
 
