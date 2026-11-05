@@ -6,9 +6,14 @@
     <string name="cancel">non</string>
     <string name="ok">oui</string>
 
-    <string name="time_spend">"138h"</string>
+    <string name="time_spend">"139h"</string>
     <string name="basic_infos">"Application développée par un 1/2 pour son 3/4."</string>
     <string name="patch_list">"
+ v1.19.0
+- Fix les scroll minutes et heures de saisie de sessions
+- Ignore les session de moins de 3minutes (fausses saisies)
+- Ajout des estimation de temps lecture meme en cas de session non enregistrée
+
 v1.18.0
 - Observatory: Calcul de la moyenne des session quand on est en semaine.
 - MainActivityFragment: Enchainement des popups plus sur pour pas rater d'evenements.

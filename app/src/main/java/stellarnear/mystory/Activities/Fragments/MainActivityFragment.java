@@ -282,7 +282,7 @@ public class MainActivityFragment extends CustomFragment {
         hourPicker.setOverScrollEnabled(false);
         // Animation rapide pour que les clics rapides (+15/-15) ne se chevauchent pas
         hourPicker.setItemTransitionTimeMillis(120);
-        hourPicker.scrollToPosition(0);
+        // scrollToPosition deferred until after the view is attached to the window (via onShowListener)
 
         DiscreteScrollView minutePicker = new DiscreteScrollView(ctx);
         minutePicker.setLayoutParams(new LinearLayout.LayoutParams(0, scrollHeightPx, 1f));
@@ -294,8 +294,7 @@ public class MainActivityFragment extends CustomFragment {
         minutePicker.setOverScrollEnabled(false);
         // Animation rapide pour que les clics rapides (+15/-15) ne se chevauchent pas
         minutePicker.setItemTransitionTimeMillis(120);
-        // Démarrer au vrai 0 — InfiniteScrollAdapter place le centre au milieu
-        minutePicker.scrollToPosition(minuteInfiniteAdapter.getClosestPosition(0));
+        // scrollToPosition deferred until after the view is attached to the window (via onShowListener)
 
         // --- État partagé ---
         final int[] selectedHour = {0};
@@ -463,18 +462,39 @@ public class MainActivityFragment extends CustomFragment {
                 .setCancelable(false)
                 .addActionButton(cancelButton)
                 .addActionButton(okButton)
-                .setOnShowListener(dialogInterface -> {})
+                .setOnShowListener(dialogInterface -> {
+                    // Scroll to initial positions only once the dialog window is visible
+                    // so that DiscreteScrollView is fully measured and attached.
+                    hourPicker.scrollToPosition(0);
+                    minutePicker.scrollToPosition(minuteInfiniteAdapter.getClosestPosition(0));
+                })
                 .setOnDismissListener(dialogInterface -> {})
                 .setOnCancelListener(dialogInterface -> {});
 
+        final boolean isSubstantialProgress = finalPagesRead >= 2 && ( (int) seekBar.getProgress() - previousPercent ) >= 1;
+
         cancelButton.setOnClickListener(v -> {
+            if (isSubstantialProgress) {
+                String sessionKey = LocalDate.now().toString()
+                        + " "
+                        + LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString();
+                LibraryLoader.getAccessStats().addSession(sessionKey, 0, finalPagesRead, type, false);
+                LibraryLoader.saveAccessStats();
+            }
             dialog.dismiss();
             if (onFinished != null) onFinished.run();
         });
 
         okButton.setOnClickListener(v -> {
             int totalMinutes = selectedHour[0] * 60 + selectedMinute[0];
-            if (totalMinutes == 0) {
+            if (totalMinutes <= 3) {
+                if (isSubstantialProgress) {
+                    String sessionKey = LocalDate.now().toString()
+                            + " "
+                            + LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString();
+                    LibraryLoader.getAccessStats().addSession(sessionKey, 0, finalPagesRead, type, false);
+                    LibraryLoader.saveAccessStats();
+                }
                 dialog.dismiss();
                 if (onFinished != null) onFinished.run();
                 return;
@@ -499,7 +519,7 @@ public class MainActivityFragment extends CustomFragment {
                     + " "
                     + LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString();
 
-            LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead,type);
+            LibraryLoader.getAccessStats().addSession(sessionKey, totalMinutes, finalPagesRead, type, true);
             LibraryLoader.saveAccessStats();
             dialog.dismiss();
             if (onFinished != null) onFinished.run();

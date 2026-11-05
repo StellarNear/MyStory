@@ -110,10 +110,15 @@ public class Library {
         private Map<String, SessionData> sessionLog = new LinkedHashMap<>();
 
         public void addSession(String key, int minutes, int pages, BookType type) {
-            if(sessionLog==null){
-               this.sessionLog = new LinkedHashMap<>();
+            addSession(key, minutes, pages, type, minutes > 3);
+        }
+
+        public void addSession(String key, int minutes, int pages, BookType type, boolean timeRecorded) {
+            if (sessionLog == null) {
+                this.sessionLog = new LinkedHashMap<>();
             }
-            sessionLog.put(key, new SessionData(minutes, pages, type));
+            boolean realRecorded = timeRecorded && minutes > 3;
+            sessionLog.put(key, new SessionData(realRecorded ? minutes : 0, pages, type, realRecorded));
         }
 
         public Map<String, SessionData> getSessionLog() {
@@ -256,6 +261,7 @@ public class Library {
             private BookType type = null;
             private int minutes;
             private int pages;
+            private Boolean timeRecorded = null;
 
             public SessionData(int minutes, int pages) {
                 this.minutes = minutes;
@@ -266,6 +272,13 @@ public class Library {
                 this.minutes = minutes;
                 this.pages = pages;
                 this.type = type;
+            }
+
+            public SessionData(int minutes, int pages, BookType type, boolean timeRecorded) {
+                this.minutes = minutes;
+                this.pages = pages;
+                this.type = type;
+                this.timeRecorded = timeRecorded;
             }
 
             public int getMinutes() {
@@ -281,6 +294,13 @@ public class Library {
                     return BookType.ROMAN;
                 }
                 return type;
+            }
+
+            public boolean isTimeRecorded() {
+                if (timeRecorded == null) {
+                    return minutes > 3;
+                }
+                return timeRecorded;
             }
         }
     }

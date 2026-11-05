@@ -320,7 +320,7 @@ public class ObservatoryActivity extends CustomActivity {
      * Les sessions sont dans AccessStats.getSessionLog() sous forme Map<String, SessionData>
      * avec clé "yyyy-MM-dd HH:mm".
      */
-    private List<Map.Entry<String, Library.AccessStats.SessionData>> getFilteredSessions() {
+    private List<Map.Entry<String, Library.AccessStats.SessionData>> getFilteredSessions(boolean recordedOnly) {
         Map<String, Library.AccessStats.SessionData> all =
                 LibraryLoader.getAccessStats().getSessionLog();
         if (all == null) return new ArrayList<>();
@@ -331,6 +331,9 @@ public class ObservatoryActivity extends CustomActivity {
             try {
                 LocalDate date = LocalDate.parse(key.substring(0, 10));
                 boolean keep = true;
+                if (recordedOnly && (!entry.getValue().isTimeRecorded() || entry.getValue().getMinutes() <= 3)) {
+                    keep = false;
+                }
                 if (selectedYear != null && date.getYear() != selectedYear) keep = false;
                 if (selectedMonth != null && date.getMonthValue() != selectedMonth) keep = false;
                 if (selectedBookType != null && selectedBookType != BookType.ALL && entry.getValue().getType() != selectedBookType)
@@ -341,6 +344,31 @@ public class ObservatoryActivity extends CustomActivity {
             }
         }
         return result;
+    }
+
+    private List<Map.Entry<String, Library.AccessStats.SessionData>> getFilteredSessions() {
+        return getFilteredSessions(true);
+    }
+
+    private float getReadingSpeedMinPerPage(BookType type) {
+        Map<String, Library.AccessStats.SessionData> all =
+                LibraryLoader.getAccessStats().getSessionLog();
+        if (all == null) return 0f;
+
+        int totalMin = 0;
+        int totalPages = 0;
+        for (Library.AccessStats.SessionData session : all.values()) {
+            if (session.isTimeRecorded() && session.getMinutes() > 3 && session.getPages() > 0) {
+                if (type == BookType.ALL || session.getType() == type) {
+                    totalMin += session.getMinutes();
+                    totalPages += session.getPages();
+                }
+            }
+        }
+        if (totalPages > 0 && totalMin > 0) {
+            return (float) totalMin / totalPages;
+        }
+        return 0f;
     }
 
     // -------------------------------------------------------------------------
@@ -360,9 +388,10 @@ public class ObservatoryActivity extends CustomActivity {
     }
 
     private void addInfosReadingTime() {
-        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions();
+        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions(true);
+        List<Map.Entry<String, Library.AccessStats.SessionData>> allFilteredSessions = getFilteredSessions(false);
 
-        if (sessions.isEmpty()) {
+        if (allFilteredSessions.isEmpty()) {
             findViewById(R.id.obs_list_infos).setVisibility(View.GONE);
             findViewById(R.id.obs_no_book).setVisibility(View.VISIBLE);
             return;
@@ -406,6 +435,22 @@ public class ObservatoryActivity extends CustomActivity {
             minutesByDate.merge(dateStr, min, Integer::sum);
         }
 
+        // Calculation of unrecorded/estimated sessions
+        int totalEstimatedMinutes = 0;
+        int unrecordedCount = 0;
+        for (Map.Entry<String, Library.AccessStats.SessionData> entry : allFilteredSessions) {
+            if (!entry.getValue().isTimeRecorded()) {
+                float speed = getReadingSpeedMinPerPage(entry.getValue().getType());
+                if (speed <= 0f) {
+                    speed = getReadingSpeedMinPerPage(BookType.ALL);
+                }
+                if (speed > 0f && entry.getValue().getPages() > 0) {
+                    totalEstimatedMinutes += (int) (entry.getValue().getPages() * speed);
+                    unrecordedCount++;
+                }
+            }
+        }
+
         // Meilleur jour absolu (somme sur la journée)
         String bestDate = "";
         int bestDateMinutes = 0;
@@ -427,7 +472,7 @@ public class ObservatoryActivity extends CustomActivity {
                 LibraryLoader.getAccessStats().getSessionLog();
         if (allSessions != null) {
             for (Map.Entry<String, Library.AccessStats.SessionData> e : allSessions.entrySet()) {
-                if (e.getKey().startsWith(todayKey)) {
+                if (e.getKey().startsWith(todayKey) && e.getValue().isTimeRecorded() && e.getValue().getMinutes() > 3) {
                     todaySessions++;
                     todayMinutes += e.getValue().getMinutes();
                 }
@@ -440,18 +485,30 @@ public class ObservatoryActivity extends CustomActivity {
                 && currentBook.getCurrentPercent() < 100) {
             int pagesRemaining = (int) (currentBook.getMaxPages()
                     * (100 - currentBook.getCurrentPercent()) / 100.0);
-            if (totalPages > 0 && totalMinutes > 0) {
-                float minPerPage = (float) totalMinutes / totalPages;
+            float currentTypeSpeed = getReadingSpeedMinPerPage(currentBook.getBookType());
+            if (currentTypeSpeed <= 0f) currentTypeSpeed = getReadingSpeedMinPerPage(BookType.ALL);
+            if (currentTypeSpeed > 0f) {
                 addInfo("[ESTIM] Temps restant pour le livre en cours",
-                        formatMinutes((int) (minPerPage * pagesRemaining)));
+                        formatMinutes((int) (currentTypeSpeed * pagesRemaining)));
             }
         }
 
-        addInfo("Nombre de sessions enregistrées", String.valueOf(sessionCount));
-        addInfo("Temps total de lecture", formatMinutes(totalMinutes));
-        addInfo("Durée moyenne par session", formatMinutes(avgMinutes));
-        addInfo("Session la plus courte", formatMinutes(minMinutes == Integer.MAX_VALUE ? 0 : minMinutes));
-        addInfo("Session la plus longue", formatMinutes(maxMinutes));
+        addInfo("Nombre de sessions enregistrées (durée saisie)", String.valueOf(sessionCount));
+        addInfo("Temps total de lecture (saisi)", formatMinutes(totalMinutes));
+
+        if (totalEstimatedMinutes > 0) {
+            int totalAdjustedMinutes = totalMinutes + totalEstimatedMinutes;
+            float pctEst = (100.0f * totalEstimatedMinutes) / totalAdjustedMinutes;
+            addInfo("[ESTIM] Temps total de lecture ajusté", formatMinutes(totalAdjustedMinutes));
+            addInfo("[ESTIM] Dont temps estimé (" + unrecordedCount + " sessions)",
+                    formatMinutes(totalEstimatedMinutes) + String.format(" (%.0f%%)", pctEst));
+        }
+
+        if (sessionCount > 0) {
+            addInfo("Durée moyenne par session", formatMinutes(avgMinutes));
+            addInfo("Session la plus courte", formatMinutes(minMinutes == Integer.MAX_VALUE ? 0 : minMinutes));
+            addInfo("Session la plus longue", formatMinutes(maxMinutes));
+        }
 
         if (!bestDate.isEmpty()) {
             // Reformater "2026-04-30" → "30/04/26"
@@ -716,9 +773,14 @@ public class ObservatoryActivity extends CustomActivity {
         LineData data = new LineData();
 
         if (readingTimeMode) {
-            data.addDataSet(sessionCountPlot
-                    ? computeSessionCountDataSet()
-                    : computeReadingTimeDataSet());
+            if (sessionCountPlot) {
+                data.addDataSet(computeSessionCountDataSet());
+            } else {
+                List<LineDataSet> dataSets = computeReadingTimeDataSets();
+                for (LineDataSet ds : dataSets) {
+                    data.addDataSet(ds);
+                }
+            }
             data.setValueTextColor(getColor(R.color.primary_dark_blue));
             chart.setData(data);
             if (sessionCountPlot) {
@@ -777,92 +839,142 @@ public class ObservatoryActivity extends CustomActivity {
         chart.animateXY(750, 1000);
     }
 
-    private LineDataSet computeReadingTimeDataSet() {
-        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions();
+    private List<LineDataSet> computeReadingTimeDataSets() {
+        List<Map.Entry<String, Library.AccessStats.SessionData>> allFiltered = getFilteredSessions(false);
         String[] dowNames = {"Lundi", "Mardi", "Mercredi", "Jeudi",
                 "Vendredi", "Samedi", "Dimanche"};
 
-        ArrayList<Entry> listVal = new ArrayList<>();
+        List<LineDataSet> result = new ArrayList<>();
+        ArrayList<Entry> valRecorded = new ArrayList<>();
+        ArrayList<Entry> valAdjusted = new ArrayList<>();
+
+        boolean hasEstimatedData = false;
 
         if (modeSelectWeek != null) {
-            int[] minutesByDow = new int[7];
+            int[] recordedMinByDow = new int[7];
+            int[] totalMinByDow = new int[7];
             Set<String>[] datesByDow = new HashSet[7];
             for (int i = 0; i < 7; i++) datesByDow[i] = new HashSet<>();
 
-            for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
+            for (Map.Entry<String, Library.AccessStats.SessionData> entry : allFiltered) {
                 try {
                     String dateStr = entry.getKey().substring(0, 10);
                     LocalDate date = LocalDate.parse(dateStr);
                     int dow = date.getDayOfWeek().getValue() - 1;
-                    minutesByDow[dow] += entry.getValue().getMinutes();
-                    datesByDow[dow].add(dateStr); // dates distinctes pour ce jour de semaine
+                    datesByDow[dow].add(dateStr);
+
+                    int min = 0;
+                    if (entry.getValue().isTimeRecorded()) {
+                        min = entry.getValue().getMinutes();
+                    } else {
+                        float speed = getReadingSpeedMinPerPage(entry.getValue().getType());
+                        if (speed <= 0f) speed = getReadingSpeedMinPerPage(BookType.ALL);
+                        if (speed > 0f) {
+                            min = (int) (entry.getValue().getPages() * speed);
+                            hasEstimatedData = true;
+                        }
+                    }
+                    if (entry.getValue().isTimeRecorded()) {
+                        recordedMinByDow[dow] += min;
+                    }
+                    totalMinByDow[dow] += min;
                 } catch (Exception ignored) {
                 }
             }
+
             for (int i = 0; i < 7; i++) {
                 labelList.add(dowNames[i]);
-                int nOccurrences = datesByDow[i].size();
-                int avgMinutes = nOccurrences > 0 ? minutesByDow[i] / nOccurrences : 0;
-                String descr = formatMinutes(avgMinutes) + " en moyenne le " + dowNames[i]
-                        + " (" + nOccurrences + " " + dowNames[i].toLowerCase() + "s)";
-                listVal.add(new Entry(i, avgMinutes, descr));
+                int nOcc = datesByDow[i].size();
+                int avgRec = nOcc > 0 ? recordedMinByDow[i] / nOcc : 0;
+                int avgTot = nOcc > 0 ? totalMinByDow[i] / nOcc : 0;
+
+                valRecorded.add(new Entry(i, avgRec, formatMinutes(avgRec) + " saisi le " + dowNames[i]));
+                valAdjusted.add(new Entry(i, avgTot, formatMinutes(avgTot) + " ajusté [ESTIM] le " + dowNames[i]));
             }
         } else {
-            // Mode normal : même logique que computeLineDataSet mais en minutes
-            TreeMap<String, Integer> minutesByPeriod = new TreeMap<>();
-            for (Map.Entry<String, Library.AccessStats.SessionData> entry : sessions) {
-                String key = entry.getKey(); // "2026-04-30 22:45"
-                String dateStr = key.substring(0, 10); // "2026-04-30"
+            TreeMap<String, Integer> recordedByPeriod = new TreeMap<>();
+            TreeMap<String, Integer> totalByPeriod = new TreeMap<>();
+
+            for (Map.Entry<String, Library.AccessStats.SessionData> entry : allFiltered) {
                 try {
-                    LocalDate date = LocalDate.parse(dateStr);
-                    String periodKey;
-                    if (modeSelect == ModeSelect.MONTH) {
-                        // Par jour dans le mois
-                        periodKey = String.format("%02d/%02d/%02d",
-                                date.getYear() % 100,
-                                date.getMonthValue(),
-                                date.getDayOfMonth());
+                    LocalDate date = LocalDate.parse(entry.getKey().substring(0, 10));
+                    String periodKey = (modeSelect == ModeSelect.MONTH)
+                            ? String.format("%02d/%02d/%02d", date.getYear() % 100, date.getMonthValue(), date.getDayOfMonth())
+                            : String.format("%02d/%02d", date.getYear() % 100, date.getMonthValue());
+
+                    int min = 0;
+                    if (entry.getValue().isTimeRecorded()) {
+                        min = entry.getValue().getMinutes();
+                        recordedByPeriod.merge(periodKey, min, Integer::sum);
                     } else {
-                        // Par mois
-                        periodKey = String.format("%02d/%02d",
-                                date.getYear() % 100,
-                                date.getMonthValue());
+                        float speed = getReadingSpeedMinPerPage(entry.getValue().getType());
+                        if (speed <= 0f) speed = getReadingSpeedMinPerPage(BookType.ALL);
+                        if (speed > 0f) {
+                            min = (int) (entry.getValue().getPages() * speed);
+                            hasEstimatedData = true;
+                        }
                     }
-                    minutesByPeriod.merge(periodKey, entry.getValue().getMinutes(), Integer::sum);
+                    totalByPeriod.merge(periodKey, min, Integer::sum);
+                    if (!recordedByPeriod.containsKey(periodKey)) {
+                        recordedByPeriod.put(periodKey, 0);
+                    }
                 } catch (Exception ignored) {
                 }
             }
 
             int index = 0;
-            for (Map.Entry<String, Integer> entry : minutesByPeriod.entrySet()) {
-                labelList.add(entry.getKey());
-                String descr = formatMinutes(entry.getValue()) + " en " + entry.getKey();
-                listVal.add(new Entry(index, entry.getValue(), descr));
+            for (Map.Entry<String, Integer> entry : totalByPeriod.entrySet()) {
+                String key = entry.getKey();
+                labelList.add(key);
+                int recMin = recordedByPeriod.getOrDefault(key, 0);
+                int totMin = entry.getValue();
+
+                valRecorded.add(new Entry(index, recMin, formatMinutes(recMin) + " saisi en " + key));
+                valAdjusted.add(new Entry(index, totMin, formatMinutes(totMin) + " ajusté [ESTIM] en " + key));
                 index++;
             }
         }
 
-        LineDataSet set = new LineDataSet(listVal,
-                "temps de lecture (" + (modeSelectWeek != null ? "par jour" : "total") + ")");
-        set.setValueTextSize(15);
-        set.setValueTextColor(getColor(R.color.primary_dark_blue));
-        set.setCircleHoleColor(getColor(R.color.primary_light_blue));
-        set.setColor(getColor(R.color.primary_dark_blue));
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setCircleColor(getColor(R.color.primary_dark_blue));
-        // Formateur inline pour les labels sur les points
-        set.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
+        LineDataSet setRec = new LineDataSet(valRecorded, "temps saisi (" + (modeSelectWeek != null ? "par jour" : "total") + ")");
+        setRec.setValueTextSize(15);
+        setRec.setValueTextColor(getColor(R.color.primary_dark_blue));
+        setRec.setCircleHoleColor(getColor(R.color.primary_light_blue));
+        setRec.setColor(getColor(R.color.primary_dark_blue));
+        setRec.setLineWidth(2f);
+        setRec.setCircleRadius(4f);
+        setRec.setCircleColor(getColor(R.color.primary_dark_blue));
+        setRec.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
             @Override
             public String getPointLabel(Entry entry) {
                 return formatMinutes((int) entry.getY());
             }
         });
-        return set;
+        result.add(setRec);
+
+        if (hasEstimatedData) {
+            LineDataSet setAdj = new LineDataSet(valAdjusted, "[ESTIM] temps ajusté");
+            setAdj.setValueTextSize(15);
+            setAdj.setValueTextColor(getColor(R.color.primary_middle_blue));
+            setAdj.setCircleHoleColor(getColor(R.color.primary_light_blue));
+            setAdj.setColor(getColor(R.color.primary_middle_blue));
+            setAdj.setLineWidth(2f);
+            setAdj.setCircleRadius(4f);
+            setAdj.setCircleColor(getColor(R.color.primary_middle_blue));
+            setAdj.enableDashedLine(10f, 5f, 0f);
+            setAdj.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
+                @Override
+                public String getPointLabel(Entry entry) {
+                    return formatMinutes((int) entry.getY());
+                }
+            });
+            result.add(setAdj);
+        }
+
+        return result;
     }
 
     private LineDataSet computeSessionCountDataSet() {
-        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions();
+        List<Map.Entry<String, Library.AccessStats.SessionData>> sessions = getFilteredSessions(false);
         String[] dowNames = {"Lundi", "Mardi", "Mercredi", "Jeudi",
                 "Vendredi", "Samedi", "Dimanche"};
         ArrayList<Entry> listVal = new ArrayList<>();
